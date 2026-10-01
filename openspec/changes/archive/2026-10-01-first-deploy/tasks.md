@@ -19,11 +19,11 @@
 
 ## 4. First deploy and verification
 
-- [ ] 4.1 Push to `main`; CI green incl. `deploy-server`, "Deploy client" green, site loads at https://jukkakot.github.io/neljan-suora/
-- [ ] 4.2 Run `gh workflow run prod-smoke.yml` and see it green (fix-forward any repo defect per design decision 6, recording the cause here)
+- [x] 4.1 Push to `main`; CI green incl. `deploy-server`, "Deploy client" green, site loads at https://jukkakot.github.io/neljan-suora/
+- [x] 4.2 Run `gh workflow run prod-smoke.yml` and see it green (fix-forward any repo defect per design decision 6, recording the cause here) — ran automatically after the deploys (run 36878480411 green; the earlier run was cancelled by the concurrency group); no repo defect found
 - [x] 4.3 Query Axiom for the smoke's lines (`server.*`, `game.started`, `ver` = pushed commit) — **moved to `shared-logs`** (design decision 7)
-- [ ] 4.4 UI check on the live site with `playwright-mobile` (portrait): start screen, a device game move, footer build times
-- [ ] 4.5 Refresh the front page card with `npm run homepage-card -- --push` (dev server running); it links the live game, no "Tulossa"
+- [x] 4.4 UI check on the live site with `playwright-mobile` (portrait): start screen, a device game move, footer build times
+- [x] 4.5 Refresh the front page card with `npm run homepage-card -- --push` (dev server running); it links the live game, no "Tulossa"
 
 ## 5. Docs and roadmap
 
