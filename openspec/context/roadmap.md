@@ -11,7 +11,7 @@ tasks written), **planned**.
 | 2 | `rules-engine` | done | Replace Ristinolla with the 7 × 6 gravity rules on bitboards in `packages/rules` (pure, seeded start, contract in `contract.ts`): legal columns, win with the winning row, draw; the protocol's move (a column); property tests |
 | 3 | `game-ui` | done | The upright grid in the client shell: column-first controls with a ghost disc and one confirm, drop animation, the winning row shown; view model and client definition; E2E smoke on the real moves; front page card refreshed |
 | 4 | `bot-v1` | done | Searching bot (product.md → Bot ambition) through the bot adapter, measured against the kit's search; a strength requirement in `strength.json`, tournament green |
-| 5 | `first-deploy` | planned | The rest of the setup checklist (docs/operations.md): Pages, Render, Axiom, prod smoke; done with the user's go-ahead (creates external services); the front page card links the game |
+| 5 | `first-deploy` | specced | The rest of the setup checklist (docs/operations.md): Pages, Render, Axiom, prod smoke; done with the user's go-ahead (creates external services); the front page card links the game |
 
 ## Later, to consider (not now)
 
