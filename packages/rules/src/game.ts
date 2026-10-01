@@ -58,10 +58,17 @@ function nextSeat(seats: readonly number[], seat: number): number {
   return seats.find((s) => s > seat) ?? seats[0] ?? 0;
 }
 
-/** A new game for `seats`; the seed draws who starts. */
-export function startGame(seed: number, seats: readonly number[]): Game {
+/** Who has the first turn: `firstSeat` when it is one of `seats`, otherwise drawn from the seed. */
+export function firstTurn(seed: number, seats: readonly number[], firstSeat?: number): number {
   const ordered = [...seats].sort((a, b) => a - b);
-  const turn = ordered[createRng(seed).int(0, ordered.length - 1)]!;
+  if (firstSeat !== undefined && ordered.includes(firstSeat)) return firstSeat;
+  return ordered[createRng(seed).int(0, ordered.length - 1)]!;
+}
+
+/** A new game for `seats`; `firstSeat` starts when given, otherwise the seed draws who starts. */
+export function startGame(seed: number, seats: readonly number[], firstSeat?: number): Game {
+  const ordered = [...seats].sort((a, b) => a - b);
+  const turn = firstTurn(seed, ordered, firstSeat);
   return { seed, seats: ordered, left: [], cells: Array.from({ length: CELLS }, () => 0), turn, moves: 0, over: false, winners: [], line: [] };
 }
 

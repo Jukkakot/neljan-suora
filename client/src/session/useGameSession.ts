@@ -8,6 +8,7 @@ import {
 import { GAME_ERROR_CODES, type BotSpeed, type CommandResult, type GameErrorCode, type MovePayload } from "@neljan-suora/protocol";
 import { SEAT_COUNT, type NeljanSuoraOptions } from "@neljan-suora/rules";
 import { useCallback } from "react";
+import { firstPlayerOptions, loadFirstPlayer, type FirstPlayer } from "./firstPlayer.ts";
 import { neljanSuoraClient } from "./neljanSuoraClient.ts";
 import type { GameView } from "./viewModel.ts";
 
@@ -38,8 +39,8 @@ export function noticeKey(code: string): NoticeKey {
 }
 
 export interface GameSession extends Omit<KitSession<GameView, NeljanSuoraOptions>, "playBots" | "watchBots" | "notice" | "command"> {
-  /** A quick game against a bot on the device, straight into the game. */
-  playBots(nickname: string): void;
+  /** A quick game against a bot on the device, straight into the game; `first` starts (default: the remembered choice). */
+  playBots(nickname: string, first?: FirstPlayer): void;
   /** Watches a new game of two bots on the device (leaving the current game, if any). */
   watchBots(nickname: string, speed?: BotSpeed): void;
   /** Makes a move (the whole turn). Resolves undefined without sending while another command is pending. */
@@ -59,7 +60,10 @@ export function useGameSession(connector?: Connector): GameSession {
     errorCodes: GAME_ERROR_CODES,
     connector,
   });
-  const playBots = useCallback((nickname: string) => kitPlayBots(nickname, SEAT_COUNT - 1), [kitPlayBots]);
+  const playBots = useCallback(
+    (nickname: string, first = loadFirstPlayer()) => kitPlayBots(nickname, SEAT_COUNT - 1, firstPlayerOptions(first)),
+    [kitPlayBots],
+  );
   const watchBots = useCallback((nickname: string, speed?: BotSpeed) => kitWatchBots(nickname, SEAT_COUNT, speed), [kitWatchBots]);
   const move = useCallback(({ column }: MovePayload) => command("move", { move: { column } }), [command]);
   return { ...session, playBots, watchBots, move, notice: notice as NoticeKey | undefined };

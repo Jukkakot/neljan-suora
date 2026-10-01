@@ -3,6 +3,7 @@ import { RULES_VERSION, type NeljanSuoraOptions } from "@neljan-suora/rules";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { checkNickname, isLocalToken, loadNickname, randomNickname, type OpenGames, type ServerWake } from "@game-kit/client";
+import { FIRST_PLAYERS, loadFirstPlayer, saveFirstPlayer, type FirstPlayer } from "../session/firstPlayer.ts";
 import type { GameSession } from "../session/useGameSession.ts";
 import { SettingsButton, SettingsScreen } from "../settings/SettingsScreen.tsx";
 import { TipsReset } from "../tips/TipsReset.tsx";
@@ -68,6 +69,11 @@ export function StartScreen({ session, wake, openGames = NO_GAMES, invite, onInv
   const [settingsOpen, setSettingsOpen] = useState(false);
   // "Pelaan itse": on whenever the screen opens; off offers a game of bots only to watch.
   const [playMyself, setPlayMyself] = useState(true);
+  const [firstPlayer, setFirstPlayer] = useState(loadFirstPlayer);
+  const chooseFirstPlayer = (choice: FirstPlayer) => {
+    setFirstPlayer(choice);
+    saveFirstPlayer(choice);
+  };
   if (settingsOpen) return <SettingsScreen onClose={() => setSettingsOpen(false)} />;
 
   let content;
@@ -197,9 +203,21 @@ export function StartScreen({ session, wake, openGames = NO_GAMES, invite, onInv
                 <Switch checked={playMyself} onChange={(e) => setPlayMyself(e.target.checked)} />
               </label>
               {playMyself ? (
-                <Button variant={offerResume ? "secondary" : undefined} disabled={!nickname.ok} onClick={() => playBots(name)}>
-                  {t("start.playBot")}
-                </Button>
+                <>
+                  <div className={styles.firstPlayer} role="group" aria-labelledby="first-player-title">
+                    <span id="first-player-title" className={styles.firstPlayerTitle}>
+                      {t("start.firstPlayer")}
+                    </span>
+                    {FIRST_PLAYERS.map((choice) => (
+                      <Button key={choice} variant={choice === firstPlayer ? "primary" : "secondary"} aria-pressed={choice === firstPlayer} onClick={() => chooseFirstPlayer(choice)}>
+                        {t(`start.firstPlayer_${choice}`)}
+                      </Button>
+                    ))}
+                  </div>
+                  <Button variant={offerResume ? "secondary" : undefined} disabled={!nickname.ok} onClick={() => playBots(name, firstPlayer)}>
+                    {t("start.playBot")}
+                  </Button>
+                </>
               ) : (
                 <Button variant="secondary" disabled={!nickname.ok} onClick={() => watchBots(name)}>
                   {t("start.watchBots")}

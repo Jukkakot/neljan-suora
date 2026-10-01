@@ -14,8 +14,10 @@ Neljän suora is the classic gravity four-in-a-row game, with our own name and l
 - Four of the mover's discs in a row horizontally, vertically or diagonally win at once, and the
   winning row is shown. A full grid without such a row is a draw. No passing, no scores beyond
   win, draw or loss.
-- Who starts is drawn from the game's seed, also in a rematch (the kit's rematch makes a new room
-  and tells the rules nothing about the previous game; letting the other seat start is a kit TODO).
+- Who starts: in a game against the bot on the device the person chooses on the start screen
+  ("Kuka aloittaa?": Minä / Botti / Arvonta, remembered on the device, Arvonta at first); its
+  "Pelaa uudelleen" lets the other seat start than in the game that ended (Arvonta included).
+  Friends' games and watched bot games draw the starter from the game's seed, also in a rematch.
 - The commercial game's name, logos, box look and signature colours never appear in the UI,
   assets, texts or repo (nfr → Legal).
 

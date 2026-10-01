@@ -59,7 +59,7 @@ The `@game-kit/*` packages live in [`Jukkakot/game-kit`](https://github.com/Jukk
 `npm run check`). Neljän suora's workspaces depend on the tarballs of one release
 (`https://github.com/Jukkakot/game-kit/releases/download/v<version>/…`), pinned by the lockfile.
 
-- **Switch version:** `npm run kit:use -- 0.2.0` rewrites every `@game-kit/*` dependency and runs
+- **Switch version:** `npm run kit:use -- 0.3.0` rewrites every `@game-kit/*` dependency and runs
   `npm install`.
 - **Kit and game together:** edit in `../game-kit`, then `npm run kit:use -- local` here (packs
   the kit there and installs those tarballs: exactly what a release ships); repeat after each kit

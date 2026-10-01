@@ -217,7 +217,11 @@ client/src/
 - **Local play:** a game against bots is the kit's `LocalRoom` with the game's definition, the
   same `GameRoomLike` as a Colyseus room: same synced-state shape, same `CommandResult`s, bots from
   the worker, "Peru" (undo), no turn clock. Saved in localStorage (`neljan-suora.localGame`) after
-  every step; a save that fails `checkGame` is dropped. Watched bot games are never saved.
+  every step; a save that fails `checkGame` is dropped. Watched bot games are never saved. Who
+  starts is the options' `firstSeat` (the start screen's choice, `client/src/session/firstPlayer.ts`,
+  stored as `neljan-suora.firstPlayer`; none = the seed draws); the rematch's options come from the
+  definition's `local.rematchOptions`, which names the seat that did not start. Online games never
+  carry the option (the protocol's `optionsSchema` accepts none).
 - **Motion:** the last move comes from a board diff (`useLastMove`); the end celebrates only when
   `useEnded` saw it happen. `prefers-reduced-motion` stops all of it.
 - **Layout:** phone portrait stacks turn line, players, board and controls; from 900 px landscape

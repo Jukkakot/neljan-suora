@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { neljanSuoraRules as rules } from "./contract.js";
 import { CELLS } from "./bitboard.js";
-import { legalColumns, startGame } from "./game.js";
+import { createRng } from "./rng.js";
+import { firstTurn, legalColumns, startGame } from "./game.js";
 import { gameAfter } from "./testing.js";
 
 const seats = [
@@ -20,6 +21,25 @@ describe("The grid and who starts", () => {
     expect(rules.start(7, seats, {})).toEqual(game);
     const starters = new Set(Array.from({ length: 20 }, (_, seed) => rules.seatOnTurn(rules.start(seed, seats, {}))));
     expect(starters).toEqual(new Set([1, 2]));
+  });
+
+  it("A chosen first seat: the named seat is on turn, whatever the seed", () => {
+    for (let seed = 0; seed < 20; seed++) {
+      expect(rules.seatOnTurn(rules.start(seed, seats, { firstSeat: 2 }))).toBe(2);
+      expect(rules.seatOnTurn(rules.start(seed, seats, { firstSeat: 1 }))).toBe(1);
+    }
+  });
+
+  it("no first seat: the same starter as before for 200 seeds", () => {
+    for (let seed = 0; seed < 200; seed++) {
+      const drawn = [1, 2][createRng(seed).int(0, 1)];
+      expect(firstTurn(seed, [1, 2])).toBe(drawn);
+      expect(rules.seatOnTurn(rules.start(seed, seats, {}))).toBe(drawn);
+    }
+  });
+
+  it("a first seat that is not seated is ignored", () => {
+    for (let seed = 0; seed < 20; seed++) expect(firstTurn(seed, [1, 2], 3)).toBe(firstTurn(seed, [1, 2]));
   });
 
   it("Turns alternate", () => {

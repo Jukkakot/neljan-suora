@@ -3,6 +3,7 @@ import { BOT_NAMES, type Seat } from "@game-kit/protocol";
 import { CELLS, DEFAULT_OPTIONS, SEAT_COUNT, neljanSuoraRules, type Game, type Move, type NeljanSuoraOptions } from "@neljan-suora/rules";
 import { botBudget, type AskBot } from "../bots/botMoves.ts";
 import { askBotWorker } from "../bots/botWorkerClient.ts";
+import { rematchOptions } from "./firstPlayer.ts";
 import { toView, type GameView, type SyncedGame } from "./viewModel.ts";
 
 const isInt = (value: unknown, min: number, max: number): boolean => Number.isInteger(value) && (value as number) >= min && (value as number) <= max;
@@ -68,6 +69,7 @@ export function createNeljanSuoraClient(askBot: AskBot = askBotWorker): GameClie
       child: childOf,
       turn: (game) => game.moves + 1,
       logFacts: (game) => ({ dealSeed: game.seed, moves: game.moves }),
+      rematchOptions,
     },
   };
 }

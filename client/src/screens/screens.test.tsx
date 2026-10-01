@@ -41,15 +41,32 @@ describe("start screen", () => {
     const session = sessionOf();
     render(<StartScreen session={session} wake={ready} />);
     fireEvent.click(screen.getByRole("button", { name: "Pelaa bottia vastaan" }));
-    expect(session.playBots).toHaveBeenCalledExactlyOnceWith("Maija");
+    expect(session.playBots).toHaveBeenCalledExactlyOnceWith("Maija", "random");
     fireEvent.click(screen.getByRole("button", { name: "Luo peli" }));
     expect(session.createGame).toHaveBeenCalledExactlyOnceWith("Maija");
+  });
+
+  it("Who starts: Arvonta at first; the choice reaches the game and is remembered", () => {
+    const session = sessionOf();
+    const { unmount } = render(<StartScreen session={session} wake={ready} />);
+    expect(screen.getByRole("group", { name: "Kuka aloittaa?" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Arvonta" }).getAttribute("aria-pressed")).toBe("true");
+    fireEvent.click(screen.getByRole("button", { name: "Minä" }));
+    expect(screen.getByRole("button", { name: "Minä" }).getAttribute("aria-pressed")).toBe("true");
+    fireEvent.click(screen.getByRole("button", { name: "Pelaa bottia vastaan" }));
+    expect(session.playBots).toHaveBeenCalledExactlyOnceWith("Maija", "me");
+    unmount();
+    render(<StartScreen session={sessionOf()} wake={ready} />);
+    expect(screen.getByRole("button", { name: "Minä" }).getAttribute("aria-pressed")).toBe("true");
+    fireEvent.click(screen.getByRole("button", { name: "Botti" }));
+    expect(localStorage.getItem("neljan-suora.firstPlayer")).toBe("bot");
   });
 
   it("Pelaan itse off offers a game of bots to watch", () => {
     const session = sessionOf();
     render(<StartScreen session={session} wake={ready} />);
     fireEvent.click(screen.getByRole("switch"));
+    expect(screen.queryByRole("group", { name: "Kuka aloittaa?" })).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "Katso bottien peliä" }));
     expect(session.watchBots).toHaveBeenCalledExactlyOnceWith("Maija");
   });

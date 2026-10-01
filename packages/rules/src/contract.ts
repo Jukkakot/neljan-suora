@@ -7,10 +7,13 @@ import { endGame, playMove, randomMove, removeSeat, startGame, type Game, type M
  */
 
 /**
- * Neljän suora's options (set by the host in the waiting room): none yet; a variant (a larger grid …)
- * would go here and in the protocol's `optionsSchema`.
+ * Neljän suora's options. `firstSeat` is only set by games on the device (the person's choice of who
+ * starts, the alternating rematch); online games never carry it (the protocol's `optionsSchema`
+ * accepts no options). A variant (a larger grid …) would go here and in the protocol's schema.
  */
-export type NeljanSuoraOptions = Record<string, never>;
+export interface NeljanSuoraOptions {
+  readonly firstSeat?: number;
+}
 
 export const DEFAULT_OPTIONS: NeljanSuoraOptions = {};
 
@@ -19,7 +22,7 @@ export const moveText = (move: Move): string => `col${move.column}`;
 export const neljanSuoraRules: GameRules<Game, Move, NeljanSuoraOptions> = {
   seatRange: () => ({ min: 2, max: 2 }),
 
-  start: (seed, seats) => startGame(seed, seats.map((s) => s.seat)),
+  start: (seed, seats, options) => startGame(seed, seats.map((s) => s.seat), options.firstSeat),
 
   seatOnTurn: (game) => (game.over ? 0 : game.turn),
 
