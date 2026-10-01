@@ -183,25 +183,33 @@ position it cannot settle SHALL never make it answer late or not at all.
 - **WHEN** the bot is asked in a position outside its book with a solve limit too small to settle it
 - **THEN** it answers with the column the heuristic search chooses within the same budget
 
-### Requirement: The opening book is loaded on demand
+### Requirement: The opening book is looked up on the server
 
-The bot's opening book SHALL NOT be part of the app's first load. It SHALL be fetched the first time a
-bot move (or a hint) is needed in the app, kept for the rest of the visit, and stored so that it is
-available offline after one successful fetch. Until it has arrived, or when it cannot be fetched,
-the bot SHALL still answer within its budget, solving the position itself or falling back to the
-heuristic move. A failed fetch SHALL be logged once and retried at the next visit, not in a loop.
+The bot's opening book SHALL stay on the game server and SHALL NOT be downloaded to the browser.
+For each bot move (and each hint) in a position the book can hold, the browser SHALL ask the server
+for the position's verdict (its outcome and the columns of its best score) before the bot chooses,
+and the bot SHALL choose among those columns. When the server does not answer quickly (offline,
+asleep, slow, an error, or the position is not in the book), the bot SHALL choose as if it had no
+book, still within its budget. The server SHALL answer only well-formed, legal positions and SHALL
+limit how often one address may ask.
 
-#### Scenario: First bot move of the visit
+#### Scenario: Opening move from the server's book
 
-- **WHEN** a person starts their first game against a bot after opening the app
-- **THEN** the book is fetched then, and not when the start screen loads
+- **WHEN** the bot plays the first seat on an empty board and the server answers
+- **THEN** it drops into column 3, the only winning first move
 
-#### Scenario: Offline after a visit
+#### Scenario: No server
 
-- **WHEN** the book was fetched in an earlier visit and the device is offline
-- **THEN** the bot plays from the book without the network
+- **WHEN** the device is offline and the bot is on turn in the opening
+- **THEN** the bot still answers with a legal column within its budget
 
-#### Scenario: Book unavailable
+#### Scenario: Nothing to download
 
-- **WHEN** the book cannot be fetched
-- **THEN** the bot still answers every move within its budget, and one warning is logged
+- **WHEN** a person plays a whole game against the bot
+- **THEN** the browser fetches no opening book file
+
+#### Scenario: Bad position
+
+- **WHEN** the server is asked about a position that cannot arise in a game (wrong size, floating
+  discs, wrong disc counts)
+- **THEN** it answers with an error and no verdict
