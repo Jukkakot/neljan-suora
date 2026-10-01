@@ -30,9 +30,10 @@
   },
   "board": {
     "label": "Game board",
-    "cellEmpty": "Row {{row}}, column {{col}}: empty",
-    "cellChosen": "Row {{row}}, column {{col}}: chosen, tap again to place",
-    "cellTaken": "Row {{row}}, column {{col}}: {{berry}}"
+    "column": "Column {{col}}: {{contents}}",
+    "empty": "empty",
+    "full": ", full",
+    "chosen": ", chosen – tap again to drop"
   },
   "start": {
     "connecting": "Connecting to the server…",

@@ -30,9 +30,10 @@
   },
   "board": {
     "label": "Pelilauta",
-    "cellEmpty": "Rivi {{row}}, sarake {{col}}: tyhjä",
-    "cellChosen": "Rivi {{row}}, sarake {{col}}: valittu, napauta uudelleen asettaaksesi",
-    "cellTaken": "Rivi {{row}}, sarake {{col}}: {{berry}}"
+    "column": "Sarake {{col}}: {{contents}}",
+    "empty": "tyhjä",
+    "full": ", täynnä",
+    "chosen": ", valittu – napauta uudelleen pudottaaksesi"
   },
   "start": {
     "connecting": "Yhdistetään palvelimeen…",

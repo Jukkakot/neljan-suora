@@ -1,7 +1,7 @@
 /*
  * Phone (portrait): turn line and players, the board, the controls, the tray, stacked and as wide
  * as the board. Wide screens: the board on the left as tall as the window allows, everything else in
- * a column beside it.
+ * a column beside it (phones in landscape too).
  */
 .layout {
   width: min(100%, 60dvh, 640px);
@@ -37,11 +37,12 @@
   justify-items: center;
 }
 
-@media (min-width: 900px) and (orientation: landscape) {
+@media (min-width: 640px) and (orientation: landscape) {
   .layout {
     width: 100%;
     max-width: 1200px;
-    grid-template-columns: min(calc(100dvh - 96px), 720px) minmax(320px, 420px);
+    /* The 7 × 6 board as wide as its height lets it be (height = 6/7 of the width). */
+    grid-template-columns: min(calc((100dvh - 96px) * 7 / 6), 840px) minmax(280px, 420px);
     grid-template-areas:
       "board head"
       "board side";

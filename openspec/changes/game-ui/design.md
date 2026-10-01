@@ -60,9 +60,14 @@ pudottaaksesi" when chosen. English: "Column {{col}}: …", "empty", ", full",
 
 ### Layout
 
-The board keeps `aspect-ratio: 7 / 6` (padding included) and the existing layout; on the reference
-phone (360 px) the columns are ≥ 44 px wide. Landscape and narrow desktop use the existing wide
-layout (board beside the controls), checked once.
+The board keeps `aspect-ratio: 7 / 6` (padding included). Found in the UI check: seven 44 px
+columns with the old crate padding and gaps overflowed the crate on a 360 px phone. Decision: crate
+padding 4 px, column gap 2 px (columns exactly 44 px at 360 px), and `min-width: 0` so a smaller
+phone narrows the columns instead of spilling out of the crate.
+
+Also found: phones in landscape (e.g. 780 × 360) scrolled the board out of view, because the wide
+layout started at 900 px. Decision: the board-beside-the-rest layout starts at 640 px in landscape,
+and its board column is `min((100dvh − 96px) · 7/6, 840px)` so the 7 × 6 board fills the height.
 
 ## NFR
 

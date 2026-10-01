@@ -3,42 +3,60 @@
   width: 100%;
   aspect-ratio: var(--columns) / var(--rows);
   display: grid;
-  grid-template-rows: repeat(var(--rows), 1fr);
-  gap: var(--space-1);
-  padding: var(--space-2);
+  grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+  gap: 2px;
+  padding: var(--space-1);
   background:
     repeating-linear-gradient(to bottom, var(--board-grain) 0 1px, transparent 1px 11px),
     var(--board);
   border-radius: var(--radius-m);
 }
 
-.row {
+/*
+ * A column is one tap target the height of the grid; its holes are stacked inside. It is 44 px wide
+ * on a 360 px phone and may narrow below that on smaller screens rather than spill out of the crate.
+ */
+.column {
+  min-width: 0;
   display: grid;
-  grid-template-columns: repeat(var(--columns), 1fr);
+  grid-template-rows: repeat(var(--rows), 1fr);
   gap: var(--space-1);
-}
-
-/* The tap target is the full square; only the hole inside it is round. */
-.cell {
-  min-width: var(--tap-min);
-  min-height: var(--tap-min);
-  display: grid;
-  place-items: center;
-  padding: var(--space-1);
+  padding: 0;
   border: 0;
   border-radius: var(--radius-s);
   background: transparent;
   color: var(--text);
   cursor: pointer;
+  transition: background-color var(--motion-fast);
 }
 
-.cell:disabled {
+.column:disabled {
   cursor: default;
 }
 
-.cell:focus-visible {
+.column:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* The chosen column is lit; on a pointer device a column lights faintly under the pointer. */
+.chosenColumn {
+  background: var(--column-light);
+}
+
+@media (hover: hover) {
+  .column:not(:disabled):not(.chosenColumn):hover {
+    background: color-mix(in srgb, var(--column-light) 55%, transparent);
+  }
+}
+
+/* One slot of the column; a size container so a falling berry can move in whole slots (cqh). */
+.cell {
+  container-type: size;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  padding: 2px;
 }
 
 /* A moss hole: a round dip in the crate. */
@@ -57,17 +75,13 @@
   transition: outline-color var(--motion-fast);
 }
 
-.cell:not(:disabled):not(.chosen):hover .hole {
-  outline-color: var(--border);
-}
-
-/* Pieces and the preview share the hole's centre. */
+/* Pieces and the ghost share the hole's centre. */
 .piece,
 .preview {
   grid-area: 1 / 1;
 }
 
-/* The chosen hole: the viewer's berry, faded, until the move is confirmed. */
+/* The ghost: the viewer's berry, faded, where it would land, until the move is confirmed. */
 .chosen .hole {
   outline: 2px dashed var(--preview-ok-outline);
 }
@@ -76,14 +90,25 @@
   opacity: 0.45;
 }
 
-/* The last move: lands flattened and springs back; the dot stays until the next move. */
+/*
+ * The last move: the berry drops from just above the top hole (`--fall` slots), speeding up like
+ * gravity, then lands flattened and springs back. The dot stays until the next move.
+ */
+.last {
+  --drop: calc(90ms + var(--fall, 1) * 35ms);
+}
+
 .last .piece {
-  animation: squish var(--motion) ease-out;
+  position: relative;
+  z-index: 2;
+  animation:
+    drop var(--drop) cubic-bezier(0.5, 0, 1, 1) both,
+    squish 200ms ease-out var(--drop);
 }
 
 .dot {
   grid-area: 1 / 1;
-  z-index: 1;
+  z-index: 3;
   width: 18%;
   aspect-ratio: 1;
   border-radius: 50%;
@@ -95,6 +120,28 @@
   outline: 3px solid var(--shine);
   outline-offset: 1px;
   animation: shine var(--motion-slow) ease-out;
+}
+
+.last.win .piece {
+  animation:
+    drop var(--drop) cubic-bezier(0.5, 0, 1, 1) both,
+    squish 200ms ease-out var(--drop),
+    shine var(--motion-slow) ease-out var(--drop) backwards;
+}
+
+/* Once won, every berry outside the line fades so the line stands out. */
+.faded .piece {
+  opacity: 0.4;
+  transition: opacity var(--motion-slow);
+}
+
+@keyframes drop {
+  from {
+    transform: translateY(calc(var(--fall, 1) * -1 * (100cqh + var(--space-1))));
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 @keyframes squish {
@@ -121,7 +168,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .last .piece,
+  .last.win .piece,
   .win .piece {
     animation: none;
+  }
+
+  .faded .piece {
+    transition: none;
   }
 }

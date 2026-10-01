@@ -9,13 +9,13 @@ export interface BoardProps {
   board: readonly number[];
   /** Columns of the grid. */
   columns?: number;
-  /** The winning line's cells. */
+  /** The winning line's cells; the other berries fade once it is set. */
   line?: readonly number[];
-  /** The column the viewer chose, previewed with their berry where it would land until they confirm. */
+  /** The column the viewer chose: lit, with their ghost berry where it would land. */
   chosen?: number;
-  /** The viewer's seat (the chosen column's berry). */
+  /** The viewer's seat (the ghost's berry). */
   seat?: number;
-  /** The cells of the last move: marked with a dot and settling in. */
+  /** The cells of the last move: they drop in and keep a dot. */
   lastMove?: ReadonlySet<number>;
   /** A command is on its way: taps wait. */
   busy?: boolean;
@@ -24,53 +24,57 @@ export interface BoardProps {
 }
 
 /**
- * The upright grid as a birch crate: round moss holes, each a square button. On the viewer's turn a
- * tap anywhere in a column that is not full chooses it (the viewer's berry is previewed, faded, in
- * the cell it would land in) and a second tap in it, or the confirm button below the board, drops
- * it. The last move's berry squishes in and keeps a dot; the winning line's berries shine.
+ * The upright grid as a birch crate: seven columns of round moss holes, each column one button the
+ * height of the grid. On the viewer's turn the first tap on a column lights it and shows their ghost
+ * berry where it would land; a second tap, or the confirm button below the board, drops it. A new
+ * berry drops down its column and squishes, keeping a dot; once won, the winning line shines and the
+ * other berries fade.
  */
 export function Board({ board, columns = COLUMNS, line = [], chosen, seat, lastMove, busy = false, onColumn }: BoardProps) {
   const { t } = useTranslation();
   const rows = Math.ceil(board.length / columns);
   const landing = chosen === undefined ? undefined : landingCell(board, chosen);
+  const won = line.length > 0;
   return (
-    <div className={styles.board} style={{ "--columns": columns, "--rows": rows } as CSSProperties} role="grid" aria-label={t("board.label")} aria-busy={busy || undefined}>
-      {Array.from({ length: rows }, (_, row) => (
-        <div key={row} role="row" className={styles.row}>
-          {Array.from({ length: columns }, (_, col) => {
-            const cell = row * columns + col;
-            const owner = board[cell] ?? 0;
-            const full = board[col] !== 0;
-            const isChosen = cell === landing;
-            const isLast = owner !== 0 && lastMove?.has(cell);
-            const label = owner
-              ? t("board.cellTaken", { row: row + 1, col: col + 1, berry: t(owner === 1 ? "berry.1" : "berry.2") })
-              : t(isChosen ? "board.cellChosen" : "board.cellEmpty", { row: row + 1, col: col + 1 });
-            const cls = [styles.cell, line.includes(cell) && styles.win, isChosen && styles.chosen, isLast && styles.last].filter(Boolean).join(" ");
-            return (
-              <button
-                key={cell}
-                type="button"
-                role="gridcell"
-                className={cls}
-                data-cell={cell}
-                data-column={col}
-                data-owner={owner}
-                aria-label={label}
-                aria-pressed={isChosen || undefined}
-                disabled={full || !onColumn || busy}
-                onClick={() => onColumn?.(col)}
-              >
-                <span className={styles.hole}>
-                  {owner !== 0 && <Berry seat={owner} size="88%" className={styles.piece} />}
-                  {isChosen && seat !== undefined && <Berry seat={seat} size="88%" className={styles.preview} />}
-                  {isLast && <span className={styles.dot} data-last="" />}
+    <div className={styles.board} style={{ "--columns": columns, "--rows": rows } as CSSProperties} role="group" aria-label={t("board.label")} aria-busy={busy || undefined}>
+      {Array.from({ length: columns }, (_, col) => {
+        const cells = Array.from({ length: rows }, (_, row) => row * columns + col);
+        const full = board[col] !== 0;
+        const isChosen = chosen === col && !full;
+        const berries = [...cells].reverse().flatMap((cell) => (board[cell] ? [t(board[cell] === 1 ? "berry.1" : "berry.2")] : []));
+        const label =
+          t("board.column", { col: col + 1, contents: berries.length > 0 ? berries.join(", ") : t("board.empty") }) +
+          (full ? t("board.full") : isChosen ? t("board.chosen") : "");
+        return (
+          <button
+            key={col}
+            type="button"
+            className={isChosen ? `${styles.column} ${styles.chosenColumn}` : styles.column}
+            data-column={col}
+            aria-label={label}
+            aria-pressed={isChosen || undefined}
+            disabled={full || !onColumn || busy}
+            onClick={() => onColumn?.(col)}
+          >
+            {cells.map((cell, row) => {
+              const owner = board[cell] ?? 0;
+              const isGhost = cell === landing;
+              const isLast = owner !== 0 && lastMove?.has(cell);
+              const inLine = line.includes(cell);
+              const cls = [styles.cell, inLine && styles.win, won && !inLine && styles.faded, isGhost && styles.chosen, isLast && styles.last].filter(Boolean).join(" ");
+              return (
+                <span key={cell} className={cls} style={isLast ? ({ "--fall": row + 1 } as CSSProperties) : undefined} data-cell={cell} data-owner={owner} aria-hidden="true">
+                  <span className={styles.hole}>
+                    {owner !== 0 && <Berry seat={owner} size="88%" className={styles.piece} />}
+                    {isGhost && seat !== undefined && <Berry seat={seat} size="88%" className={styles.preview} />}
+                    {isLast && <span className={styles.dot} data-last="" />}
+                  </span>
                 </span>
-              </button>
-            );
-          })}
-        </div>
-      ))}
+              );
+            })}
+          </button>
+        );
+      })}
     </div>
   );
 }

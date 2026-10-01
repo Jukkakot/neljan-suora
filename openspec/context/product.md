@@ -21,9 +21,10 @@ Neljän suora is the classic gravity four-in-a-row game, with our own name and l
 
 ## Controls
 
-Column first: a tap anywhere in a column shows a ghost disc in the cell it would land in; a second
-tap on the same column (or the confirm button) drops it; another column moves the ghost. No drag
-needed. Same "few taps, one deliberate confirm" rule as under Mobile.
+Column first: a tap anywhere in a column lights it and shows a ghost berry in the cell it would land
+in; a second tap on the same column (or the confirm button) drops it; another column moves the ghost.
+No drag needed. The berry drops down the column, and a won game fades everything but the winning
+line (spec `game-board`). Same "few taps, one deliberate confirm" rule as under Mobile.
 
 ## Bot ambition
 

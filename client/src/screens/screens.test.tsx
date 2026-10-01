@@ -84,42 +84,47 @@ describe("game screen › a move", () => {
     };
     return { move, ...render(<GameScreen view={view} session={session} />) };
   }
-  const cell = (container: HTMLElement, i: number) => container.querySelector(`[data-cell='${i}']`) as HTMLButtonElement;
+  const column = (container: HTMLElement, c: number) => container.querySelector(`[data-column='${c}']`) as HTMLButtonElement;
+  const ghostAt = (container: HTMLElement, cell: number) => container.querySelector(`[data-cell='${cell}'] [class*='preview']`);
 
   /** A grid from column stacks (bottom up): `{ 0: [1, 2] }` puts seat 1 at the bottom of column 0 and seat 2 above it. */
   const gridOf = (stacks: Record<number, number[]>) => {
     const board = Array.from({ length: 42 }, () => 0);
-    for (const [column, stack] of Object.entries(stacks)) stack.forEach((seat, height) => (board[(5 - height) * 7 + Number(column)] = seat));
+    for (const [c, stack] of Object.entries(stacks)) stack.forEach((seat, height) => (board[(5 - height) * 7 + Number(c)] = seat));
     return board;
   };
 
-  it("the first tap chooses a column, the second makes the move", async () => {
-    const { container, move } = setup();
-    fireEvent.click(cell(container, 3));
+  it("Choosing a column shows the ghost where it lands; Confirming sends the column", async () => {
+    const { container, move } = setup(gameView({ board: gridOf({ 3: [2, 1] }) }));
+    fireEvent.click(column(container, 3));
     expect(move).not.toHaveBeenCalled();
-    // The berry is previewed where it would land: the bottom of column 3.
-    expect(cell(container, 38).getAttribute("aria-pressed")).toBe("true");
+    expect(column(container, 3).getAttribute("aria-pressed")).toBe("true");
+    // Two berries in column 3 (index 3): the ghost is in the third hole from the bottom.
+    expect(ghostAt(container, 24)).not.toBeNull();
     expect(screen.getByText("Napauta saraketta uudelleen tai paina Aseta")).toBeTruthy();
-    await act(async () => fireEvent.click(cell(container, 38)));
+    await act(async () => fireEvent.click(column(container, 3)));
     expect(move).toHaveBeenCalledExactlyOnceWith({ column: 3 });
   });
 
-  it("the confirm button makes the chosen move; it is disabled until a column is chosen", async () => {
+  it("Changing the choice moves the ghost; the confirm button makes the chosen move", async () => {
     const { container, move } = setup();
     const confirm = screen.getByRole("button", { name: "Aseta" }) as HTMLButtonElement;
     expect(confirm.disabled).toBe(true);
-    fireEvent.click(cell(container, 0));
-    fireEvent.click(cell(container, 2));
+    fireEvent.click(column(container, 4));
+    fireEvent.click(column(container, 2));
+    expect(move).not.toHaveBeenCalled();
+    expect([ghostAt(container, 39), ghostAt(container, 37)].map((g) => g !== null)).toEqual([false, true]);
     await act(async () => fireEvent.click(confirm));
     expect(move).toHaveBeenCalledExactlyOnceWith({ column: 2 });
   });
 
-  it("a full column and the other's turn cannot be tapped", () => {
+  it("A full column and the other's turn cannot be tapped", () => {
     const board = gridOf({ 0: [1, 2, 1, 2, 1, 2] });
-    expect(cell(setup(gameView({ board })).container, 35).disabled).toBe(true);
+    const mine = setup(gameView({ board })).container;
+    expect([column(mine, 0).disabled, column(mine, 1).disabled]).toEqual([true, false]);
     cleanup();
     const { container } = setup(gameView({ board, turnSeat: 2, isMyTurn: false }));
-    expect(cell(container, 36).disabled).toBe(true);
+    expect(column(container, 1).disabled).toBe(true);
     expect(screen.getByText("Odota vuoroasi")).toBeTruthy();
   });
 
@@ -127,7 +132,7 @@ describe("game screen › a move", () => {
     const board = gridOf({ 0: [1, 1, 1], 1: [2, 2, 2] });
     const { container } = setup(gameView({ board, game: { seed: 0, seats: [1, 2], left: [], cells: board, turn: 1, moves: 6, over: false, winners: [], line: [] } }));
     fireEvent.click(screen.getByRole("button", { name: "Vihje" }));
-    expect(cell(container, 14).getAttribute("aria-pressed")).toBe("true");
+    expect(column(container, 0).getAttribute("aria-pressed")).toBe("true");
   });
 
   it("a finished game shows the result and Pelaa uudelleen", () => {

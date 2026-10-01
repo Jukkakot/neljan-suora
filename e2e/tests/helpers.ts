@@ -3,7 +3,7 @@ import { expect, type Page } from "@playwright/test";
 /** A quick-play pool unique to one test, so tests never share games. */
 export const uniquePool = (name: string) => `e2e-${name}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-export const board = (page: Page) => page.getByRole("grid", { name: "Pelilauta" });
+export const board = (page: Page) => page.getByRole("group", { name: "Pelilauta" });
 
 /** Opens the start screen in `pool`, enters `nickname`, taps "Luo peli" and waits for the waiting room. */
 export async function createGame(page: Page, pool: string, nickname: string) {
@@ -33,11 +33,12 @@ export const isOver = (page: Page) => page.getByRole("table", { name: "Tulokset"
  * player does. Returns the cell the disc landed in.
  */
 export async function playFirstColumn(page: Page): Promise<number> {
-  const open = board(page).locator("[data-cell]:not([disabled])").first();
+  const open = board(page).locator("[data-column]:not([disabled])").first();
   await open.tap();
-  const landing = board(page).locator("[aria-pressed='true']");
-  const cell = Number(await landing.getAttribute("data-cell"));
-  await landing.tap();
+  await expect(open).toHaveAttribute("aria-pressed", "true");
+  // The landing cell: the lowest empty one of the column.
+  const cell = Number(await open.locator("[data-owner='0']").last().getAttribute("data-cell"));
+  await open.tap();
   await expect(board(page).locator(`[data-cell='${cell}']`)).not.toHaveAttribute("data-owner", "0");
   return cell;
 }
