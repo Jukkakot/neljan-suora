@@ -187,8 +187,8 @@ client/src/
 - **UI foundation:** every colour, spacing and radius is a token in `ui/tokens.css`; CSS Modules;
   anything shown twice is a shared component (`Berry` = a seat's piece everywhere; `SeatMark` is its small fixed-size form).
 - **A move:** the board is seven column buttons (each the grid's height, labelled with its berries
-  bottom up); the first tap lights the column and shows the ghost berry where it lands, the second
-  tap or "Aseta" drops it (one deliberate confirm); "Vihje" chooses the search bot's column. A new
+  bottom up); one tap drops the berry (a tap while a move is on its way is ignored); "Vihje" lights
+  the search bot's column with the ghost berry where it would land, without playing it. A new
   berry drops down its column (CSS, `--fall` slots in container units) and squishes; once won, the
   berries outside the line fade. Phones in landscape and wider screens put the board beside the rest.
 - **Session:** a per-tab reconnection token rejoins after a reload; a seated player's unfinished

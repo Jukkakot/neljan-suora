@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { chooseMove } from "@neljan-suora/bots";
 import type { BotSpeed } from "@neljan-suora/protocol";
 import { useTranslation } from "react-i18next";
@@ -33,8 +33,8 @@ export interface GameScreenProps {
 
 /**
  * The game's shell around the board: whose turn it is, the players, the board, the controls and the
- * result. On the viewer's turn they tap a column to choose it and confirm with a second tap or the
- * confirm button (one deliberate confirm per move); "Vihje" chooses the bot's column for them.
+ * result. On the viewer's turn a tap on a column drops their berry at once; "Vihje" shows the bot's
+ * column with a ghost berry without playing it.
  * Against bots on the device "Peru" takes back the viewer's last move. A finished game shows the
  * result table with "Pelaa uudelleen" and "Alkuun". A spectator gets no turn controls: the bots'
  * speed while only bots play, and "Uusi bottipeli" after a bot-only game. Once the current player's
@@ -50,28 +50,32 @@ export function GameScreen({ view, session }: GameScreenProps) {
   useTurnAlert(view);
 
   const { isMyTurn, mySeat } = view;
-  // The column the viewer chose on this turn; forgotten when the turn changes or the column fills.
-  const [choice, setChoice] = useState<{ turn: number; column: number }>();
-  const chosen = choice?.turn === view.turn && isMyTurn && view.board[choice.column] === 0 ? choice.column : undefined;
+  // The column "Vihje" suggested on this turn; forgotten when the turn changes or the column fills.
+  const [hint, setHint] = useState<{ turn: number; column: number }>();
+  const hinted = hint?.turn === view.turn && isMyTurn && view.board[hint.column] === 0 ? hint.column : undefined;
   const lastMove = useLastMove(view.board, view.roomId);
   const shownLastMove = view.finished ? undefined : lastMove;
   // The end, seen as it happens and with a winner: counts count up; falling leaves when the viewer won or watches.
   const celebrate = useEnded(view.finished) && view.winners.length > 0;
   const leaves = celebrate && (view.spectating || view.results.some((r) => r.winner && r.isMe));
 
-  const send = async (column: number | undefined) => {
-    if (column === undefined || pending) return;
-    const result = await move({ column });
-    if (result?.ok) setChoice(undefined);
+  // One tap drops. A tap while a move is on its way is ignored, so a quick second tap (before the
+  // session's pending re-renders the board as busy) plays once.
+  const sending = useRef(false);
+  const tap = async (column: number) => {
+    if (pending || sending.current) return;
+    sending.current = true;
+    try {
+      const result = await move({ column });
+      if (result?.ok) setHint(undefined);
+    } finally {
+      sending.current = false;
+    }
   };
-  const tap = (column: number) => {
-    if (chosen === column) void send(column);
-    else setChoice({ turn: view.turn, column });
-  };
-  const hint = () => {
+  const showHint = () => {
     if (!view.game) return;
     const best = chooseMove(view.game, { depth: 4 }, view.turn);
-    if (best) setChoice({ turn: view.turn, column: best.column });
+    if (best) setHint({ turn: view.turn, column: best.column });
   };
 
   // Announce a player leaving the running game (left, kicked or timed out; the reason is not synced).
@@ -91,7 +95,7 @@ export function GameScreen({ view, session }: GameScreenProps) {
   }, [departed]);
 
   const message = notice ? t(notice) : departed !== undefined ? t("progress.left", { name: departed }) : undefined;
-  const status = !isMyTurn ? t("move.wait") : chosen === undefined ? t("move.choose") : t("move.ready");
+  const status = !isMyTurn ? t("move.wait") : hinted === undefined ? t("move.tap") : t("move.hinted", { column: hinted + 1 });
   const canMove = isMyTurn && !view.myAutoplay && !view.finished;
 
   // Settings (and the language) open over the game; the game keeps running underneath.
@@ -115,7 +119,7 @@ export function GameScreen({ view, session }: GameScreenProps) {
           <PlayerStrip view={view} />
         </div>
         <div className={styles.board}>
-          <Board board={view.board} line={view.line} chosen={chosen} seat={mySeat} lastMove={shownLastMove} busy={pending} onColumn={canMove ? tap : undefined} />
+          <Board board={view.board} line={view.line} hinted={hinted} seat={mySeat} lastMove={shownLastMove} busy={pending} onColumn={canMove ? (column) => void tap(column) : undefined} />
         </div>
         <div className={styles.side}>
           {view.finished && view.results.length > 0 && <ResultTable rows={view.results} celebrate={celebrate} />}
@@ -147,9 +151,7 @@ export function GameScreen({ view, session }: GameScreenProps) {
               enabled={canMove}
               pending={pending}
               status={status}
-              ready={chosen !== undefined}
-              onConfirm={() => void send(chosen)}
-              onHint={hint}
+              onHint={showHint}
               onUndo={view.canUndo ? () => void undo?.() : undefined}
               canUndo={view.undoable}
             />

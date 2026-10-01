@@ -94,28 +94,21 @@ describe("game screen › a move", () => {
     return board;
   };
 
-  it("Choosing a column shows the ghost where it lands; Confirming sends the column", async () => {
-    const { container, move } = setup(gameView({ board: gridOf({ 3: [2, 1] }) }));
-    fireEvent.click(column(container, 3));
-    expect(move).not.toHaveBeenCalled();
-    expect(column(container, 3).getAttribute("aria-pressed")).toBe("true");
-    // Two berries in column 3 (index 3): the ghost is in the third hole from the bottom.
-    expect(ghostAt(container, 24)).not.toBeNull();
-    expect(screen.getByText("Napauta saraketta uudelleen tai paina Aseta")).toBeTruthy();
-    await act(async () => fireEvent.click(column(container, 3)));
-    expect(move).toHaveBeenCalledExactlyOnceWith({ column: 3 });
+  it("Dropping a berry: one tap sends the column", async () => {
+    const { container, move } = setup();
+    await act(async () => fireEvent.click(column(container, 4)));
+    expect(move).toHaveBeenCalledExactlyOnceWith({ column: 4 });
+    expect(screen.queryByRole("button", { name: "Aseta" })).toBeNull();
   });
 
-  it("Changing the choice moves the ghost; the confirm button makes the chosen move", async () => {
+  it("A quick second tap sends only one move", async () => {
     const { container, move } = setup();
-    const confirm = screen.getByRole("button", { name: "Aseta" }) as HTMLButtonElement;
-    expect(confirm.disabled).toBe(true);
+    let land!: () => void;
+    move.mockImplementation(() => new Promise((resolve) => (land = () => resolve({ ok: true }))));
     fireEvent.click(column(container, 4));
-    fireEvent.click(column(container, 2));
-    expect(move).not.toHaveBeenCalled();
-    expect([ghostAt(container, 39), ghostAt(container, 37)].map((g) => g !== null)).toEqual([false, true]);
-    await act(async () => fireEvent.click(confirm));
-    expect(move).toHaveBeenCalledExactlyOnceWith({ column: 2 });
+    fireEvent.click(column(container, 4));
+    await act(async () => land());
+    expect(move).toHaveBeenCalledOnce();
   });
 
   it("A full column and the other's turn cannot be tapped", () => {
@@ -128,11 +121,16 @@ describe("game screen › a move", () => {
     expect(screen.getByText("Odota vuoroasi")).toBeTruthy();
   });
 
-  it("the hint chooses the winning column", () => {
+  it("Asking for a hint shows the ghost and sends nothing; Ignoring the hint sends the tapped column", async () => {
     const board = gridOf({ 0: [1, 1, 1], 1: [2, 2, 2] });
-    const { container } = setup(gameView({ board, game: { seed: 0, seats: [1, 2], left: [], cells: board, turn: 1, moves: 6, over: false, winners: [], line: [] } }));
+    const { container, move } = setup(gameView({ board, game: { seed: 0, seats: [1, 2], left: [], cells: board, turn: 1, moves: 6, over: false, winners: [], line: [] } }));
     fireEvent.click(screen.getByRole("button", { name: "Vihje" }));
-    expect(column(container, 0).getAttribute("aria-pressed")).toBe("true");
+    // Three berries in column 0: the ghost is in the fourth hole from the bottom.
+    expect(ghostAt(container, 14)).not.toBeNull();
+    expect(screen.getByText("Vihje: sarake 1")).toBeTruthy();
+    expect(move).not.toHaveBeenCalled();
+    await act(async () => fireEvent.click(column(container, 4)));
+    expect(move).toHaveBeenCalledExactlyOnceWith({ column: 4 });
   });
 
   it("a finished game shows the result and Pelaa uudelleen", () => {

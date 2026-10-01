@@ -111,7 +111,7 @@ npm run strength -w @neljan-suora/bots          # the requirements in packages/n
   the client with `VITE_SERVER_URL=http://localhost:2600 npx vite --port 5180` and point
   Playwright's `baseURL` there.
 - Each test plays in its own pool (`?pool=…`), so runs never share games.
-- Make moves with `markFirstFree` (`helpers.ts`): it taps like a phone (choose, then confirm).
+- Make moves with `playFirstColumn` (`helpers.ts`): it taps like a phone (one tap drops).
 - In a cloud container without Playwright's own browser build, point `launchOptions.executablePath`
   at the preinstalled Chromium in a local, uncommitted config.
 - On failure: screenshot and trace in `e2e/test-results/` (`npx playwright show-trace …`); CI

@@ -33,7 +33,7 @@
     "column": "Sarake {{col}}: {{contents}}",
     "empty": "tyhjä",
     "full": ", täynnä",
-    "chosen": ", valittu – napauta uudelleen pudottaaksesi"
+    "hinted": ", vihje"
   },
   "start": {
     "connecting": "Yhdistetään palvelimeen…",
@@ -116,7 +116,7 @@
   },
   "hint": {
     "button": "Vihje",
-    "title": "Valitse botin sarake valmiiksi"
+    "title": "Näytä botin ehdottama sarake"
   },
   "progress": {
     "label": "Pelaajat",
@@ -190,7 +190,7 @@
   },
   "tips": {
     "goal": "Saa neljä marjaa riviin – vaakaan, pystyyn tai vinottain.",
-    "place": "Napauta saraketta ja vahvista napauttamalla sitä uudelleen tai painamalla Aseta. Marja putoaa pohjalle.",
+    "place": "Napauta saraketta – marja putoaa pohjalle.",
     "close": "Sulje vinkki",
     "reset": "Näytä vinkit uudelleen",
     "resetDone": "Vinkit näytetään seuraavassa pelissä."
@@ -231,9 +231,8 @@
   },
   "move": {
     "wait": "Odota vuoroasi",
-    "choose": "Valitse sarake",
-    "ready": "Napauta saraketta uudelleen tai paina Aseta",
-    "confirm": "Aseta"
+    "tap": "Napauta saraketta",
+    "hinted": "Vihje: sarake {{column}}"
   },
   "berry": {
     "1": "puolukka",

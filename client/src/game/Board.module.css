@@ -39,13 +39,13 @@
   outline-offset: 2px;
 }
 
-/* The chosen column is lit; on a pointer device a column lights faintly under the pointer. */
-.chosenColumn {
+/* The hinted column is lit; on a pointer device a column lights faintly under the pointer. */
+.hintedColumn {
   background: var(--column-light);
 }
 
 @media (hover: hover) {
-  .column:not(:disabled):not(.chosenColumn):hover {
+  .column:not(:disabled):not(.hintedColumn):hover {
     background: color-mix(in srgb, var(--column-light) 55%, transparent);
   }
 }
@@ -82,7 +82,7 @@
 }
 
 /* The ghost: the viewer's berry, faded, where it would land, until the move is confirmed. */
-.chosen .hole {
+.hinted .hole {
   outline: 2px dashed var(--preview-ok-outline);
 }
 

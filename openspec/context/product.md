@@ -21,10 +21,10 @@ Neljän suora is the classic gravity four-in-a-row game, with our own name and l
 
 ## Controls
 
-Column first: a tap anywhere in a column lights it and shows a ghost berry in the cell it would land
-in; a second tap on the same column (or the confirm button) drops it; another column moves the ghost.
-No drag needed. The berry drops down the column, and a won game fades everything but the winning
-line (spec `game-board`). Same "few taps, one deliberate confirm" rule as under Mobile.
+One tap: a tap anywhere in a column drops the berry at once, in every game type; there is no
+confirm (user's decision 2026-10-01, change `one-tap-drop`). "Vihje" lights the suggested column
+with a ghost berry where it would land, without playing it. No drag needed. The berry drops down
+the column, and a won game fades everything but the winning line (spec `game-board`).
 
 ## Bot ambition
 
@@ -83,8 +83,7 @@ Berries in a birch crate (spec `visual-theme`; values in `client/src/ui/tokens.c
   (2.5 s). A draw has no leaves. `prefers-reduced-motion` stops all of it.
 - **Voice:** restrained. Texts in play are plain; the piece is a berry ("marja"). Theme words only
   in names and the end-of-game lines: "Voitit – kori täynnä!", "{name} voitti – kori täynnä",
-  "Tasapeli – laatikko täynnä". The confirm button reads "Aseta". Bot names stay the kit's forest
-  animals.
+  "Tasapeli – laatikko täynnä". Bot names stay the kit's forest animals.
 - Every project has a light and a dark theme, designed with equal care. The device setting is
   followed unless the player forces one in the settings.
 - Accessibility is basic only: contrast (text 4.5:1, berry on hole 3:1) and tap targets; the crown
@@ -94,5 +93,5 @@ Berries in a birch crate (spec `visual-theme`; values in `client/src/ui/tokens.c
 
 - Portrait phone first (reference device Galaxy S24); a wide screen puts the board beside the
   controls.
-- Few taps, but one deliberate confirm per move: the first tap chooses, the second (or the confirm
-  button) makes the move. Nothing is played on release.
+- One tap per move: a tap on a column plays it, no confirm. A mistaken tap online stays (no undo
+  there); against bots on the device "Peru" takes it back.

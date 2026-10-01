@@ -33,7 +33,7 @@
     "column": "Column {{col}}: {{contents}}",
     "empty": "empty",
     "full": ", full",
-    "chosen": ", chosen – tap again to drop"
+    "hinted": ", hint"
   },
   "start": {
     "connecting": "Connecting to the server…",
@@ -116,7 +116,7 @@
   },
   "hint": {
     "button": "Hint",
-    "title": "Choose the bot's column for you"
+    "title": "Show the bot's suggested column"
   },
   "progress": {
     "label": "Players",
@@ -190,7 +190,7 @@
   },
   "tips": {
     "goal": "Get four berries in a row – across, up or diagonally.",
-    "place": "Tap a column and confirm by tapping it again or pressing Place. The berry drops to the bottom.",
+    "place": "Tap a column – the berry drops to the bottom.",
     "close": "Close tip",
     "reset": "Show tips again",
     "resetDone": "Tips will show in the next game."
@@ -231,9 +231,8 @@
   },
   "move": {
     "wait": "Wait for your turn",
-    "choose": "Choose a column",
-    "ready": "Tap the column again or press Place",
-    "confirm": "Place"
+    "tap": "Tap a column",
+    "hinted": "Hint: column {{column}}"
   },
   "berry": {
     "1": "lingonberry",

@@ -11,8 +11,8 @@ export interface BoardProps {
   columns?: number;
   /** The winning line's cells; the other berries fade once it is set. */
   line?: readonly number[];
-  /** The column the viewer chose: lit, with their ghost berry where it would land. */
-  chosen?: number;
+  /** The column "Vihje" suggests: lit, with the viewer's ghost berry where it would land. */
+  hinted?: number;
   /** The viewer's seat (the ghost's berry). */
   seat?: number;
   /** The cells of the last move: they drop in and keep a dot. */
@@ -25,34 +25,33 @@ export interface BoardProps {
 
 /**
  * The upright grid as a birch crate: seven columns of round moss holes, each column one button the
- * height of the grid. On the viewer's turn the first tap on a column lights it and shows their ghost
- * berry where it would land; a second tap, or the confirm button below the board, drops it. A new
+ * height of the grid. On the viewer's turn a tap on a column drops their berry at once; "Vihje" lights
+ * the suggested column with their ghost berry where it would land. A new
  * berry drops down its column and squishes, keeping a dot; once won, the winning line shines and the
  * other berries fade.
  */
-export function Board({ board, columns = COLUMNS, line = [], chosen, seat, lastMove, busy = false, onColumn }: BoardProps) {
+export function Board({ board, columns = COLUMNS, line = [], hinted, seat, lastMove, busy = false, onColumn }: BoardProps) {
   const { t } = useTranslation();
   const rows = Math.ceil(board.length / columns);
-  const landing = chosen === undefined ? undefined : landingCell(board, chosen);
+  const landing = hinted === undefined ? undefined : landingCell(board, hinted);
   const won = line.length > 0;
   return (
     <div className={styles.board} style={{ "--columns": columns, "--rows": rows } as CSSProperties} role="group" aria-label={t("board.label")} aria-busy={busy || undefined}>
       {Array.from({ length: columns }, (_, col) => {
         const cells = Array.from({ length: rows }, (_, row) => row * columns + col);
         const full = board[col] !== 0;
-        const isChosen = chosen === col && !full;
+        const isHinted = hinted === col && !full;
         const berries = [...cells].reverse().flatMap((cell) => (board[cell] ? [t(board[cell] === 1 ? "berry.1" : "berry.2")] : []));
         const label =
           t("board.column", { col: col + 1, contents: berries.length > 0 ? berries.join(", ") : t("board.empty") }) +
-          (full ? t("board.full") : isChosen ? t("board.chosen") : "");
+          (full ? t("board.full") : isHinted ? t("board.hinted") : "");
         return (
           <button
             key={col}
             type="button"
-            className={isChosen ? `${styles.column} ${styles.chosenColumn}` : styles.column}
+            className={isHinted ? `${styles.column} ${styles.hintedColumn}` : styles.column}
             data-column={col}
             aria-label={label}
-            aria-pressed={isChosen || undefined}
             disabled={full || !onColumn || busy}
             onClick={() => onColumn?.(col)}
           >
@@ -61,7 +60,7 @@ export function Board({ board, columns = COLUMNS, line = [], chosen, seat, lastM
               const isGhost = cell === landing;
               const isLast = owner !== 0 && lastMove?.has(cell);
               const inLine = line.includes(cell);
-              const cls = [styles.cell, inLine && styles.win, won && !inLine && styles.faded, isGhost && styles.chosen, isLast && styles.last].filter(Boolean).join(" ");
+              const cls = [styles.cell, inLine && styles.win, won && !inLine && styles.faded, isGhost && styles.hinted, isLast && styles.last].filter(Boolean).join(" ");
               return (
                 <span key={cell} className={cls} style={isLast ? ({ "--fall": row + 1 } as CSSProperties) : undefined} data-cell={cell} data-owner={owner} aria-hidden="true">
                   <span className={styles.hole}>

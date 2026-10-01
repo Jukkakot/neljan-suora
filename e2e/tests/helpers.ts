@@ -28,14 +28,11 @@ export const isMyTurn = (page: Page) => page.getByText("Sinun vuorosi", { exact:
 export const isOver = (page: Page) => page.getByRole("table", { name: "Tulokset" }).isVisible();
 
 /**
- * Plays the leftmost column that is not full as on a phone: tap it to choose (the berry is previewed
- * where it would land), tap the preview to confirm. Taps, not clicks, so the test moves like a
- * player does. Returns the cell the disc landed in.
+ * Plays the leftmost column that is not full as on a phone: one tap drops the berry. Taps, not
+ * clicks, so the test moves like a player does. Returns the cell the disc landed in.
  */
 export async function playFirstColumn(page: Page): Promise<number> {
   const open = board(page).locator("[data-column]:not([disabled])").first();
-  await open.tap();
-  await expect(open).toHaveAttribute("aria-pressed", "true");
   // The landing cell: the lowest empty one of the column.
   const cell = Number(await open.locator("[data-owner='0']").last().getAttribute("data-cell"));
   await open.tap();

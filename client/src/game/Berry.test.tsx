@@ -36,13 +36,13 @@ describe("visual-theme › Seats are berries", () => {
 });
 
 describe("game-board › Columns read aloud", () => {
-  it("A column with berries: bottom up, then empty, full and chosen", () => {
-    render(<Board board={grid({ 2: [1, 2], 0: [1, 2, 1, 2, 1, 2] })} chosen={4} seat={1} onColumn={() => {}} />);
+  it("A column with berries: bottom up, then empty, full and hinted", () => {
+    render(<Board board={grid({ 2: [1, 2], 0: [1, 2, 1, 2, 1, 2] })} hinted={4} seat={1} onColumn={() => {}} />);
     expect(screen.getByRole("button", { name: "Sarake 3: puolukka, mustikka" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Sarake 2: tyhjä" })).toBeTruthy();
     const full = screen.getByRole("button", { name: "Sarake 1: puolukka, mustikka, puolukka, mustikka, puolukka, mustikka, täynnä" }) as HTMLButtonElement;
     expect(full.disabled).toBe(true);
-    expect(screen.getByRole("button", { name: "Sarake 5: tyhjä, valittu – napauta uudelleen pudottaaksesi" }).getAttribute("aria-pressed")).toBe("true");
+    expect(screen.getByRole("button", { name: "Sarake 5: tyhjä, vihje" })).toBeTruthy();
   });
 });
 

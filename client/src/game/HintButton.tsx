@@ -4,7 +4,7 @@ import { Button } from "../ui/Button.tsx";
 import styles from "./Controls.module.css";
 
 /**
- * "Vihje": chooses the bot's move for the viewer's turn, ready to confirm. Disabled when it cannot
+ * "Vihje": shows the bot's column for the viewer's turn with a ghost berry, without playing it. Disabled when it cannot
  * be used.
  */
 export function HintButton({ disabled, onHint }: { disabled: boolean; onHint(): void }) {
