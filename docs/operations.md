@@ -20,7 +20,7 @@ Live since 2026-10-01 ([setup checklist](#setup-checklist) done).
 
 ## Setup checklist
 
-**Done 2026-10-01** (steps 1–3 and 5; step 4 waits for roadmap `shared-logs`).
+**Done 2026-10-01** (all steps; step 4 through roadmap `shared-logs`).
 
 `create-game` created nothing outside this folder. Each step says what needs it, so it can wait
 until the first deploy, or be skipped while the game runs locally only. Commands assume the GitHub
