@@ -1,6 +1,7 @@
 import { defineServer, defineRoom, LobbyRoom, monitor, playground } from "colyseus";
 import { RULES_VERSION } from "@neljan-suora/rules";
 import { clientLogBatchSchema } from "@neljan-suora/protocol";
+import { loadBook, mountBook } from "./book.js";
 import { readBuiltAt } from "./buildInfo.js";
 import { configureCors } from "./cors.js";
 import { attachHttpAudit, frameworkLogger, mountClientLogs, mountWatch, serverVersion } from "@game-kit/server";
@@ -29,6 +30,8 @@ const server = defineServer({
     app.set("trust proxy", 1);
     mountClientLogs(app, clientLogBatchSchema);
     mountWatch(app);
+    // Read once at start: the bot opening book, looked up by the browsers.
+    mountBook(app, loadBook());
 
     app.get("/health", (_req, res) => {
       res.json({ status: "ok", rulesVersion: RULES_VERSION, version: serverVersion(), builtAt });

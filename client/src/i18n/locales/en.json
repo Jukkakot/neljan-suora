@@ -233,10 +233,31 @@
     "wait": "Wait for your turn",
     "tap": "Tap a column",
     "hinting": "The hint is ripening…",
-    "hinted": "Hint: column {{column}}"
+    "hinted": "Hint: column {{column}}",
+    "hintedHow": "Hint: column {{column}} · {{how}}{{outcome}}"
   },
   "berry": {
     "1": "lingonberry",
     "2": "blueberry"
+  },
+  "explain": {
+    "line": "{{name}}: {{how}}{{outcome}}",
+    "how": {
+      "book": "from the book",
+      "solve": "solved",
+      "unsettled": "estimate"
+    },
+    "wins": " · {{name}} wins",
+    "draw": " · draw",
+    "hintHow": {
+      "book": "from the book",
+      "solve": "solved",
+      "unsettled": "estimate"
+    },
+    "hintOutcome": {
+      "win": " · you win",
+      "draw": " · draw",
+      "loss": " · you lose"
+    }
   }
 }

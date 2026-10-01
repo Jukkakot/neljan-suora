@@ -1,5 +1,5 @@
-import { COLUMNS, ROWS } from "@neljan-suora/rules";
-import type { Position } from "../negamax/position.js";
+import { bitsOf, cellAt, CELLS, COLUMNS, hasFour, ROWS, type Game } from "@neljan-suora/rules";
+import { Position } from "../negamax/position.js";
 import type { Outcome } from "./solve.js";
 
 /*
@@ -123,6 +123,49 @@ export class Book {
     if (missing && this.score(position) !== best) return undefined;
     return { outcome: Math.sign(best) as Outcome, columns };
   }
+}
+
+/*
+ * A position as the book route's `cells`: 42 digits, column by column, bottom up; `0` empty, `1` a
+ * disc of the side to move, `2` one of the other side. Seat colours and who started do not matter.
+ */
+
+/** The `cells` string of `game` (side to move = `1`), or undefined when the game is over. */
+export function cellsOf(game: Game): string | undefined {
+  if (game.over) return undefined;
+  let cells = "";
+  for (let column = 0; column < COLUMNS; column++) {
+    for (let height = 0; height < ROWS; height++) {
+      const owner = game.cells[cellAt(column, height)]!;
+      cells += owner === 0 ? "0" : owner === game.turn ? "1" : "2";
+    }
+  }
+  return cells;
+}
+
+/**
+ * The position of a `cells` string, or undefined unless it can arise in a game that is not over:
+ * 42 digits 0–2, no disc above an empty cell, the other side's discs equal to the mover's or one
+ * more, and no four in a row.
+ */
+export function positionFromCells(cells: string): Position | undefined {
+  if (!/^[012]{42}$/.test(cells)) return undefined;
+  const board: number[] = Array.from({ length: CELLS }, () => 0);
+  const counts = [0, 0, 0];
+  for (let column = 0; column < COLUMNS; column++) {
+    let empty = false;
+    for (let height = 0; height < ROWS; height++) {
+      const owner = Number(cells[column * ROWS + height]);
+      if (owner === 0) empty = true;
+      else if (empty) return undefined;
+      board[cellAt(column, height)] = owner;
+      counts[owner]!++;
+    }
+  }
+  const [, mover, other] = counts as [number, number, number];
+  if (other !== mover && other !== mover + 1) return undefined;
+  if (hasFour(bitsOf(board, 1)) || hasFour(bitsOf(board, 2))) return undefined;
+  return Position.fromGame({ cells: board, turn: 1 } as unknown as Game);
 }
 
 /** A book file holding `scores` (position, score for the side to move), for tests: Pons' format, 2-byte keys. */

@@ -2,7 +2,8 @@ import { createRng, legalColumns, playMove, type Game, type Move, type Rng } fro
 import { bestReplyBot, greedyBot, mctsBot, randomBot, type Bot, type Budget, type MultiplayerGame } from "@game-kit/bots";
 import { evaluate } from "./evaluation.js";
 import { negamaxBot } from "./negamax/search.js";
-import { perfectBot, type PerfectBot } from "./perfect/bot.js";
+import { perfectBot, type PerfectBot, type VerdictSource } from "./perfect/bot.js";
+import type { Outcome, RootVerdict } from "./perfect/solve.js";
 
 /** `seat` drops a disc into `column`, on turn or not (search may play out of turn). */
 function played(game: Game, seat: number, column: number): Game {
@@ -64,4 +65,29 @@ export function chooseMove(game: Game, budget: Budget, rng: Rng | number, bot: B
   if (game.over) return undefined;
   const column = bot.choose(game, budget, typeof rng === "number" ? createRng(rng) : rng);
   return column === undefined ? undefined : { column };
+}
+
+/** How a bot move was worked out; `outcome` (for the side that moved) only when it is certain. */
+export interface MoveHow {
+  readonly source: VerdictSource;
+  readonly outcome?: Outcome;
+}
+
+/** A bot move and how it was worked out (none when the game is over). */
+export interface ExplainedMove {
+  readonly move: Move | undefined;
+  readonly how?: MoveHow;
+}
+
+/**
+ * `chooseMove` with the perfect bot told the position's book `verdict` (looked up by the caller, if
+ * any), answering how the move was worked out as well.
+ */
+export function chooseExplainedMove(game: Game, budget: Budget, seed: number, verdict?: RootVerdict, bot: PerfectBot = devicePlayer): ExplainedMove {
+  bot.setVerdict(verdict);
+  const move = chooseMove(game, budget, seed, bot);
+  bot.setVerdict(undefined);
+  const last = bot.last;
+  if (!move || !last) return { move };
+  return { move, how: last.source === "unsettled" || !last.verdict ? { source: last.source } : { source: last.source, outcome: last.verdict.outcome } };
 }

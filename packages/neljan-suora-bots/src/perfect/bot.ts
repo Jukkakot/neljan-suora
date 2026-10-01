@@ -32,6 +32,16 @@ export interface PerfectOptions {
 export interface PerfectBot extends Bot<Game, number> {
   /** Uses `book` from the next answer on (undefined: none). */
   setBook(book: Book | undefined): void;
+  /** Uses `verdict` (the caller's book lookup) for the next answer only, in place of the book. */
+  setVerdict(verdict: RootVerdict | undefined): void;
+  /** How the last answer was worked out (undefined before the first, or when the game was over). */
+  readonly last: VerdictReport | undefined;
+}
+
+/** How an answer was worked out. */
+export interface VerdictReport {
+  readonly source: VerdictSource;
+  readonly verdict?: RootVerdict;
 }
 
 /**
@@ -44,6 +54,8 @@ export interface PerfectBot extends Bot<Game, number> {
 export function perfectBot(options: PerfectOptions = {}): PerfectBot {
   const now = options.now ?? systemClock;
   let book = options.book;
+  let given: RootVerdict | undefined;
+  let last: VerdictReport | undefined;
   let solver: Solver | undefined;
   const search: NegamaxBot = negamaxBot({ now, tableBits: options.searchTableBits });
 
@@ -51,15 +63,24 @@ export function perfectBot(options: PerfectOptions = {}): PerfectBot {
     setBook(next) {
       book = next;
     },
+    setVerdict(next) {
+      given = next;
+    },
+    get last() {
+      return last;
+    },
 
     choose(game: Game, budget: Budget, rng: Rng): number | undefined {
       checkBudget(budget);
+      const verdictGiven = given;
+      given = undefined;
+      last = undefined;
       if (game.over) return undefined;
       const started = now();
       const position = Position.fromGame(game);
 
       let source: VerdictSource = "book";
-      let verdict: RootVerdict | undefined = book?.lookup(position);
+      let verdict: RootVerdict | undefined = verdictGiven ?? book?.lookup(position);
       if (!verdict) {
         source = "solve";
         solver ??= new Solver(options.solverTableBits);
@@ -67,7 +88,8 @@ export function perfectBot(options: PerfectOptions = {}): PerfectBot {
         verdict = solver.solveRoot(position, { nodes: budget.iterations, expired: () => now() >= solveEnd });
         if (!verdict) source = "unsettled";
       }
-      options.report?.({ source, verdict });
+      last = { source, verdict };
+      options.report?.(last);
 
       const candidates = verdict && verdict.outcome >= 0 ? verdict.columns : undefined;
       if (candidates?.length === 1) return candidates[0];

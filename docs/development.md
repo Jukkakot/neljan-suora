@@ -48,8 +48,8 @@ npm run e2e   # smoke test, when UI or connection code changed
   release, see below). No formatter.
 - Workspace order matters for the build: `rules`, `protocol`, the bots, `server`, `client` (root
   `package.json`).
-- Bundle budget: client JavaScript ≤ 200 kB gzip, the bot worker ≤ 30 kB, the opening book ≤ 34 MB
-  raw (size-limit, fails CI).
+- Bundle budget: client JavaScript ≤ 200 kB gzip, the bot worker ≤ 30 kB (size-limit, fails CI).
+  The opening book is not shipped to the browser.
 - Tests: Vitest in every workspace. Server test files run one at a time because each boots a
   real Colyseus server (`fileParallelism: false`).
 
@@ -110,11 +110,12 @@ npm run strength -w @neljan-suora/bots          # the requirements in packages/n
 - The book is Pascal Pons' `7x6.book` (github.com/PascalPons/connect4, release `book`, AGPL-3.0;
   the user accepted the licence for this hobby project): exact scores of positions up to 14 discs,
   33.5 MB, committed as `packages/neljan-suora-bots/book/7x6.book` and read as is. Nothing is
-  generated here.
+  generated here. The game server loads it at start and answers lookups (`GET /book`); the
+  tournament CLI reads it from disk. The client never downloads it.
 - Its unit test checks the opening theory against the real file (the start is won only by column 3;
   first discs in columns 2 and 4 draw, in 0, 1, 5 and 6 lose) and a few verdicts against the solver.
 - To replace it (another book of Pons' format): swap the file and keep its name, or change the
-  package export, the Workbox route and the size-limit entry together.
+  bots package export (the server resolves the file through it).
 
 ### E2E smoke
 

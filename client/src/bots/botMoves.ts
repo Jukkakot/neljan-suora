@@ -1,20 +1,29 @@
-import { Book, chooseMove, devicePlayer, SOLVE_NODES, type Budget } from "@neljan-suora/bots";
+import { chooseExplainedMove, SOLVE_NODES, type Budget, type ExplainedMove, type RootVerdict } from "@neljan-suora/bots";
 import type { Game, Move } from "@neljan-suora/rules";
 
 /**
  * What the game asks a bot: the move of the seat on turn in `game` within `budget`, seeded so the
- * same question gets the same answer. Plain data, so it crosses the Web Worker boundary as is. The
- * first question after the opening book arrives carries it (`book`); the worker keeps it from then on.
+ * same question gets the same answer.
  */
-export interface MoveRequest {
+export interface BotQuestion {
   readonly game: Game;
   readonly budget: Budget;
   readonly seed: number;
-  readonly book?: ArrayBuffer;
+}
+
+/**
+ * A question as the bot worker gets it: plain data, so it crosses the Web Worker boundary as is,
+ * with the position's opening-book verdict when the server gave one.
+ */
+export interface MoveRequest extends BotQuestion {
+  readonly verdict?: RootVerdict;
 }
 
 /** Asks for a bot move; resolves undefined when there is none. */
-export type AskBot = (request: MoveRequest) => Promise<Move | undefined>;
+export type AskBot = (question: BotQuestion) => Promise<Move | undefined>;
+
+/** Asks for a bot move and how it was worked out. */
+export type AskExplained = (question: BotQuestion) => Promise<ExplainedMove>;
 
 /**
  * The budget of one bot move: up to 3 s, the solve limited to what a mid-range phone settles in
@@ -29,7 +38,6 @@ export function botBudget(speed = 1): Budget {
 }
 
 /** The bot's answer, computed right here (the worker runs this; so do tests and old browsers). */
-export function answer({ game, budget, seed, book }: MoveRequest): Move | undefined {
-  if (book) devicePlayer.setBook(Book.parse(book));
-  return chooseMove(game, budget, seed);
+export function answer({ game, budget, seed, verdict }: MoveRequest): ExplainedMove {
+  return chooseExplainedMove(game, budget, seed, verdict);
 }

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createRng, legalColumns, playMove, startGame, type Game } from "@neljan-suora/rules";
 import { gameAfter } from "@neljan-suora/rules/testing";
+import { chooseExplainedMove } from "../adapter.js";
 import { Position } from "../negamax/position.js";
 import { negamaxBot } from "../negamax/search.js";
 import { Book, writeBook } from "./book.js";
@@ -86,6 +87,32 @@ describe("perfect bot", () => {
     bot.setBook(bookOf([[0, 0], 0, [6]]));
     expect(bot.choose(gameAfter([0, 0]), { depth: 2, iterations: 10 }, createRng(1))).toBe(6);
     expect(bot.choose(gameAfter([0, 1, 0, 1, 0, 1, 0]), { depth: 2 }, createRng(1))).toBeUndefined();
+  });
+
+  it("plays a verdict given by the caller once, without a solve", () => {
+    const sources: VerdictSource[] = [];
+    const bot = perfectBot({ ...small, report: (info) => sources.push(info.source) });
+    bot.setVerdict({ outcome: 1, columns: [3] });
+    expect(bot.choose(gameAfter([]), { depth: 2, iterations: 10 }, createRng(1))).toBe(3);
+    expect(bot.last).toEqual({ source: "book", verdict: { outcome: 1, columns: [3] } });
+    // Cleared after use: the next answer has no verdict and the tiny solve limit leaves it unsettled.
+    bot.choose(gameAfter([]), { depth: 2, iterations: 10 }, createRng(1));
+    expect(sources).toEqual(["book", "unsettled"]);
+  });
+
+  it("tells how a move was worked out, the outcome only when certain", () => {
+    const bot = perfectBot(small);
+    expect(chooseExplainedMove(gameAfter([]), { depth: 2 }, 1, { outcome: 1, columns: [3] }, bot)).toEqual({
+      move: { column: 3 },
+      how: { source: "book", outcome: 1 },
+    });
+    // Three in column 0 for the side to move: solved, a win.
+    expect(chooseExplainedMove(gameAfter([0, 1, 0, 1, 0, 2]), { depth: 2 }, 1, undefined, bot)).toEqual({
+      move: { column: 0 },
+      how: { source: "solve", outcome: 1 },
+    });
+    expect(chooseExplainedMove(gameAfter([3, 2]), { depth: 2, iterations: 500 }, 1, undefined, bot).how).toEqual({ source: "unsettled" });
+    expect(chooseExplainedMove(gameAfter([0, 1, 0, 1, 0, 1, 0]), { depth: 2 }, 1, undefined, bot)).toEqual({ move: undefined });
   });
 
   it("never misses the tactics", () => {

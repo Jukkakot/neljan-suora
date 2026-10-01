@@ -60,13 +60,6 @@
       "path": "dist/assets/bot.worker-*.js",
       "limit": "30 kB",
       "gzip": true
-    },
-    {
-      "name": "opening book (raw)",
-      "path": "dist/assets/7x6-*.book",
-      "limit": "34 MB",
-      "gzip": false,
-      "brotli": false
     }
   ]
 }

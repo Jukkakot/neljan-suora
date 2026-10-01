@@ -15,8 +15,11 @@ import { TurnLine } from "../game/TurnLine.tsx";
 import { useEnded, useLastMove } from "../motion/hooks.ts";
 import { LeafFall } from "../motion/LeafFall.tsx";
 import { NOTICE_MS, type GameSession } from "../session/useGameSession.ts";
+import type { MoveHow } from "@neljan-suora/bots";
 import { botBudget } from "../bots/botMoves.ts";
-import { askBotWorker } from "../bots/botWorkerClient.ts";
+import { askExplained } from "../bots/botWorkerClient.ts";
+import { useExplanation } from "../bots/explanations.ts";
+import { explanationText, hintText } from "../game/explain.ts";
 import type { GameView } from "../session/viewModel.ts";
 import { SettingsButton, SettingsScreen } from "../settings/SettingsScreen.tsx";
 import { useTurnAlert } from "../settings/turnAlert.ts";
@@ -52,7 +55,7 @@ export function GameScreen({ view, session }: GameScreenProps) {
 
   const { isMyTurn, mySeat } = view;
   // The column "Vihje" suggested on this turn; forgotten when the turn changes or the column fills.
-  const [hint, setHint] = useState<{ turn: number; column: number }>();
+  const [hint, setHint] = useState<{ turn: number; column: number; how?: MoveHow }>();
   const hinted = hint?.turn === view.turn && isMyTurn && view.board[hint.column] === 0 ? hint.column : undefined;
   const lastMove = useLastMove(view.board, view.roomId);
   const shownLastMove = view.finished ? undefined : lastMove;
@@ -80,8 +83,8 @@ export function GameScreen({ view, session }: GameScreenProps) {
     const turn = view.turn;
     setHinting(true);
     try {
-      const best = await askBotWorker({ game: view.game, budget: botBudget(), seed: turn });
-      if (best) setHint({ turn, column: best.column });
+      const { move: best, how } = await askExplained({ game: view.game, budget: botBudget(), seed: turn });
+      if (best) setHint({ turn, column: best.column, how });
     } finally {
       setHinting(false);
     }
@@ -104,13 +107,15 @@ export function GameScreen({ view, session }: GameScreenProps) {
   }, [departed]);
 
   const message = notice ? t(notice) : departed !== undefined ? t("progress.left", { name: departed }) : undefined;
-  const status = !isMyTurn
-    ? t("move.wait")
-    : hinted !== undefined
-      ? t("move.hinted", { column: hinted + 1 })
-      : hinting
+  // How the bot's last move was worked out (bots run on this device only), until the next move.
+  const explanation = useExplanation(view.board);
+  const explained = explanation && !view.finished ? explanationText(t, explanation, view.seats) : undefined;
+  const status =
+    hinted !== undefined
+      ? hintText(t, hinted, hint?.how)
+      : isMyTurn && hinting
         ? t("move.hinting")
-        : t("move.tap");
+        : (explained ?? (isMyTurn ? t("move.tap") : t("move.wait")));
   const canMove = isMyTurn && !view.myAutoplay && !view.finished;
 
   // Settings (and the language) open over the game; the game keeps running underneath.
@@ -148,7 +153,7 @@ export function GameScreen({ view, session }: GameScreenProps) {
               <GameOverControls onHome={leave} onRematch={rematch} rematching={rematching} />
             )
           ) : view.spectating ? (
-            <SpectatorPanel botOnly={view.botOnly} speed={view.botSpeed} pending={pending} onSpeed={(speed) => void setSpeed(speed)} />
+            <SpectatorPanel status={explained} botOnly={view.botOnly} speed={view.botSpeed} pending={pending} onSpeed={(speed) => void setSpeed(speed)} />
           ) : leaving ? (
             <LeaveConfirm onLeave={leave} onCancel={() => setLeaving(false)} />
           ) : view.canKick ? (

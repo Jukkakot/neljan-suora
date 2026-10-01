@@ -15,6 +15,7 @@ tasks written), **planned**.
 | 6 | `one-tap-drop` | done | A tap on a column drops the berry at once in every game type; "Aseta" goes; "Vihje" only shows the column (user's request 2026-10-01) |
 | 7 | `shared-logs` | done | One Axiom dataset shared by all the user's games (personal tier allows 3 datasets, all taken): lines carry which game and which side (server/client) they come from; queries and dashboards filter by it. Likely a game-kit change first; then wire this game's `AXIOM_TOKEN`, dashboard and the log query check |
 | 8 | `perfect-bot` | done | The offered bot plays perfectly (user's decision 2026-10-01: replaces the searcher, no levels): a win/draw/loss solver plus a lazily fetched opening book (Pascal Pons' `7x6.book`, exact scores up to 14 discs, 33.5 MB), the searcher choosing among the best-outcome columns; up to 3 s per move; "Vihje" through the worker |
+| 9 | `server-book` | done | The opening book moves to the game server (`GET /book`; the 33.5 MB download crashed the worker on a phone); the browser asks it per move with an 800 ms timeout; the status line and "Vihje" tell how each bot move was worked out (book, solved, estimate) and the certain outcome |
 
 ## Later, to consider (not now)
 

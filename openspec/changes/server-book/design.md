@@ -104,6 +104,20 @@ shows it only for the move it belongs to.
   the explanation store and status texts (view-model level). UI check: device game shows the
   explanation; hint shows it. E2E smoke unchanged (must pass).
 
+### Decisions made during implementation
+
+- **Log event:** the kit's server catalogue has no `server.warn`; a missing book is logged as
+  `framework.log` at warn level with `kind: "book"` (no kit change). Kit TODO: a generic
+  `server.warn` event.
+- **Explanation key:** online views carry no seed (`seed: 0`), so the store is keyed by the board
+  the move led to, not by seed and move count.
+- **Watching bots:** the spectator panel shows the explanation in place of "Katsot peliä" (the move
+  controls, and so the status line, are not shown to a spectator).
+- **Status order:** shown hint > hint in progress > explanation > "Napauta saraketta" / "Odota
+  vuoroasi"; notices stay in their own toast. Hint for a solved column: "laskettu loppuun".
+- **The perfect bot keeps `setBook`** for the tournament CLI; `setVerdict` applies to the next
+  answer only, and `last` reports how the last answer was worked out.
+
 ## Risks / Trade-offs
 
 - [Server asleep on the first moves] → 800 ms timeout, the bot plays without the book; the start

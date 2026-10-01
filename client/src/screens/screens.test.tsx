@@ -5,6 +5,7 @@ import "../i18n";
 import type { ServerWake } from "@game-kit/client";
 import type { GameSession } from "../session/useGameSession.ts";
 import { reloadSettings } from "../settings/settings.ts";
+import { recordExplanation } from "../bots/explanations.ts";
 import { gameView } from "../test/views.ts";
 import { GameScreen, type GameScreenProps } from "./GameScreen.tsx";
 import { StartScreen, type StartScreenProps } from "./StartScreen.tsx";
@@ -124,13 +125,35 @@ describe("game screen › a move", () => {
   it("Asking for a hint shows the ghost and sends nothing; Ignoring the hint sends the tapped column", async () => {
     const board = gridOf({ 0: [1, 1, 1], 1: [2, 2, 2] });
     const { container, move } = setup(gameView({ board, game: { seed: 0, seats: [1, 2], left: [], cells: board, turn: 1, moves: 6, over: false, winners: [], line: [] } }));
-    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Vihje" })));
+    // No game server here: the bot works the hint out without the book.
+    vi.stubGlobal("fetch", () => Promise.reject(new Error("offline")));
+    fireEvent.click(screen.getByRole("button", { name: "Vihje" }));
+    expect(await screen.findByText("Vihje: sarake 1 · laskettu loppuun · voitat")).toBeTruthy();
+    vi.unstubAllGlobals();
     // Three berries in column 0: the ghost is in the fourth hole from the bottom.
     expect(ghostAt(container, 14)).not.toBeNull();
-    expect(screen.getByText("Vihje: sarake 1")).toBeTruthy();
     expect(move).not.toHaveBeenCalled();
     await act(async () => fireEvent.click(column(container, 4)));
     expect(move).toHaveBeenCalledExactlyOnceWith({ column: 4 });
+  });
+
+  it("After a bot move the status line tells how it was worked out, until the next move", () => {
+    // Maija (1) opened in column 0; Pekka the bot (2) answered in column 3.
+    const before = { seed: 0, seats: [1, 2], left: [], cells: gridOf({ 0: [1] }), turn: 2, moves: 1, over: false, winners: [], line: [] };
+    recordExplanation(before, { column: 3 }, { source: "book", outcome: 1 });
+    setup(gameView({ board: gridOf({ 0: [1], 3: [2] }) }));
+    expect(screen.getByText("Pekka: kirjasta · Pekka voittaa")).toBeTruthy();
+    cleanup();
+    setup(gameView({ board: gridOf({ 0: [1, 1], 3: [2] }), turnSeat: 2, isMyTurn: false }));
+    expect(screen.getByText("Odota vuoroasi")).toBeTruthy();
+    cleanup();
+    recordExplanation(before, { column: 4 }, { source: "solve", outcome: -1 });
+    setup(gameView({ board: gridOf({ 0: [1], 4: [2] }) }));
+    expect(screen.getByText("Pekka: laski loppuun · Maija voittaa")).toBeTruthy();
+    cleanup();
+    recordExplanation(before, { column: 5 }, { source: "unsettled" });
+    setup(gameView({ board: gridOf({ 0: [1], 5: [2] }) }));
+    expect(screen.getByText("Pekka: arvioi")).toBeTruthy();
   });
 
   it("a finished game shows the result and Pelaa uudelleen", () => {

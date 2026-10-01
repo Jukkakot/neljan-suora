@@ -233,10 +233,31 @@
     "wait": "Odota vuoroasi",
     "tap": "Napauta saraketta",
     "hinting": "Vihje kypsyy…",
-    "hinted": "Vihje: sarake {{column}}"
+    "hinted": "Vihje: sarake {{column}}",
+    "hintedHow": "Vihje: sarake {{column}} · {{how}}{{outcome}}"
   },
   "berry": {
     "1": "puolukka",
     "2": "mustikka"
+  },
+  "explain": {
+    "line": "{{name}}: {{how}}{{outcome}}",
+    "how": {
+      "book": "kirjasta",
+      "solve": "laski loppuun",
+      "unsettled": "arvioi"
+    },
+    "wins": " · {{name}} voittaa",
+    "draw": " · tasapeli",
+    "hintHow": {
+      "book": "kirjasta",
+      "solve": "laskettu loppuun",
+      "unsettled": "arvio"
+    },
+    "hintOutcome": {
+      "win": " · voitat",
+      "draw": " · tasapeli",
+      "loss": " · häviät"
+    }
   }
 }

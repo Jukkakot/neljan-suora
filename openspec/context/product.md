@@ -40,6 +40,12 @@ or a solve within about 3 s settles the position, and lets the searcher choose a
 that outcome. As the first seat it never loses; as the second it wins or draws whenever the person
 errs into such a position. "Vihje" uses the same bot.
 
+Every bot move worked out on the device is **explained** in the status line (`server-book`): from
+the book, solved to the end, or an estimate, and when certain who wins or a draw ("Kettu: kirjasta ·
+Kettu voittaa"). "Vihje" says the same about its column, the outcome for the person asking
+("Vihje: sarake 4 · kirjasta · voitat"). The opening book lives on the server, so offline the bot
+plays its openings without it.
+
 ## Modes
 
 - **Against bots on the device:** a person against bots, fully in the browser (no server), also

@@ -16,9 +16,9 @@ Apply to every change. Designs and task lists must show how they are met.
 
 ## Performance (mid-range phone a few years old)
 - Usable within 3 s on 4G; JS bundle budget 200 kB gzip and the bot worker 30 kB,
-  checked in CI (`npm run size`). The bot's opening book (Pons' book, 33.5 MB raw, limit 34 MB) is
-  not part of the first load: it is fetched on the first bot move and then cached for offline play
-  (a few seconds on 4G, about a minute on a weak connection; the bot plays without it meanwhile).
+  checked in CI (`npm run size`). The bot's opening book stays on the server (`server-book`):
+  nothing large is downloaded; a bot move in the opening waits at most 800 ms for the server's
+  answer, and offline the bot plays without the book.
 - Animations at 60 fps; animate only transform and opacity.
 - Every tap gives immediate feedback (pending state); target server response
   under 300 ms.
@@ -78,6 +78,7 @@ Apply to every change. Designs and task lists must show how they are met.
 ## Abuse protection
 - Nickname 2–16 characters, trimmed, no control characters or whitespace-only.
 - Per-connection rate limit on commands.
+- `GET /book`: strict input validation, 120 requests/min per IP.
 - Room limits: max open rooms per connection plus a global cap.
 
 ## Versioning

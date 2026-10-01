@@ -64,7 +64,10 @@ kit packages come built (`dist/` only).
   the game listing to start screens).
 - HTTP: `POST /watch` (a seat reservation for a spectator), `GET /health` (`{ status,
   rulesVersion, version, builtAt }`; Render's health check and the client's wake-up request),
-  `POST /client-logs`. Development only: `/monitor`, `/playground`. CORS: `ALLOWED_ORIGINS`.
+  `POST /client-logs`, `GET /book?cells=<42 digits>` (the opening book's verdict for the side to
+  move: `{known, outcome, columns}`, `400 BAD_POSITION` for impossible positions; 120 requests/min
+  per IP; cacheable for a day; the book is read once at start, a missing file is logged once and
+  every position answers unknown). Development only: `/monitor`, `/playground`. CORS: `ALLOWED_ORIGINS`.
 
 ### Commands and rejection contract — Implemented
 
@@ -159,8 +162,8 @@ kit packages come built (`dist/` only).
   a node limit) settles the position, from the **opening book** when the position is in it; the
   negamax then chooses among the columns of the best outcome (all columns when lost or unsettled).
   The book is Pascal Pons' `7x6.book` (AGPL-3.0, 33.5 MB): exact scores of positions up to 14
-  discs, committed under `packages/neljan-suora-bots/book/` and fetched by the client on the first
-  bot question; the bot plays the columns of the best score (soonest win), and past the book the
+  discs, committed under `packages/neljan-suora-bots/book/` and **held by the game server** (see
+  Server); the browser passes the server's verdict to the bot, which plays the columns of the best score (soonest win), and past the book the
   solve settles positions within `SOLVE_NODES` (1.5 M nodes, ~2 s on a mid-range phone).
 - **Tournaments:** the bot registry with budgets (`perfect` = depth 8 + `SOLVE_NODES`,
   `negamax@d8`, `brs@d4`, `mcts@i400`, `greedy@200ms`), formats, the random opening,
@@ -172,10 +175,14 @@ kit packages come built (`dist/` only).
   Worker (own size-limit entry); `askBotWorker` asks it and answers in the page where no worker can
   run; "Vihje" asks it too. Budget 3 s and `SOLVE_NODES` (both divided by the watching speed); the
   move still shows after the 1 s pause, so only an unsettled position makes the bot think longer.
-  The opening book is its own hashed asset, not in any bundle: the page fetches it on the first bot
-  question of the visit (that question waits for it up to 1.5 s), hands it to the worker once, logs
-  `client.warn` `bot.book` once if it fails; the service worker keeps it (runtime `CacheFirst`, not
-  precached), so later visits play from it offline.
+  The opening book is never downloaded (`server-book`; the 33.5 MB book crashed the worker on a
+  phone): up to 13 discs the page first asks the server's `GET /book` (800 ms timeout) and hands the
+  verdict to the worker with the question; offline, asleep, slow or not in the book, the bot plays
+  without it. One `client.warn` `bot.book` per visit on the first failed lookup.
+- **How a move was chosen:** the worker answers the move and how it was worked out (book, solve or
+  estimate, and the certain outcome); the page keeps it in a small store keyed by the board the
+  move led to, and the status line (the spectator panel when watching) and "Vihje" show it. Only
+  moves worked out on this device are explained.
 
 ## Client — Implemented
 

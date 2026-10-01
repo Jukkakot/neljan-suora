@@ -152,6 +152,12 @@ by `tools/axiom/dashboard.py` in the game kit (uid `3345cc1f-c285-4c6b-a0c2-8bc7
 | `framework.log`, `server.*`, `process.*` | Colyseus's own messages, process lifecycle and fatal errors |
 | `client.*` | client warnings/errors, crashes, key events (connection, rejections) |
 
+**Opening book:** the server reads `packages/neljan-suora-bots/book/7x6.book` at start (+33.5 MB
+of memory; Render's free tier has 512 MB) and answers `GET /book`. Production check after a deploy:
+`<server>/book?cells=` followed by 42 zeros answers `{"known":true,"outcome":1,"columns":[3]}`. A
+`framework.log` line with `kind: "book"` at start means the file was missing (bots still play,
+weaker in the opening).
+
 **Client logs** are batched and sent to `POST /client-logs` (max 50 entries, 30 requests/min per
 IP; IPs are never logged). Opening the game with `?debug=1` makes that one client ship its debug
 and info entries too.
