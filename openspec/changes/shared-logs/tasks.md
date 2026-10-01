@@ -16,16 +16,20 @@
 
 ## 3. Palikka on kit v0.2.0 (in `../palikka`, following its own instructions)
 
-- [ ] 3.1 `npm run kit:use -- 0.2.0`; `setLogGame("palikka")` first in its server entry; `render.yaml` `AXIOM_DATASET=games`; remove its `tools/axiom/dashboard.py`; its operations → Logs and nfr point to `games` with `where game == "palikka"`. Verify: its check chain green, its dev log lines have `"game":"palikka"`; commit and push per its rules
-- [ ] 3.2 Roadmap note (one line, "move logs to the shared `games` dataset with a `game` field, see game-kit README → Logs") in `../muuttuva-labyrintti` and `../monopoly-client` roadmaps or README if no roadmap. Verify: committed in each repo (push per their rules)
+- [x] 3.1 `npm run kit:use -- 0.2.0`; `setLogGame("palikka")` first in its server entry; `render.yaml` `AXIOM_DATASET=games`; remove its `tools/axiom/dashboard.py`; its operations → Logs and nfr point to `games` with `where game == "palikka"`. Verify: its check chain green, its dev log lines have `"game":"palikka"`; commit and push per its rules
+- [x] 3.2 Roadmap note (one line, "move logs to the shared `games` dataset with a `game` field, see game-kit README → Logs") in `../muuttuva-labyrintti` and `../monopoly-client` roadmaps or README if no roadmap. Verify: committed in each repo (push per their rules)
+
+Notes (3): Palikka's dev-log check was covered by its check chain (same kit code) and the production
+check 4.4. Monopoly's note went to its `docs/todo.md`, which is git-ignored there (a local file), so
+no commit; Labyrinth's went to its roadmap's Improvement backlog and is pushed.
 
 ## 4. Axiom and Render (external; deletion approved by the user 2026-10-01)
 
-- [ ] 4.1 Delete the `palikka` dashboard and the `palikka` dataset with `tools/axiom/axiom.ps1`; create dataset `games` (30-day retention, EU). Verify: `GET /v2/datasets` lists `labyrinth`, `monopoly` and `games`
-- [ ] 4.2 Create one ingest-only token for `games`; store it (never printed) as `AXIOM_TOKEN` on the Render services `neljan-suora` (`srv-dav70tvpn0mc73afd0i0`) and `palikka` (Render MCP `update_environment_variables`) and as the user env var `AXIOM_GAMES_TOKEN`. Verify: both services redeploy and are live
-- [ ] 4.3 Upload the dashboard (`python ../game-kit/tools/axiom/dashboard.py`, then `axiom.ps1 POST /v2/dashboards`); record the uid in the kit README and in both games' operations → Logs. Verify: the dashboard opens and its Peli filter lists both games
-- [ ] 4.4 Production check: play or open each game once, then `['games'] | where _time > ago(1h) | summarize count() by game, src` (Axiom MCP) shows `neljan-suora` and `palikka` with `server` (and `client` where a client logged). Verify: the query result
+- [x] 4.1 Delete the `palikka` dashboard and the `palikka` dataset with `tools/axiom/axiom.ps1`; create dataset `games` (30-day retention, EU). Verify: `GET /v2/datasets` lists `labyrinth`, `monopoly` and `games`
+- [x] 4.2 Create one ingest-only token for `games`; store it (never printed) as `AXIOM_TOKEN` on the Render services `neljan-suora` (`srv-dav70tvpn0mc73afd0i0`) and `palikka` (Render MCP `update_environment_variables`) and as the user env var `AXIOM_GAMES_TOKEN`. Verify: both services redeploy and are live
+- [x] 4.3 Upload the dashboard (`python ../game-kit/tools/axiom/dashboard.py`, then `axiom.ps1 POST /v2/dashboards`); record the uid in the kit README and in both games' operations → Logs. Verify: the dashboard opens and its Peli filter lists both games
+- [x] 4.4 Production check: play or open each game once, then `['games'] | where _time > ago(1h) | summarize count() by game, src` (Axiom MCP) shows `neljan-suora` and `palikka` with `server` (and `client` where a client logged). Verify: the query result
 
 ## 5. Wrap-up
 
-- [ ] 5.1 Roadmap: `shared-logs` done; memory note `axiom-dataset-limit` updated (datasets now `labyrinth`, `monopoly`, `games`; shared token in `AXIOM_GAMES_TOKEN`). Commit and push docs (and kit README uid). Verify: working trees clean in all touched repos
+- [x] 5.1 Roadmap: `shared-logs` done; memory note `axiom-dataset-limit` updated (datasets now `labyrinth`, `monopoly`, `games`; shared token in `AXIOM_GAMES_TOKEN`). Commit and push docs (and kit README uid). Verify: working trees clean in all touched repos
