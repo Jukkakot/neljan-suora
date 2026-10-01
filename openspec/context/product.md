@@ -6,11 +6,32 @@ in `openspec/specs/`, the spec wins. The parts marked **TODO** are agreed in the
 
 ## The game (rules in our own words)
 
-**TODO** (roadmap `rules-engine`): board, pieces or cards, seats and turn order, what a move is,
-when the game ends, how it is scored and who wins. Until then the placeholder game Ristinolla
-(tic-tac-toe: 3×3, two seats, three in a row wins, a full board is a draw) stands in, so every part
-of the contract runs. If the game is inspired by a commercial one, never use its name, logos or
-look (nfr → Legal).
+Neljän suora is the classic gravity four-in-a-row game, with our own name and look. The rules land
+in roadmap `rules-engine`; until then the placeholder game Ristinolla (tic-tac-toe) stands in, so
+every part of the contract runs.
+
+- Two seats. An upright grid of 7 columns and 6 rows.
+- A move is choosing a column that is not full; the disc drops to the lowest free cell of it.
+- Four of the mover's discs in a row horizontally, vertically or diagonally win at once, and the
+  winning row is shown. A full grid without such a row is a draw. No passing, no scores beyond
+  win, draw or loss.
+- Who starts is drawn from the game's seed; a rematch lets the other seat start (`rules-engine`
+  confirms).
+- The commercial game's name, logos, box look and signature colours never appear in the UI,
+  assets, texts or repo (nfr → Legal).
+
+## Controls
+
+Column first: a tap anywhere in a column shows a ghost disc in the cell it would land in; a second
+tap on the same column (or the confirm button) drops it; another column moves the ghost. No drag
+needed. Same "few taps, one deliberate confirm" rule as under Mobile.
+
+## Bot ambition
+
+The game is solved (the first player wins with perfect play), so strong play is reachable in the
+browser: bitboard negamax with alpha-beta, a transposition table, centre-first move ordering and
+iterative deepening within the time budget. Whether the kit's generic search is fast enough or the
+game needs its own searcher is decided in `bot-v1` by measurement.
 
 ## Modes
 

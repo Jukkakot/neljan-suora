@@ -6,9 +6,16 @@ tasks written), **planned**.
 
 | # | Change | Status | What |
 |---|---|---|---|
-| 0 | `create` | done | Made from the game-kit template: workspaces, kit packages, the placeholder game Ristinolla, screens, docs, OpenSpec, `.claude`, CI/deploy, E2E, tournament |
-| 1 | `theme` | planned | Agree the theme with light and dark mockups: visual concept, palette and seat colours, motion at the end, the voice of texts and names; tokens, icons and copy follow, product.md and nfr.md record it |
-| 2 | `rules-engine` | planned | Replace Ristinolla with the real rules in `packages/rules` (pure, seeded, contract in `contract.ts`) and the protocol's move and options; property tests |
-| 3 | `game-ui` | planned | The real board and move controls in the client shell (view model, client definition, one deliberate confirm), E2E smoke on the real moves |
-| 4 | `bot-v1` | planned | The bot adapter and evaluation for the real rules, a strength requirement in `strength.json`, tournament green |
-| 5 | `first-deploy` | planned | The setup checklist (docs/operations.md): GitHub repo, Pages, Render, Axiom, prod smoke; done with the user's go-ahead (creates external services) |
+| 0 | `create` | done | Made from the game-kit template (v0.1.0): workspaces, kit packages, the placeholder game Ristinolla, screens, docs, OpenSpec, `.claude`, CI/deploy, E2E, tournament; GitHub repo `Jukkakot/neljan-suora` |
+| 1 | `theme` | planned | Agree the theme with light and dark mockups: visual concept, palette and the two disc colours, the drop and win motion, the voice of texts and bot names; tokens, icons and copy follow, product.md and nfr.md record it |
+| 2 | `rules-engine` | planned | Replace Ristinolla with the 7 × 6 gravity rules on bitboards in `packages/rules` (pure, seeded start, contract in `contract.ts`): legal columns, win with the winning row, draw; the protocol's move (a column); property tests |
+| 3 | `game-ui` | planned | The upright grid in the client shell: column-first controls with a ghost disc and one confirm, drop animation, the winning row shown; view model and client definition; E2E smoke on the real moves |
+| 4 | `bot-v1` | planned | Searching bot (product.md → Bot ambition) through the bot adapter, measured against the kit's search; a strength requirement in `strength.json`, tournament green |
+| 5 | `first-deploy` | planned | The rest of the setup checklist (docs/operations.md): Pages, Render, Axiom, prod smoke; done with the user's go-ahead (creates external services) |
+
+## Later, to consider (not now)
+
+- Larger grids (8 × 7, 9 × 7) as an option.
+- A "pop out" rule (a player may take their own disc from the bottom row instead of dropping).
+- A perfect-play bot with an opening book.
+- A hint that tells whether the position is won, drawn or lost.
