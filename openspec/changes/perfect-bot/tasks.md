@@ -66,6 +66,10 @@
   fetched once, after the start screen; "Vihje" shows a column. Then reload offline (DevTools
   offline via the browser context) and play a move: the bot answers. Verify: accessibility snapshot
   or DOM query per step; no screenshot needed.
+  Done 2026-10-01 with a partial book (278 entries, the generator's state after wave 4), dev server:
+  `?dev=0v2` opened 3, 3, 3 (theory); the network log shows one fetch of the `.bin`; vs the human the
+  bot opened 3 and "Vihje" showed column 4 (index 3); offline mid-game the bot answered. Left: the
+  offline *reload* needs the service worker, i.e. the built client (`vite preview`) — do it in 6.2.
 
 ## 5. Strength
 
