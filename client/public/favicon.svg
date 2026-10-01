@@ -1,7 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#1a2029"/>
-  <rect x="96" y="96" width="152" height="152" rx="20" fill="#5d9cf0"/>
-  <rect x="264" y="96" width="152" height="152" rx="20" fill="#ffbe5c"/>
-  <rect x="96" y="264" width="152" height="152" rx="20" fill="#5cc285"/>
-  <rect x="264" y="264" width="152" height="152" rx="20" fill="#ff6b75"/>
+  <defs>
+    <radialGradient id="hl" cx="0.32" cy="0.3" r="0.4">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Birch square with two grain lines -->
+  <rect width="512" height="512" rx="96" fill="#e2d5b8"/>
+  <path d="M40 150 H472 M40 380 H472" stroke="#6e5528" stroke-opacity="0.22" stroke-width="10" stroke-linecap="round"/>
+  <!-- Leaf -->
+  <path d="M256 70 C 330 60 380 100 392 150 C 330 165 270 135 256 70 Z" fill="#6f9a3a"/>
+  <path d="M262 78 C 300 100 340 125 386 148" stroke="#4c6e24" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <!-- Puolukka -->
+  <circle cx="168" cy="290" r="108" fill="#c42b45"/>
+  <circle cx="168" cy="290" r="108" fill="url(#hl)"/>
+  <!-- Mustikka with its crown -->
+  <circle cx="344" cy="290" r="108" fill="#34407e"/>
+  <circle cx="344" cy="290" r="108" fill="url(#hl)"/>
+  <polygon points="307,228 307,206 318,218 326,198 336,218 344,194 352,218 362,198 370,218 381,206 381,228" fill="#14183a" fill-opacity="0.8"/>
 </svg>

@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "Neljän suora",
-    "tagline": "Selainpeli kavereita tai botteja vastaan"
+    "tagline": "Neljä marjaa riviin – kavereita tai botteja vastaan"
   },
   "language": {
     "label": "Kieli",
@@ -31,8 +31,8 @@
   "board": {
     "label": "Pelilauta",
     "cellEmpty": "Rivi {{row}}, sarake {{col}}: tyhjä",
-    "cellChosen": "Rivi {{row}}, sarake {{col}}: valittu, napauta uudelleen merkitäksesi",
-    "cellTaken": "Rivi {{row}}, sarake {{col}}: pelaajan {{seat}} merkki"
+    "cellChosen": "Rivi {{row}}, sarake {{col}}: valittu, napauta uudelleen asettaaksesi",
+    "cellTaken": "Rivi {{row}}, sarake {{col}}: {{berry}}"
   },
   "start": {
     "connecting": "Yhdistetään palvelimeen…",
@@ -126,12 +126,12 @@
     "bot": "botti",
     "autoplay": "botti pelaa hänen puolestaan",
     "autoplayMine": "botti pelaa puolestasi",
-    "marks_one": "{{count}} merkki",
-    "marks_other": "{{count}} merkkiä"
+    "berries_one": "{{count}} marja",
+    "berries_other": "{{count}} marjaa"
   },
   "result": {
-    "mine": "Voitit!",
-    "other": "{{name}} voitti",
+    "mine": "Voitit – kori täynnä!",
+    "other": "{{name}} voitti – kori täynnä",
     "rematch": "Pelaa uudelleen",
     "home": "Alkuun",
     "shared": "Jaettu voitto: {{names}}",
@@ -141,8 +141,8 @@
     "player": "Pelaaja",
     "winner": "Voittaja",
     "departed": "Lähti",
-    "draw": "Tasapeli",
-    "marks": "Merkit"
+    "draw": "Tasapeli – laatikko täynnä",
+    "marks": "Marjat"
   },
   "kick": {
     "timeUp": "{{name}} – aika loppui",
@@ -176,7 +176,7 @@
   },
   "leave": {
     "button": "Poistu pelistä",
-    "confirm": "Lähdetkö pelistä? Merkkisi jäävät laudalle, mutta et enää pelaa.",
+    "confirm": "Lähdetkö pelistä? Marjasi jäävät laudalle, mutta et enää pelaa.",
     "yes": "Poistu",
     "cancel": "Peru"
   },
@@ -188,8 +188,8 @@
     "newBotGame": "Uusi bottipeli"
   },
   "tips": {
-    "goal": "Saa kolme merkkiä riviin – vaakaan, pystyyn tai vinottain.",
-    "place": "Napauta tyhjää ruutua ja vahvista napauttamalla sitä uudelleen tai painamalla Merkitse.",
+    "goal": "Saa kolme marjaa riviin – vaakaan, pystyyn tai vinottain.",
+    "place": "Napauta tyhjää ruutua ja vahvista napauttamalla sitä uudelleen tai painamalla Aseta.",
     "close": "Sulje vinkki",
     "reset": "Näytä vinkit uudelleen",
     "resetDone": "Vinkit näytetään seuraavassa pelissä."
@@ -231,7 +231,11 @@
   "move": {
     "wait": "Odota vuoroasi",
     "choose": "Valitse tyhjä ruutu",
-    "ready": "Napauta ruutua uudelleen tai paina Merkitse",
-    "confirm": "Merkitse"
+    "ready": "Napauta ruutua uudelleen tai paina Aseta",
+    "confirm": "Aseta"
+  },
+  "berry": {
+    "1": "puolukka",
+    "2": "mustikka"
   }
 }

@@ -14,7 +14,7 @@ import { ResultTable } from "../game/ResultTable.tsx";
 import { SpectatorCount, SpectatorPanel } from "../game/SpectatorControls.tsx";
 import { TurnLine } from "../game/TurnLine.tsx";
 import { useEnded, useLastMove } from "../motion/hooks.ts";
-import { Snowfall } from "../motion/Snowfall.tsx";
+import { LeafFall } from "../motion/LeafFall.tsx";
 import { NOTICE_MS, type GameSession } from "../session/useGameSession.ts";
 import type { GameView } from "../session/viewModel.ts";
 import { SettingsButton, SettingsScreen } from "../settings/SettingsScreen.tsx";
@@ -55,9 +55,9 @@ export function GameScreen({ view, session }: GameScreenProps) {
   const chosen = choice?.turn === view.turn && isMyTurn && view.board[choice.cell] === 0 ? choice.cell : undefined;
   const lastMove = useLastMove(view.board, view.roomId);
   const shownLastMove = view.finished ? undefined : lastMove;
-  // The end, seen as it happens and with a winner: counts count up; falling squares when the viewer won or watches.
+  // The end, seen as it happens and with a winner: counts count up; falling leaves when the viewer won or watches.
   const celebrate = useEnded(view.finished) && view.winners.length > 0;
-  const snow = celebrate && (view.spectating || view.results.some((r) => r.winner && r.isMe));
+  const leaves = celebrate && (view.spectating || view.results.some((r) => r.winner && r.isMe));
 
   const send = async (cell: number | undefined) => {
     if (cell === undefined || pending) return;
@@ -156,7 +156,7 @@ export function GameScreen({ view, session }: GameScreenProps) {
           )}
         </div>
       </div>
-      {snow && <Snowfall />}
+      {leaves && <LeafFall />}
       <Notice message={message} />
       <FirstGameTips playing={!view.spectating && view.phase === "playing" && !view.finished} isMyTurn={view.isMyTurn} />
     </Screen>

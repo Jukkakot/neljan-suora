@@ -25,13 +25,13 @@ export function TurnLine({ view }: { view: TurnLineView }) {
     if (winners.length > 1) text = t(iWon ? "result.sharedMine" : "result.shared", { names: winners.map(nameOf).join(", ") });
     else text = iWon ? t("result.mine") : t("result.other", { name: nameOf(first) });
     return (
-      <p className={`${styles.line} ${styles.mine}`} data-winner-seat={winners.join(",")}>
+      <p className={`${styles.line} ${styles.mine} ${styles.end}`} data-winner-seat={winners.join(",")}>
         <SeatMark seat={iWon ? mySeat : first} isMe={iWon} size={28} />
         <span>{text}</span>
       </p>
     );
   }
-  if (finished) return <p className={styles.line}>{t("result.draw")}</p>;
+  if (finished) return <p className={`${styles.line} ${styles.end}`}>{t("result.draw")}</p>;
   if (turnSeat === 0) return null;
   let text: string;
   if (isMyTurn) text = t("turn.mine");

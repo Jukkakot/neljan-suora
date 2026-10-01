@@ -61,19 +61,33 @@ game needs its own searcher is decided in `bot-v1` by measurement.
 - Bot strength is measured, not guessed: tournaments and Elo, requirements in `strength.json`.
 - Bot names: Kettu, Ilves, Pöllö, Näätä (the kit's; the theme may rename them).
 
-## Theme "Placeholder"
+## Theme "Marjat"
 
-**TODO** (roadmap `theme`): agree the theme with light and dark mockups: the visual concept
-(materials, palette, shapes), the seat colours, the motion at the end, and the voice of the texts
-and names. Until then a neutral look stands in (`client/src/ui/tokens.css`): paper and graphite
-surfaces, an indigo accent, four seat colours, both light and dark designed.
+Berries in a birch crate (spec `visual-theme`; values in `client/src/ui/tokens.css`).
 
+- **Concept:** light is a pale lichen page with a birch-crate board (horizontal grain) and round
+  moss-green holes; dark is a forest night with a dark wooden board and dark moss holes. Each is
+  designed with its own values, not an inversion. Accent: the mustikka blue.
+- **Seats:** seat 1 **puolukka** (lingonberry red), seat 2 **mustikka** (blueberry blue with a small
+  crown, so the two read apart without colour). Spare seat colours for the kit: lakka (cloudberry
+  orange), kanerva (heather purple). The piece is one `Berry` disc everywhere (board, preview,
+  player strip, turn line, result table).
+- **Own look:** never the commercial game's name, logo or colours: the board is wood, never blue;
+  no seat is yellow (checked by `tokens.test.ts`).
+- **Type:** Fredoka (self-hosted) for the title, headings and the end-of-game line; system-ui for
+  everything else.
+- **Motion:** restrained in play: a placed berry squishes in (≤ 250 ms) and keeps a centre dot as
+  the last move. At the end: counts count up, the winning line's berries get a leaf-green ring and
+  the result row a sweep, and on a win (seen by the winner or a spectator) leaves fall once
+  (2.5 s). A draw has no leaves. `prefers-reduced-motion` stops all of it.
+- **Voice:** restrained. Texts in play are plain; the piece is a berry ("marja"). Theme words only
+  in names and the end-of-game lines: "Voitit – kori täynnä!", "{name} voitti – kori täynnä",
+  "Tasapeli – laatikko täynnä". The confirm button reads "Aseta". Bot names stay the kit's forest
+  animals.
 - Every project has a light and a dark theme, designed with equal care. The device setting is
   followed unless the player forces one in the settings.
-- Motion: restrained in play (marks settle in ≤ 250 ms, the last move is marked), playful at the
-  end (counts count up, the winner's row shimmers, falling squares). `prefers-reduced-motion` stops
-  all of it.
-- Accessibility is basic only: contrast and tap targets; colour alone may identify a player.
+- Accessibility is basic only: contrast (text 4.5:1, berry on hole 3:1) and tap targets; the crown
+  means colour alone need not identify a seat.
 
 ## Mobile
 

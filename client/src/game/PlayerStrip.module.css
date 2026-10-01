@@ -80,8 +80,8 @@
 
 /* Out of moves: the chip is frosted over. */
 .out {
-  background: var(--frost);
-  border-color: var(--frost-edge);
+  background: var(--out);
+  border-color: var(--out-edge);
 }
 
 /* Seen going out: the chip freezes (a brief bright flash as the frost comes over it). */

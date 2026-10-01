@@ -2,40 +2,45 @@
  * Design tokens: the only place colours, spacing and radii are defined.
  * Components use these through CSS Modules; never hard-code a colour.
  *
- * Theme "Placeholder": a neutral stand-in until the game's own theme is agreed (roadmap: `theme`).
- * Light is plain paper with an indigo accent, dark a graphite night with the same hues lifted for
- * contrast. The seat colours are the players' identity, in turn order indigo, coral, teal, amber.
- * The theme change replaces the values (and the comments) here; the token names stay.
+ * Theme "Marjat": berries in a birch crate. Light is a pale lichen page with a birch board and
+ * moss-green holes, dark a forest night with a dark wooden board; each has its own values, not an
+ * inversion. Seat 1 is puolukka (lingonberry red), seat 2 mustikka (blueberry blue, drawn with a
+ * crown so it reads without colour); the accent is the mustikka blue. Never a yellow seat or a blue
+ * board (the commercial game's look).
  */
 :root {
   /* Surfaces and text */
-  --bg: #f6f6f4;
+  --bg: #eef0e8;
   --surface: #ffffff;
-  --surface-2: #ebebe7;
-  --text: #1f2024;
-  --muted: #64666e;
-  --accent: #4f56c8;
+  --surface-2: #e3e7da;
+  --text: #24261f;
+  --muted: #5f6456;
+  --accent: #34407e;
   --accent-contrast: #ffffff;
-  --border: #d6d6d0;
-  --danger: #b3261e;
+  --border: #d6d9cc;
+  --danger: #a8323a;
 
-  /* Board: the ground and one cell */
-  --board: #e2e2dc;
-  --cell: #fbfbf9;
+  /* Board: the crate, its grain, one moss hole */
+  --board: #e2d5b8;
+  --board-grain: rgba(110, 85, 40, 0.18);
+  --cell: #c9d2b4;
+  --cell-shadow: inset 0 2px 3px rgba(60, 50, 20, 0.25);
   /* The chosen cell's outline before the move is confirmed */
-  --preview-ok-outline: #1f2024;
+  --preview-ok-outline: #24261f;
 
-  /* A chip out of play; the last move's ring; the end's falling squares */
-  --frost: #e4e4df;
-  --frost-edge: #c2c2ba;
+  /* A chip out of play; the last move's dot; the win ring and sweep; the end's falling leaves */
+  --out: #e1e3da;
+  --out-edge: #bfc4b2;
   --last-mark: rgba(255, 255, 255, 0.9);
-  --snow: #a3a6c8;
+  --shine: #7aa63a;
+  --leaf: #6f9a3a;
 
-  /* Seats */
-  --seat-1: #4f56c8;
-  --seat-2: #d4553f;
-  --seat-3: #23867a;
-  --seat-4: #b7801b;
+  /* Seats: puolukka, mustikka (with crown); lakka and kanerva are spares for the kit */
+  --seat-1: #c42b45;
+  --seat-2: #34407e;
+  --seat-3: #c7761e;
+  --seat-4: #8a4f9e;
+  --berry-crown: rgba(20, 24, 50, 0.75);
 
   /* Spacing (4 px scale), radii, sizes */
   --space-1: 4px;
@@ -56,6 +61,8 @@
 
   /* Type */
   --font: system-ui, "Segoe UI", Roboto, sans-serif;
+  /* The round display face (self-hosted Fredoka): title, headings and the end-of-game line only */
+  --font-display: "Fredoka Variable", var(--font);
   --text-s: 0.8rem;
   --text-m: 1rem;
   --text-l: 1.25rem;
@@ -69,54 +76,62 @@
  */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #141518;
-    --surface: #1d1e23;
-    --surface-2: #26282e;
-    --text: #e8e8ec;
-    --muted: #9a9ca6;
-    --accent: #8d93ff;
-    --accent-contrast: #12132a;
-    --border: #33353d;
+    --bg: #121610;
+    --surface: #1a2016;
+    --surface-2: #232a1e;
+    --text: #ece8de;
+    --muted: #a3a896;
+    --accent: #8d9bff;
+    --accent-contrast: #10142a;
+    --border: #2f3628;
     --danger: #ff8a7f;
 
-    --board: #0f1013;
-    --cell: #1c1d22;
-    --preview-ok-outline: #e8e8ec;
-    --frost: #2b2d34;
-    --frost-edge: #4a4d58;
-    --last-mark: rgba(10, 10, 14, 0.85);
-    --snow: #c9cbff;
+    --board: #2f271d;
+    --board-grain: rgba(0, 0, 0, 0.35);
+    --cell: #1a2016;
+    --cell-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+    --preview-ok-outline: #ece8de;
+    --out: #262c22;
+    --out-edge: #454d3c;
+    --last-mark: rgba(10, 12, 8, 0.85);
+    --shine: #b6e06a;
+    --leaf: #9fcf5a;
 
-    --seat-1: #8d93ff;
-    --seat-2: #ff8a73;
-    --seat-3: #4fc7b6;
-    --seat-4: #f0b44a;
+    --seat-1: #ff5d73;
+    --seat-2: #8d9bff;
+    --seat-3: #f0a650;
+    --seat-4: #d29be6;
+    --berry-crown: rgba(20, 24, 60, 0.8);
   }
 }
 
 :root[data-theme="dark"] {
-  --bg: #141518;
-  --surface: #1d1e23;
-  --surface-2: #26282e;
-  --text: #e8e8ec;
-  --muted: #9a9ca6;
-  --accent: #8d93ff;
-  --accent-contrast: #12132a;
-  --border: #33353d;
+  --bg: #121610;
+  --surface: #1a2016;
+  --surface-2: #232a1e;
+  --text: #ece8de;
+  --muted: #a3a896;
+  --accent: #8d9bff;
+  --accent-contrast: #10142a;
+  --border: #2f3628;
   --danger: #ff8a7f;
 
-  --board: #0f1013;
-  --cell: #1c1d22;
-  --preview-ok-outline: #e8e8ec;
-  --frost: #2b2d34;
-  --frost-edge: #4a4d58;
-  --last-mark: rgba(10, 10, 14, 0.85);
-  --snow: #c9cbff;
+  --board: #2f271d;
+  --board-grain: rgba(0, 0, 0, 0.35);
+  --cell: #1a2016;
+  --cell-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+  --preview-ok-outline: #ece8de;
+  --out: #262c22;
+  --out-edge: #454d3c;
+  --last-mark: rgba(10, 12, 8, 0.85);
+  --shine: #b6e06a;
+  --leaf: #9fcf5a;
 
-  --seat-1: #8d93ff;
-  --seat-2: #ff8a73;
-  --seat-3: #4fc7b6;
-  --seat-4: #f0b44a;
+  --seat-1: #ff5d73;
+  --seat-2: #8d9bff;
+  --seat-3: #f0a650;
+  --seat-4: #d29be6;
+  --berry-crown: rgba(20, 24, 60, 0.8);
   color-scheme: dark;
 }
 

@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "Neljän suora",
-    "tagline": "A browser game against friends or bots"
+    "tagline": "Four berries in a row – against friends or bots"
   },
   "language": {
     "label": "Language",
@@ -31,8 +31,8 @@
   "board": {
     "label": "Game board",
     "cellEmpty": "Row {{row}}, column {{col}}: empty",
-    "cellChosen": "Row {{row}}, column {{col}}: chosen, tap again to mark",
-    "cellTaken": "Row {{row}}, column {{col}}: player {{seat}}'s mark"
+    "cellChosen": "Row {{row}}, column {{col}}: chosen, tap again to place",
+    "cellTaken": "Row {{row}}, column {{col}}: {{berry}}"
   },
   "start": {
     "connecting": "Connecting to the server…",
@@ -126,12 +126,12 @@
     "bot": "bot",
     "autoplay": "the bot plays for them",
     "autoplayMine": "the bot plays for you",
-    "marks_one": "{{count}} mark",
-    "marks_other": "{{count}} marks"
+    "berries_one": "{{count}} berry",
+    "berries_other": "{{count}} berries"
   },
   "result": {
-    "mine": "You won!",
-    "other": "{{name}} won",
+    "mine": "You won – basket full!",
+    "other": "{{name}} won – basket full",
     "rematch": "Play again",
     "home": "Home",
     "shared": "A shared win: {{names}}",
@@ -141,8 +141,8 @@
     "player": "Player",
     "winner": "Winner",
     "departed": "Left",
-    "draw": "A draw",
-    "marks": "Marks"
+    "draw": "Draw – the crate is full",
+    "marks": "Berries"
   },
   "kick": {
     "timeUp": "{{name}} – time is up",
@@ -176,7 +176,7 @@
   },
   "leave": {
     "button": "Leave game",
-    "confirm": "Leave the game? Your marks stay on the board, but you no longer play.",
+    "confirm": "Leave the game? Your berries stay on the board, but you no longer play.",
     "yes": "Leave",
     "cancel": "Cancel"
   },
@@ -188,8 +188,8 @@
     "newBotGame": "New bot game"
   },
   "tips": {
-    "goal": "Get three marks in a row – across, down or diagonally.",
-    "place": "Tap an empty cell and confirm by tapping it again or pressing Mark.",
+    "goal": "Get three berries in a row – across, down or diagonally.",
+    "place": "Tap an empty cell and confirm by tapping it again or pressing Place.",
     "close": "Close tip",
     "reset": "Show tips again",
     "resetDone": "Tips will show in the next game."
@@ -231,7 +231,11 @@
   "move": {
     "wait": "Wait for your turn",
     "choose": "Choose an empty cell",
-    "ready": "Tap the cell again or press Mark",
-    "confirm": "Mark"
+    "ready": "Tap the cell again or press Place",
+    "confirm": "Place"
+  },
+  "berry": {
+    "1": "lingonberry",
+    "2": "blueberry"
   }
 }

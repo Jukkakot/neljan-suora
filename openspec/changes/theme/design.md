@@ -158,3 +158,17 @@ change, no spec change.
 - [Placeholder styling may need rework when the 7 × 6 grid lands] → the board surface, hole and
   berry are size-independent (percentages), so `game-ui` reuses them; only the grid template
   changes.
+
+## Implementation notes
+
+- Palette: every value passed the contrast test as designed; no nudges.
+- `result.draw` is only used by the turn line's end-of-game text (the table has no draw cell), so it
+  changed in place and no `result.drawTitle` split was needed.
+- Font: `@fontsource-variable/fredoka/wght.css` is imported whole; the browser only fetches the
+  latin and latin-ext files (unicode-range), the unused Hebrew file is merely emitted. Fonts are not
+  in the service worker's precache (offline falls back to system-ui).
+- Headings: a global `h1, h2` rule in `index.css` gives every screen heading the display face; the
+  turn line's end-of-game text has its own `.end` class.
+- Board: the hover outline is not applied to the chosen hole, so the dashed outline stays visible
+  under a mouse pointer. Board and row gaps went from `--space-2` to `--space-1` so the holes are
+  larger; cells stay ≈ 101 px square on the S24.

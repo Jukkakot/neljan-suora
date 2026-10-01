@@ -1,41 +1,39 @@
-/* A square board as wide as the layout allows; three rows of three cells. */
+/* The birch crate: a square board as wide as the layout allows, with a horizontal grain. */
 .board {
   width: 100%;
   aspect-ratio: 1;
   display: grid;
   grid-template-rows: repeat(3, 1fr);
-  gap: var(--space-2);
+  gap: var(--space-1);
   padding: var(--space-2);
-  background: var(--board);
+  background:
+    repeating-linear-gradient(to bottom, var(--board-grain) 0 1px, transparent 1px 11px),
+    var(--board);
   border-radius: var(--radius-m);
 }
 
 .row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-2);
+  gap: var(--space-1);
 }
 
+/* The tap target is the full square; only the hole inside it is round. */
 .cell {
   min-width: var(--tap-min);
   min-height: var(--tap-min);
   display: grid;
   place-items: center;
-  padding: 0;
-  border: 2px solid transparent;
+  padding: var(--space-1);
+  border: 0;
   border-radius: var(--radius-s);
-  background: var(--cell);
+  background: transparent;
   color: var(--text);
   cursor: pointer;
-  transition: border-color var(--motion-fast);
 }
 
 .cell:disabled {
   cursor: default;
-}
-
-.cell:not(:disabled):hover {
-  border-color: var(--border);
 }
 
 .cell:focus-visible {
@@ -43,36 +41,87 @@
   outline-offset: 2px;
 }
 
-/* The chosen cell: the viewer's mark, faded, until the move is confirmed. */
-.chosen {
-  border-color: var(--preview-ok-outline);
+/* A moss hole: a round dip in the crate. */
+.hole {
+  position: relative;
+  width: 100%;
+  max-height: 100%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--cell);
+  box-shadow: var(--cell-shadow);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition: outline-color var(--motion-fast);
+}
+
+.cell:not(:disabled):not(.chosen):hover .hole {
+  outline-color: var(--border);
+}
+
+/* Pieces and the preview share the hole's centre. */
+.piece,
+.preview {
+  grid-area: 1 / 1;
+}
+
+/* The chosen hole: the viewer's berry, faded, until the move is confirmed. */
+.chosen .hole {
+  outline: 2px dashed var(--preview-ok-outline);
 }
 
 .preview {
-  display: grid;
   opacity: 0.45;
 }
 
-/* The last move settles in. */
-.last > svg {
-  animation: settle var(--motion) ease-out;
+/* The last move: lands flattened and springs back; the dot stays until the next move. */
+.last .piece {
+  animation: squish var(--motion) ease-out;
 }
 
-/* The winning line. */
-.win {
-  background: var(--surface-2);
-  border-color: var(--accent);
+.dot {
+  grid-area: 1 / 1;
+  z-index: 1;
+  width: 18%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--last-mark);
 }
 
-@keyframes settle {
-  from {
-    transform: scale(0.6);
-    opacity: 0.4;
+/* The winning line: its berries shine with a leaf-green ring, after one short pulse. */
+.win .piece {
+  outline: 3px solid var(--shine);
+  outline-offset: 1px;
+  animation: shine var(--motion-slow) ease-out;
+}
+
+@keyframes squish {
+  0% {
+    transform: scale(1.15, 0.8);
+  }
+  60% {
+    transform: scale(0.95, 1.05);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+
+@keyframes shine {
+  0% {
+    outline-offset: 8px;
+    outline-color: transparent;
+  }
+  100% {
+    outline-offset: 1px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .last > svg {
+  .last .piece,
+  .win .piece {
     animation: none;
   }
 }

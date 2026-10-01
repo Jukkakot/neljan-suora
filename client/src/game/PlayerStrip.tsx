@@ -21,7 +21,7 @@ export function PlayerStrip({ view }: { view: Pick<GameView, "seats"> & Partial<
           t(s.isMe ? "progress.seatMe" : "progress.seat", { name: s.name }),
           s.isBot ? t("progress.bot") : undefined,
           s.autoplay ? t(s.isMe ? "progress.autoplayMine" : "progress.autoplay") : undefined,
-          t("progress.marks", { count: s.marks }),
+          t("progress.berries", { count: s.marks }),
           s.connected ? undefined : t("progress.disconnected"),
         ]
           .filter(Boolean)

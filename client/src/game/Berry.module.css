@@ -1,0 +1,29 @@
+/* A round berry: the seat's colour with a soft highlight upper left and a little depth below. */
+.berry {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 30%, rgba(255, 255, 255, 0.55) 0 10%, transparent 32%),
+    var(--berry);
+  box-shadow: inset 0 -0.1em 0.2em rgba(0, 0, 0, 0.25);
+}
+
+/* Mustikka's crown: five points near the top, so seat 2 reads without colour. */
+.crown {
+  position: absolute;
+  left: 33%;
+  top: 9%;
+  width: 34%;
+  height: 18%;
+  background: var(--berry-crown);
+  clip-path: polygon(0% 100%, 0% 25%, 15% 60%, 25% 5%, 37% 60%, 50% 0%, 63% 60%, 75% 5%, 85% 60%, 100% 25%, 100% 100%);
+}
+
+/* The viewer's own seat. */
+.me {
+  outline: 2px solid var(--text);
+  outline-offset: 1px;
+}

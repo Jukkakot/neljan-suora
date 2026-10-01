@@ -1,13 +1,6 @@
-import styles from "./SeatMark.module.css";
+import { Berry } from "./Berry.tsx";
 
-/** A seat's colour as a small flat square (the theme's piece cell); the viewer's own has a ring. */
+/** A seat's berry at a small fixed size (player strip, turn line, result table); the viewer's own has a ring. */
 export function SeatMark({ seat, isMe = false, size = 20 }: { seat: number; isMe?: boolean; size?: number }) {
-  return (
-    <span
-      className={isMe ? `${styles.mark} ${styles.me}` : styles.mark}
-      style={{ width: size, height: size, background: `var(--seat-${seat})` }}
-      data-seat={seat}
-      aria-hidden="true"
-    />
-  );
+  return <Berry seat={seat} isMe={isMe} size={size} />;
 }

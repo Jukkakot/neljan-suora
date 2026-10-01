@@ -17,7 +17,7 @@ afterEach(() => localStorage.clear());
 describe("first-game-tips › One-time tips in the first game", () => {
   it("First turn: the goal first, how to place after closing it", () => {
     render(<FirstGameTips {...myTurn} />);
-    expect(screen.getByRole("status").textContent).toContain("Saa kolme merkkiä riviin");
+    expect(screen.getByRole("status").textContent).toContain("Saa kolme marjaa riviin");
 
     fireEvent.click(screen.getByRole("button", { name: "Sulje vinkki" }));
     expect(screen.getByRole("status").textContent).toContain("Napauta tyhjää ruutua");

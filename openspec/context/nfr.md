@@ -101,5 +101,6 @@ Apply to every change. Designs and task lists must show how they are met.
   Workers and typed arrays may be assumed.
 
 ## Theme
-- Every UI change follows the theme "Placeholder" (product.md → Theme). Light and dark are both
+- Every UI change follows the theme "Marjat" (product.md → Theme); `client/src/ui/tokens.test.ts`
+  checks its contrast and colour rules. Light and dark are both
   designed; the device setting is followed unless the player forces one.

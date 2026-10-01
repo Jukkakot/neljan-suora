@@ -7,9 +7,8 @@ deploy, setup checklist, logs, bug runbook) and development (run, test, debug, c
 game kit). Start any planning or investigation there, then verify against the code. Keep it current: every change updates the
 wiki pages it affects (enforced by `openspec/config.yaml` rules and archive guidance).
 
-Theme: **Placeholder** (`openspec/context/product.md` → Theme). Every UI change and every text follows
-it; check light and dark. Until the `theme` change has agreed the real theme (with light and dark
-mockups), it is a neutral stand-in: the first spec work is that change.
+Theme: **Marjat** – berries in a birch crate (`openspec/context/product.md` → Theme). Every UI change
+and every text follows it; check light and dark.
 
 The project was made from the game kit's template (`create-game`); the game is the placeholder
 Ristinolla until `rules-engine` replaces it.

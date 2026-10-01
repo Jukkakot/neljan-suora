@@ -21,7 +21,7 @@ describe("player strip", () => {
 
   it("each chip tells the seat's marks", () => {
     const { container } = render(<PlayerStrip view={{ seats, turnSeat: 1 }} />);
-    expect(chip(container, 1).textContent).toContain("2 merkkiä");
-    expect(chip(container, 2).textContent).toContain("1 merkki");
+    expect(chip(container, 1).textContent).toContain("2 marjaa");
+    expect(chip(container, 2).textContent).toContain("1 marja");
   });
 });

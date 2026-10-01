@@ -19,6 +19,12 @@ body {
   overscroll-behavior: none;
 }
 
+h1,
+h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
 button {
   font: inherit;
   touch-action: manipulation;

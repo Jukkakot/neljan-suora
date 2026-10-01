@@ -162,16 +162,16 @@ client/src/
                 generic controls (undo, hint, kick, leave, autoplay, spectate, game id badge)
   tips/         first-game tips and the start screen's reset link
   settings/     device settings store, settings screen, theme, generated sounds, turn alert
-  motion/       generic motion helpers: board diff, useLastMove, useEnded, useCountUp, Snowfall
-  ui/           tokens.css (theme "Placeholder", light + dark) and shared components
+  motion/       generic motion helpers: board diff, useLastMove, useEnded, useCountUp, LeafFall
+  ui/           tokens.css (theme "Marjat", light + dark; tokens.test.ts checks contrast) and shared components
   i18n/ config.ts CrashBoundary.tsx
 ```
 
 - **Server state is the truth.** The kit's `toLobbyView()` and the game's `toView()` turn synced
   state into an immutable `GameView` (`LobbyView<SeatView> & NeljanSuoraView`); components render it.
 - **UI foundation:** every colour, spacing and radius is a token in `ui/tokens.css`; CSS Modules;
-  anything shown twice is a shared component (`SeatMark` = a seat's colour everywhere).
-- **A move:** the first tap on an empty cell chooses it, the second tap or "Merkitse" makes the
+  anything shown twice is a shared component (`Berry` = a seat's piece everywhere; `SeatMark` is its small fixed-size form).
+- **A move:** the first tap on an empty cell chooses it, the second tap or "Aseta" makes the
   move (one deliberate confirm); "Vihje" chooses the search bot's cell.
 - **Session:** a per-tab reconnection token rejoins after a reload; a seated player's unfinished
   game is remembered, so a newly opened app offers "Jatka peliä".

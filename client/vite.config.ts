@@ -22,8 +22,8 @@ export default defineConfig(({ command }) => ({
         short_name: "Neljän suora",
         description: "Neljän suora – selainpeli puhelimessa",
         lang: "fi",
-        theme_color: "#3a78c2",
-        background_color: "#f5f7f9",
+        theme_color: "#34407e",
+        background_color: "#eef0e8",
         display: "standalone",
         orientation: "portrait",
         // Relative to the manifest, so the same build works under /neljan-suora/ and at the root.

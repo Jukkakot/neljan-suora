@@ -91,14 +91,14 @@ describe("game screen › a move", () => {
     fireEvent.click(cell(container, 4));
     expect(move).not.toHaveBeenCalled();
     expect(cell(container, 4).getAttribute("aria-pressed")).toBe("true");
-    expect(screen.getByText("Napauta ruutua uudelleen tai paina Merkitse")).toBeTruthy();
+    expect(screen.getByText("Napauta ruutua uudelleen tai paina Aseta")).toBeTruthy();
     await act(async () => fireEvent.click(cell(container, 4)));
     expect(move).toHaveBeenCalledExactlyOnceWith({ cell: 4 });
   });
 
   it("the confirm button makes the chosen move; it is disabled until a cell is chosen", async () => {
     const { container, move } = setup();
-    const confirm = screen.getByRole("button", { name: "Merkitse" }) as HTMLButtonElement;
+    const confirm = screen.getByRole("button", { name: "Aseta" }) as HTMLButtonElement;
     expect(confirm.disabled).toBe(true);
     fireEvent.click(cell(container, 0));
     fireEvent.click(cell(container, 2));
@@ -125,8 +125,32 @@ describe("game screen › a move", () => {
       { seat: 1, name: "Maija", isMe: true, isBot: false, marks: 3, left: false, winner: true, rank: 1 },
       { seat: 2, name: "Pekka", isMe: false, isBot: false, marks: 2, left: false, winner: false, rank: 2 },
     ] }));
-    expect(screen.getByText("Voitit!")).toBeTruthy();
+    expect(screen.getByText("Voitit – kori täynnä!")).toBeTruthy();
     expect(screen.getByRole("table", { name: "Tulokset" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Pelaa uudelleen" })).toBeTruthy();
+  });
+});
+
+describe("visual-theme › Motion of a won game", () => {
+  const results = (winner: boolean) => [
+    { seat: 1, name: "Maija", isMe: true, isBot: false, marks: 3, left: false, winner, rank: 1 },
+    { seat: 2, name: "Pekka", isMe: false, isBot: false, marks: 3, left: false, winner: false, rank: winner ? 2 : 1 },
+  ];
+  /** A game seen running, then seen to end as `end` says. */
+  function end(end: Parameters<typeof gameView>[0]) {
+    const session = { move: vi.fn(), kick: vi.fn(), leave: vi.fn(), pending: false, setSpeed: vi.fn(), rematch: vi.fn(), rematching: false, watchBots: vi.fn(), nickname: () => "Maija" };
+    const { container, rerender } = render(<GameScreen view={gameView()} session={session} />);
+    rerender(<GameScreen view={gameView({ finished: true, phase: "finished", turnSeat: 0, isMyTurn: false, game: undefined, ...end })} session={session} />);
+    return container.ownerDocument;
+  }
+
+  it("A win: leaves fall", () => {
+    const doc = end({ winners: [1], results: results(true) });
+    expect(doc.querySelector("[data-leaffall]")).not.toBeNull();
+  });
+
+  it("A draw: no leaves fall", () => {
+    const doc = end({ winners: [], results: results(false) });
+    expect(doc.querySelector("[data-leaffall]")).toBeNull();
   });
 });

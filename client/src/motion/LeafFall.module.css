@@ -1,0 +1,45 @@
+/* Over everything, but never in the way: taps go through to the buttons underneath. */
+.fall {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* A leaf (two opposite rounded corners), falling from above the top edge with a drift and a sway. */
+.leaf {
+  position: absolute;
+  top: -16px;
+  width: 14px;
+  height: 8px;
+  background: var(--leaf);
+  border-radius: 0 100%;
+  opacity: 0;
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+@keyframes fall {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg) scale(var(--scale));
+  }
+  10% {
+    opacity: 0.9;
+  }
+  30% {
+    transform: translate(var(--sway), 30vh) rotate(calc(var(--spin) * 0.3)) scale(var(--scale));
+  }
+  55% {
+    transform: translate(calc(var(--sway) * -1), 55vh) rotate(calc(var(--spin) * 0.55)) scale(var(--scale));
+  }
+  85% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--drift), 100vh) rotate(var(--spin)) scale(var(--scale));
+  }
+}

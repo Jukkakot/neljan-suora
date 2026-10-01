@@ -31,7 +31,7 @@ describe("board-view › Whose turn is shown", () => {
 
   it("a finished game without a winner is a draw", () => {
     render(<TurnLine view={{ seats, turnSeat: 0, isMyTurn: false, finished: true, winners: [] }} />);
-    expect(screen.getByText("Tasapeli")).toBeTruthy();
+    expect(screen.getByText("Tasapeli – laatikko täynnä")).toBeTruthy();
   });
 
   it("shows nothing before anybody holds the turn", () => {

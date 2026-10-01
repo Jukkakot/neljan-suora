@@ -127,7 +127,7 @@ npm run strength -w @neljan-suora/bots          # the requirements in packages/n
   file Claude edits and hands problems back at once.
 - **Playwright MCP** (for Claude): `playwright-mobile` = Galaxy S24 (default for UI checks),
   `playwright-ios` = iPhone 15, `playwright` = desktop; all headless and isolated. UI checks cover
-  both the light and the dark theme (Placeholder) when colours or surfaces change.
+  both the light and the dark theme (Marjat) when colours or surfaces change.
 - **Render MCP** (for Claude): deploys, service details, production logs. See
   [operations.md](operations.md).
 
