@@ -43,8 +43,9 @@ scope and non-goals explicit.
 then **stop for the user's review** before the next. Ask the user opinion questions freely (with
 AskUserQuestion); they want to be asked during spec work.
 
-**Autopilot** (implementation phase; **OFF** until the user switches it on, e.g. "autopilot päälle";
-then note the date here): when on, this overrides the review stops.
+**Autopilot** (implementation phase; **ON since 2026-10-01**, switched on by the user; it may also
+spec the planned roadmap items itself, without review stops, through `bot-v1`; it stops before
+`first-deploy`): when on, this overrides the review stops.
 
 - Run the loop without asking: apply → verify (check chain + UI check where visible) → commit →
   archive (sync specs, update roadmap and wiki) → commit → push → next specced change → …
