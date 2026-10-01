@@ -66,25 +66,6 @@ shine without animation and no leaves SHALL fall.
 - **WHEN** a game ends in a draw
 - **THEN** no line shines and no leaves fall
 
-### Requirement: Restrained voice
-Texts in play SHALL be plain and clear; the piece SHALL be called a berry ("marja", "berry").
-Theme words SHALL appear only in names and in the end-of-game lines: "Voitit – kori täynnä!"
-("You won – basket full!"), "{name} voitti – kori täynnä" ("{name} won – basket full") and
-"Tasapeli – laatikko täynnä" ("Draw – the crate is full"). The move's confirm button SHALL read
-"Aseta" ("Place").
-
-#### Scenario: The viewer wins
-- **WHEN** the viewer wins a game
-- **THEN** the end of the game reads "Voitit – kori täynnä!" in Finnish
-
-#### Scenario: Another player wins
-- **WHEN** the bot Kettu wins a game the viewer played
-- **THEN** the end of the game reads "Kettu voitti – kori täynnä"
-
-#### Scenario: Confirming a move
-- **WHEN** the viewer has chosen a cell
-- **THEN** the confirm button reads "Aseta"
-
 ### Requirement: Own look, not the commercial game's
 The theme SHALL NOT use the commercial four-in-a-row game's name, logo, box look or its
 signature colours (red and yellow pieces in a blue frame). The board SHALL be wood-coloured, not
@@ -93,3 +74,17 @@ blue, and no seat SHALL be yellow.
 #### Scenario: Board and seat colours
 - **WHEN** a game is shown in either theme
 - **THEN** the board is a wood colour and the two seats are red and blue berries
+
+### Requirement: Plain voice
+Texts in play SHALL be plain and clear; the piece SHALL be called a berry ("marja", "berry").
+Theme words SHALL appear only in names and in the end-of-game lines: "Voitit – kori täynnä!"
+("You won – basket full!"), "{name} voitti – kori täynnä" ("{name} won – basket full") and
+"Tasapeli – laatikko täynnä" ("Draw – the crate is full").
+
+#### Scenario: The viewer wins
+- **WHEN** the viewer wins a game
+- **THEN** the end of the game reads "Voitit – kori täynnä!" in Finnish
+
+#### Scenario: Another player wins
+- **WHEN** the bot Kettu wins a game the viewer played
+- **THEN** the end of the game reads "Kettu voitti – kori täynnä"

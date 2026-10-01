@@ -12,7 +12,7 @@ tasks written), **planned**.
 | 3 | `game-ui` | done | The upright grid in the client shell: column-first controls with a ghost disc and one confirm, drop animation, the winning row shown; view model and client definition; E2E smoke on the real moves; front page card refreshed |
 | 4 | `bot-v1` | done | Searching bot (product.md → Bot ambition) through the bot adapter, measured against the kit's search; a strength requirement in `strength.json`, tournament green |
 | 5 | `first-deploy` | done | The rest of the setup checklist (docs/operations.md): Pages, Render, Axiom, prod smoke; done with the user's go-ahead (creates external services); the front page card links the game. Axiom moved to `shared-logs` (dataset limit) |
-| 6 | `one-tap-drop` | specced | A tap on a column drops the berry at once in every game type; "Aseta" goes; "Vihje" only shows the column (user's request 2026-10-01) |
+| 6 | `one-tap-drop` | done | A tap on a column drops the berry at once in every game type; "Aseta" goes; "Vihje" only shows the column (user's request 2026-10-01) |
 | 7 | `shared-logs` | planned | One Axiom dataset shared by all the user's games (personal tier allows 3 datasets, all taken): lines carry which game and which side (server/client) they come from; queries and dashboards filter by it. Likely a game-kit change first; then wire this game's `AXIOM_TOKEN`, dashboard and the log query check |
 
 ## Later, to consider (not now)

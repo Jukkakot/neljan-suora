@@ -1,37 +1,13 @@
 # game-board Specification
 
 ## Purpose
-The board as the player uses it: choosing a column with a ghost berry and one confirm, columns that cannot be tapped, labels read aloud, and the winning row standing out.
+The board as the player uses it: one tap drops a berry, the hint shows a column with a ghost berry, columns that cannot be tapped, labels read aloud, and the winning row standing out.
 
 ## Requirements
 
-### Requirement: Column first, one confirm
-On the viewer's turn each column that is not full SHALL be one tap target the full height of the
-grid. The first tap SHALL choose the column: the viewer's berry is shown faded (the ghost) in the
-cell it would land in and the column is lit. A second tap on the same column, or "Aseta", SHALL drop
-it; a tap on another column SHALL move the choice there. Nothing SHALL be played by a single tap.
-A full column, every column while it is not the viewer's turn, and every column while a move is on
-its way SHALL NOT be tappable.
-
-#### Scenario: Choosing a column
-- **WHEN** it is the viewer's turn and they tap column 4, which holds two berries
-- **THEN** their ghost berry shows in column 4's third hole from the bottom and no move is sent
-
-#### Scenario: Confirming
-- **WHEN** the viewer has chosen column 4 and taps it again
-- **THEN** the move "column 4" is sent
-
-#### Scenario: Changing the choice
-- **WHEN** the viewer has chosen column 4 and taps column 2
-- **THEN** the ghost moves to column 2 and no move is sent
-
-#### Scenario: A full column
-- **WHEN** column 1 holds six berries
-- **THEN** column 1 cannot be tapped
-
 ### Requirement: Columns read aloud
 Each column SHALL be labelled with its number and its contents from the bottom up (or that it is
-empty), and SHALL say when it is full or chosen.
+empty), and SHALL say when it is full or hinted.
 
 #### Scenario: A column with berries
 - **WHEN** column 3 holds a lingonberry with a blueberry on top
@@ -48,3 +24,39 @@ their ring) stand out. A draw SHALL fade nothing.
 #### Scenario: A draw
 - **WHEN** a game ends in a draw
 - **THEN** no berry is faded
+
+### Requirement: One tap drops
+On the viewer's turn each column that is not full SHALL be one tap target the full height of the
+grid, and a tap on it SHALL play that column at once, in every game type. There SHALL be no
+confirm step and no confirm button. A full column, every column while it is not the viewer's turn,
+and every column while a move is on its way SHALL NOT be tappable, so a quick second tap cannot
+play twice.
+
+#### Scenario: Dropping a berry
+- **WHEN** it is the viewer's turn and they tap column 4
+- **THEN** the move "column 4" is sent
+
+#### Scenario: A quick second tap
+- **WHEN** the viewer taps column 4 and taps again before the move has landed
+- **THEN** only one move is sent
+
+#### Scenario: A full column
+- **WHEN** column 1 holds six berries
+- **THEN** column 1 cannot be tapped
+
+### Requirement: The hint shows a column
+"Vihje" SHALL light the suggested column and show the viewer's berry faded (the ghost) in the cell
+it would land in, without playing it. A tap on any column SHALL then play that column. The ghost
+SHALL be gone when the turn changes.
+
+#### Scenario: Asking for a hint
+- **WHEN** it is the viewer's turn and the hint suggests column 3, which holds two berries
+- **THEN** their ghost berry shows in column 3's third hole from the bottom and no move is sent
+
+#### Scenario: Following the hint
+- **WHEN** the hint shows column 3 and the viewer taps column 3
+- **THEN** the move "column 3" is sent
+
+#### Scenario: Ignoring the hint
+- **WHEN** the hint shows column 3 and the viewer taps column 5
+- **THEN** the move "column 5" is sent

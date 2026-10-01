@@ -17,4 +17,4 @@
 
 - [x] 3.1 `openspec/context/product.md`: Board and Mobile lines (one tap, no confirm; the hint shows a column)
 - [x] 3.2 `docs/architecture.md` (client board paragraph) and `docs/development.md` (E2E move helper line: name and one tap)
-- [ ] 3.3 At archive: `game-board` main spec Purpose line without "one confirm"
+- [x] 3.3 At archive: `game-board` main spec Purpose line without "one confirm"
