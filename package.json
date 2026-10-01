@@ -20,7 +20,8 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "oxlint && node tools/kit/check.mjs",
     "e2e": "npm run e2e -w @neljan-suora/e2e",
-    "kit:use": "node tools/kit/use.mjs"
+    "kit:use": "node tools/kit/use.mjs",
+    "homepage-card": "node tools/homepage/card.mjs"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",

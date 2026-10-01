@@ -60,6 +60,9 @@ then note the date here): when on, this overrides the review stops.
 
 ## Working agreements
 
+- Games front page: once the repo is on GitHub the game has a card on https://jukkakot.github.io.
+  Refresh it with `npm run homepage-card -- --push` (dev server running) in the change that alters
+  the look (theme, board) and after the first deploy; standing permission to push that repo too.
 - Commit and **push to `main`** yourself (standing permission for this repo once it is on GitHub;
   overrides the global "don't push" rule): at the latest before giving a summary. Until the setup
   checklist's GitHub step is done, commit only. Do not wait for CI or the deploy;

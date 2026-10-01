@@ -27,7 +27,9 @@ with a notice instead of failing: the client deploy and the production smoke wai
 `VITE_SERVER_URL`, CI's `deploy-server` job also for `RENDER_DEPLOY_HOOK_URL`.
 
 1. **GitHub repo** (public, so Actions minutes are free; CI runs from then on):
-   `gh repo create Jukkakot/neljan-suora --public --source . --push`.
+   `gh repo create Jukkakot/neljan-suora --public --source . --push`. Then put the game on the games
+   front page: `npm run homepage-card -- --push` with `npm run dev` running (see
+   [Games front page](#games-front-page)).
 2. **GitHub Pages** (the client): `gh api -X POST repos/Jukkakot/neljan-suora/pages -f build_type=workflow`
    (source "GitHub Actions"), and once the server exists
    `gh variable set VITE_SERVER_URL --repo Jukkakot/neljan-suora --body https://<service>.onrender.com`
@@ -174,3 +176,12 @@ it (`client.local.*` info lines ship only with `?debug=1`).
    bugs, reproduce with Playwright MCP (two tabs = two players).
 5. Fix; the failing test stays as a regression test. Record the root cause and the log lines
    that showed it.
+
+## Games front page
+
+Every game has a card on https://jukkakot.github.io (repo `Jukkakot/Jukkakot.github.io`, plain
+HTML). `npm run homepage-card` takes a dark-theme screenshot of a bot game on the running dev client
+and adds or refreshes the game's card (`data-game="neljan-suora"`) in a checkout next to this one (cloned
+when missing); `--push` pushes it. Until the game's Pages site answers, the card says "Tulossa" and
+links to the GitHub repo; rerun after the first deploy to link the game. Rerun also whenever the look
+changes (theme, board).
