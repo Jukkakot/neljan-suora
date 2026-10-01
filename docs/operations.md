@@ -1,13 +1,13 @@
 # Operations
 
-## Environments — Planned (roadmap `first-deploy`)
+## Environments — Implemented
 
-Nothing is deployed until the [setup checklist](#setup-checklist) is done. Then:
+Live since 2026-10-01 ([setup checklist](#setup-checklist) done).
 
 | | URL | Hosted on | Deploys when |
 |---|---|---|---|
 | Client | https://jukkakot.github.io/neljan-suora/ | GitHub Pages | push to `main` touching `client/`, `packages/rules/`, lockfile ("Deploy client" workflow) |
-| Server | `https://<service>.onrender.com` (also the repository variable `VITE_SERVER_URL`) | Render free web service `neljan-suora-server` (Frankfurt) | green CI on `main` when the server code (`server/`, `packages/rules/`, `packages/protocol/`, lockfile, `render.yaml`) differs from the live server's commit: the `deploy-server` job in CI calls Render's deploy hook (secret `RENDER_DEPLOY_HOOK_URL`); Render auto-deploy is off |
+| Server | https://neljan-suora-server.onrender.com (also the repository variable `VITE_SERVER_URL`) | Render free web service `neljan-suora-server` (`srv-dav70tvpn0mc73afd0i0`, Frankfurt) in the shared workspace `tea-d7vbs7l7vvec73dbddt0` | green CI on `main` when the server code (`server/`, `packages/rules/`, `packages/protocol/`, lockfile, `render.yaml`) differs from the live server's commit: the `deploy-server` job in CI calls Render's deploy hook (secret `RENDER_DEPLOY_HOOK_URL`); Render auto-deploy is off |
 
 - Game kit: Render, Pages and CI download the `@game-kit/*` release tarballs from public GitHub
   Releases of `Jukkakot/game-kit` during `npm ci` (no token). A kit bump changes the lockfile, which
@@ -19,6 +19,8 @@ Nothing is deployed until the [setup checklist](#setup-checklist) is done. Then:
   not in the dashboard.
 
 ## Setup checklist
+
+**Done 2026-10-01** (steps 1–3 and 5; step 4 waits for roadmap `shared-logs`).
 
 `create-game` created nothing outside this folder. Each step says what needs it, so it can wait
 until the first deploy, or be skipped while the game runs locally only. Commands assume the GitHub
@@ -38,7 +40,9 @@ with a notice instead of failing: the client deploy and the production smoke wai
    plan, Frankfurt). Then Settings → Deploy Hook → copy it and
    `gh secret set RENDER_DEPLOY_HOOK_URL --repo Jukkakot/neljan-suora` (paste); CI's `deploy-server`
    job uses it. Check that `ALLOWED_ORIGINS` in `render.yaml` holds the Pages origin.
-4. **Axiom** (production logs): dataset `neljan-suora` (EU) and an ingest-only token for it, e.g.
+4. **Axiom** (production logs) — *not done:* the Axiom personal tier allows 3 datasets and all
+   are taken; one dataset shared by all games is planned as roadmap `shared-logs`, which replaces
+   this step. Original step: dataset `neljan-suora` (EU) and an ingest-only token for it, e.g.
    through the API with `tools/axiom/axiom.ps1` (the user's `AXIOM_PAT`); the token goes to the
    Render service's `AXIOM_TOKEN` env var. Build the dashboard with `tools/axiom/dashboard.py`
    (writes `tools/axiom/dashboard.json`), import it, and record its uid under Logs. Without a
@@ -46,7 +50,7 @@ with a notice instead of failing: the client deploy and the production smoke wai
 5. **Production smoke:** run the `prod-smoke` workflow once by hand
    (`gh workflow run prod-smoke.yml`); it runs after every deploy from then on.
 
-Record the URLs, the Render service and workspace ids and the date here when done.
+The URLs, Render ids and the date are under [Environments](#environments--implemented).
 
 ## Release flow — Implemented
 
@@ -97,7 +101,11 @@ stale client when checking a deploy, compare the footer's "Client …" build tim
 | `AXIOM_EDGE` | `render.yaml` env | Edge domain of the dataset's region (`eu-central-1.aws.edge.axiom.co`); Axiom refuses ingest through `api.axiom.co` for EU datasets |
 | `AXIOM_TOKEN` | Render dashboard (secret, `sync: false`) | Axiom API token, **ingest-only** for `neljan-suora`; without it nothing is shipped |
 
-## Logs — Implemented
+## Logs — Implemented (Axiom shipping: Planned, roadmap `shared-logs`)
+
+**Now:** production has no `AXIOM_TOKEN`, so nothing reaches Axiom; read production logs from
+Render (dashboard or Render MCP `list_logs`, service `srv-dav70tvpn0mc73afd0i0`). The Axiom parts
+below describe the setup once `shared-logs` gives the game a dataset.
 
 All logs, server and client, are written to the server's stdout (Render's log view) and, in
 production with `AXIOM_TOKEN` set, also shipped to the **Axiom** dataset `neljan-suora` (30-day
@@ -117,7 +125,7 @@ never slows a game.
 ```
 
 **Dashboard for people:** built by `tools/axiom/dashboard.py` and uploaded with
-`tools/axiom/axiom.ps1` (see the script header), not by hand in the UI. Uid: record it here.
+`tools/axiom/axiom.ps1` (see the script header), not by hand in the UI. Uid: not built yet (`shared-logs`).
 
 **Format:** one JSON object per line, keys in this order:
 

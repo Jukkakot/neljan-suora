@@ -12,10 +12,10 @@
 
 ## 3. Render (waits for the user)
 
-- [ ] 3.1 Ask the user to create the Blueprint from `render.yaml` in the shared workspace and to give the Deploy Hook URL; then read the service id and URL with the Render MCP
+- [x] 3.1 Ask the user to create the Blueprint from `render.yaml` in the shared workspace and to give the Deploy Hook URL; then read the service id and URL with the Render MCP
 - [x] 3.2 Set `AXIOM_TOKEN` on the service with the Render MCP (`update_environment_variables`) — **moved to `shared-logs`** (design decision 7)
-- [ ] 3.3 `gh variable set VITE_SERVER_URL` (service URL) and `gh secret set RENDER_DEPLOY_HOOK_URL`
-- [ ] 3.4 Check `/health` answers with a version, and `ALLOWED_ORIGINS` matches the Pages origin
+- [x] 3.3 `gh variable set VITE_SERVER_URL` (service URL) and `gh secret set RENDER_DEPLOY_HOOK_URL`
+- [x] 3.4 Check `/health` answers with a version, and `ALLOWED_ORIGINS` matches the Pages origin
 
 ## 4. First deploy and verification
 
@@ -27,6 +27,6 @@
 
 ## 5. Docs and roadmap
 
-- [ ] 5.1 `docs/operations.md`: Environments → Implemented with the real server URL and Render service/workspace ids; setup checklist marked done with the date; Logs: dashboard uid and the setup line
-- [ ] 5.2 Any other wiki page that says "not deployed" / Planned for production (check `docs/README.md` map)
-- [ ] 5.3 `openspec/context/roadmap.md`: `first-deploy` → done
+- [x] 5.1 `docs/operations.md`: Environments → Implemented with the real server URL and Render service/workspace ids; setup checklist marked done with the date; Logs: dashboard uid and the setup line
+- [x] 5.2 Any other wiki page that says "not deployed" / Planned for production (check `docs/README.md` map)
+- [x] 5.3 `openspec/context/roadmap.md`: `first-deploy` → done
