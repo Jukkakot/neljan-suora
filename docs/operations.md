@@ -40,13 +40,10 @@ with a notice instead of failing: the client deploy and the production smoke wai
    plan, Frankfurt). Then Settings → Deploy Hook → copy it and
    `gh secret set RENDER_DEPLOY_HOOK_URL --repo Jukkakot/neljan-suora` (paste); CI's `deploy-server`
    job uses it. Check that `ALLOWED_ORIGINS` in `render.yaml` holds the Pages origin.
-4. **Axiom** (production logs) — *not done:* the Axiom personal tier allows 3 datasets and all
-   are taken; one dataset shared by all games is planned as roadmap `shared-logs`, which replaces
-   this step. Original step: dataset `neljan-suora` (EU) and an ingest-only token for it, e.g.
-   through the API with `tools/axiom/axiom.ps1` (the user's `AXIOM_PAT`); the token goes to the
-   Render service's `AXIOM_TOKEN` env var. Build the dashboard with `tools/axiom/dashboard.py`
-   (writes `tools/axiom/dashboard.json`), import it, and record its uid under Logs. Without a
-   token the server logs to Render only.
+4. **Axiom** (production logs): nothing to create. The games share the dataset `games` and one
+   ingest-only token (game-kit README → Logs): copy it from the user env var `AXIOM_GAMES_TOKEN`
+   into the Render service's `AXIOM_TOKEN` (Render MCP `update_environment_variables`, never
+   printed). The shared dashboard picks the game up by itself.
 5. **Production smoke:** run the `prod-smoke` workflow once by hand
    (`gh workflow run prod-smoke.yml`); it runs after every deploy from then on.
 
@@ -97,18 +94,14 @@ stale client when checking a deploy, compare the footer's "Client …" build tim
 | `ALLOWED_ORIGINS` | `render.yaml` env | CORS allow-list (comma-separated) |
 | `NODE_ENV=production` | `render.yaml` env | Disables `/monitor` and `/playground` |
 | `PORT` | set by Render | Server listen port |
-| `AXIOM_DATASET` | `render.yaml` env (`neljan-suora`) | Axiom dataset the production server ships its log lines to |
+| `AXIOM_DATASET` | `render.yaml` env (`games`) | Axiom dataset shared by the games; lines say which game with `game` |
 | `AXIOM_EDGE` | `render.yaml` env | Edge domain of the dataset's region (`eu-central-1.aws.edge.axiom.co`); Axiom refuses ingest through `api.axiom.co` for EU datasets |
-| `AXIOM_TOKEN` | Render dashboard (secret, `sync: false`) | Axiom API token, **ingest-only** for `neljan-suora`; without it nothing is shipped |
+| `AXIOM_TOKEN` | Render dashboard (secret, `sync: false`) | Axiom API token, the games' shared **ingest-only** token for `games`; without it nothing is shipped |
 
-## Logs — Implemented (Axiom shipping: Planned, roadmap `shared-logs`)
-
-**Now:** production has no `AXIOM_TOKEN`, so nothing reaches Axiom; read production logs from
-Render (dashboard or Render MCP `list_logs`, service `srv-dav70tvpn0mc73afd0i0`). The Axiom parts
-below describe the setup once `shared-logs` gives the game a dataset.
+## Logs — Implemented
 
 All logs, server and client, are written to the server's stdout (Render's log view) and, in
-production with `AXIOM_TOKEN` set, also shipped to the **Axiom** dataset `neljan-suora` (30-day
+production with `AXIOM_TOKEN` set, also shipped to the **Axiom** dataset `games`, shared by the user's games (30-day
 retention, queryable with APL). Axiom is the main place to read them: Claude uses the Axiom MCP
 (`queryApl`), people the Axiom web UI. Render's view (dashboard or Render MCP `list_logs`) is the
 fallback. Shipping runs in a worker thread (`@axiomhq/pino`); a failing Axiom only loses lines,
@@ -117,21 +110,21 @@ never slows a game.
 **Ready queries** (APL; narrow the time range with `where _time > ago(1d)`):
 
 ```
-['neljan-suora'] | where room == "brave-otters-sing" | sort by _time asc          // one game's timeline
-['neljan-suora'] | where level == "error" and _time > ago(1d)                      // errors today
-['neljan-suora'] | where evt == "cmd.rejected" | summarize count() by code, cmd     // rejections by code
-['neljan-suora'] | where evt == "bot.fallback" | project _time, room, seat, reason, runner
-['neljan-suora'] | where evt == "game.finished" | summarize count() by reason, bin(_time, 1d)
+['games'] | where game == "neljan-suora" and room == "brave-otters-sing" | sort by _time asc          // one game's timeline
+['games'] | where game == "neljan-suora" and level == "error" and _time > ago(1d)                      // errors today
+['games'] | where game == "neljan-suora" and evt == "cmd.rejected" | summarize count() by code, cmd     // rejections by code
+['games'] | where game == "neljan-suora" and evt == "bot.fallback" | project _time, room, seat, reason, runner
+['games'] | where game == "neljan-suora" and evt == "game.finished" | summarize count() by reason, bin(_time, 1d)
 ```
 
-**Dashboard for people:** built by `tools/axiom/dashboard.py` and uploaded with
-`tools/axiom/axiom.ps1` (see the script header), not by hand in the UI. Uid: not built yet (`shared-logs`).
+**Dashboard for people:** the shared "Pelit – lokit" (pick the game in its Peli filter), built
+by `tools/axiom/dashboard.py` in the game kit; its uid is in the game-kit README → Logs.
 
 **Format:** one JSON object per line, keys in this order:
 
 ```
 {"level":"warn","evt":"cmd.rejected","room":"brave-otters-sing","player":"r39lF4Y3r",
- "cmd":"move","code":"CELL_TAKEN", …,"src":"server","ver":"a1b2c3d","msg":"…"}
+ "cmd":"move","code":"CELL_TAKEN", …,"game":"neljan-suora","src":"server","ver":"a1b2c3d","msg":"…"}
 ```
 
 - `level` debug/info/warn/error; production writes `info` and up (`LOG_LEVEL` overrides).
@@ -139,7 +132,7 @@ never slows a game.
   `@game-kit/protocol`), the game's own client events in `packages/protocol/src/log-events.ts`.
 - `room` is the readable game id shown to players; `player` the session id; `seat` on lines about
   a seated player.
-- `src` `server` or `client`; `ver` short git commit of the side that logged (`dev` locally).
+- `game` the game's name (`neljan-suora`), set in `server/src/index.ts`; `src` `server` or `client`; `ver` short git commit of the side that logged (`dev` locally).
 - Errors: `err` (server) or `stack` (client) inside the line — never multi-line.
 - `time`: when the server wrote the line; client lines also carry the device clock in `ts`.
 
@@ -174,7 +167,7 @@ tiedot" (id, local time, version); a device game has no server room, so only cli
 it (`client.local.*` info lines ship only with `?debug=1`).
 
 1. Convert the reported local time (Europe/Helsinki) to UTC.
-2. Query Axiom: `['neljan-suora'] | where room == "<game id>" | sort by _time asc`, with a ±15 min
+2. Query Axiom: `['games'] | where game == "neljan-suora" and room == "<game id>" | sort by _time asc`, with a ±15 min
    window around the reported time. If Axiom has nothing, fetch Render logs; locally, read
    `logs/dev.log`.
 3. Follow the room timeline: `player.*`, `cmd.accepted`/`cmd.rejected`/`cmd.failed`,

@@ -24,7 +24,7 @@
     "bench": "tsx --conditions=source cli/bench.ts"
   },
   "dependencies": {
-    "@game-kit/bots": "https://github.com/Jukkakot/game-kit/releases/download/v0.1.0/game-kit-bots-0.1.0.tgz",
+    "@game-kit/bots": "https://github.com/Jukkakot/game-kit/releases/download/v0.2.0/game-kit-bots-0.2.0.tgz",
     "@neljan-suora/rules": "*"
   },
   "devDependencies": {
