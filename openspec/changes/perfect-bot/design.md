@@ -134,6 +134,16 @@ requirements use their own opening of 1 ply. Record the outcome here.
 The generator runs detached in the background during apply (it may take hours); work continues on
 the client tasks meanwhile.
 
+**8-disc oracle (decided during apply):** without help the shallow roots are far too slow in JS — a
+3-disc position took 83 s, and after an hour the first wave (the start and the 1-disc positions) had
+not finished one position. The generator's full solver therefore stops at 8 discs with John Tromp's
+database (UCI ML Repository "Connect-4", CC BY 4.0: every 8-disc position without a win and without a
+forced next disc, with its outcome). With it: start 47 s (column 3 only, as theory says), 1-disc
+positions 7–73 s, 2-disc 2 s. The database is downloaded into the git-ignored `book/.cache/`, checked
+against the solver on 20 random entries at every run, and never committed or shipped; the browser's
+solver has no oracle. Alternative considered: hard-coding the known opening theory — it gives the
+outcomes of the first discs but not the best columns deeper down, which the book needs.
+
 ### 5. Shipping the book to the browser
 
 The book is a Vite asset (`import bookUrl from "@neljan-suora/bots/book?url"` via a package export)

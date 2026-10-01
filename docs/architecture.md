@@ -151,17 +151,31 @@ kit packages come built (`dist/` only).
   transposition table (2^20 entries, ~12 MB, cleared per answer so a depth and seed always give the
   same column); threats-then-centre move order; iterative deepening under the budget. The leaf
   rating counts each column's lowest winning cell by row parity (zugzwang) plus cell weights.
-  **`devicePlayer`** (the bot people play against) is this searcher. Measured at 800 ms on a
-  desktop: ~2.3 M nodes/s, depth 14–16 in the opening (the kit's search at full width: 9–10).
-  Reusable for other two-player games (a kit candidate): the iterative deepening with a time check,
-  the typed-array table, exact root ties broken by the seed.
-- **Tournaments:** the bot registry with budgets (`negamax@d8`, `brs@d4`, `mcts@i400`,
-  `greedy@200ms`), formats, the random opening, `playTournamentGame`; `cli/` runs games on worker
-  threads. Requirements in `strength.json` (negamax beats random ≥ 98 %, negamax@d8 beats the kit's
-  `brs@d4` ≥ 90 %).
+  Measured at 800 ms on a desktop: ~2.3 M nodes/s, depth 14–16 in the opening (the kit's search at
+  full width: 9–10). Reusable for other two-player games (a kit candidate): the iterative deepening
+  with a time check, the typed-array table, exact root ties broken by the seed.
+- **The perfect bot** (`src/perfect/`, `perfect-bot`) is **`devicePlayer`**, the bot people play
+  against: a win/draw/loss solver (null-window search on the same bitboards, its own bounds table,
+  a node limit) settles the position, from the **opening book** when the position is in it; the
+  negamax then chooses among the columns of the best outcome (all columns when lost or unsettled).
+  The book holds only the positions the browser cannot settle within `SOLVE_NODES` (1.5 M nodes,
+  ~2 s on a mid-range phone), each with its outcome and best columns, mirror images shared; the
+  `NSB1` binary file is generated offline (development → Opening book) and committed under
+  `packages/neljan-suora-bots/book/`.
+- **Tournaments:** the bot registry with budgets (`perfect` = depth 8 + `SOLVE_NODES`,
+  `negamax@d8`, `brs@d4`, `mcts@i400`, `greedy@200ms`), formats, the random opening,
+  `playTournamentGame`; `cli/` runs games on worker threads and gives `perfect` the book from disk.
+  Requirements in `strength.json` (negamax beats random ≥ 98 %, negamax@d8 beats the kit's `brs@d4`
+  ≥ 90 %, perfect beats negamax@d8 ≥ 80 % and never loses a game it judged won or drawn at its first
+  move).
 - **In the client** (`client/src/bots/`): `bot.worker.ts` serves `chooseMove` in a module Web
   Worker (own size-limit entry); `askBotWorker` asks it and answers in the page where no worker can
-  run. Budget 800 ms (divided by the watching speed); the bot thinks during the 1 s pause.
+  run; "Vihje" asks it too. Budget 3 s and `SOLVE_NODES` (both divided by the watching speed); the
+  move still shows after the 1 s pause, so only an unsettled position makes the bot think longer.
+  The opening book is its own hashed asset, not in any bundle: the page fetches it on the first bot
+  question of the visit (that question waits for it up to 1.5 s), hands it to the worker once, logs
+  `client.warn` `bot.book` once if it fails; the service worker keeps it (runtime `CacheFirst`, not
+  precached), so later visits play from it offline.
 
 ## Client — Implemented
 

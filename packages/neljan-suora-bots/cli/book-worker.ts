@@ -3,6 +3,7 @@ import { gameAfter } from "@neljan-suora/rules/testing";
 import { Position } from "../src/negamax/position.js";
 import { SOLVE_NODES } from "../src/perfect/bot.js";
 import { Solver, type RootVerdict } from "../src/perfect/solve.js";
+import { loadOracle } from "./oracle.js";
 
 /** A position to judge, by the columns played from the start. */
 export interface BookTask {
@@ -24,7 +25,8 @@ if (parentPort) {
   const port = parentPort;
   const { tableBits } = workerData as { tableBits: number };
   const quick = new Solver();
-  const full = new Solver(tableBits);
+  // The 8-disc database (when downloaded) ends the full solves of shallow positions early.
+  const full = new Solver(tableBits, loadOracle());
   port.on("message", (task: BookTask) => {
     try {
       port.postMessage({ ok: true, result: judge(task, quick, full) });

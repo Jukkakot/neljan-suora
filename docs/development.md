@@ -48,7 +48,8 @@ npm run e2e   # smoke test, when UI or connection code changed
   release, see below). No formatter.
 - Workspace order matters for the build: `rules`, `protocol`, the bots, `server`, `client` (root
   `package.json`).
-- Bundle budget: client JavaScript ≤ 200 kB gzip, the bot worker ≤ 30 kB (size-limit, fails CI).
+- Bundle budget: client JavaScript ≤ 200 kB gzip, the bot worker ≤ 30 kB, the opening book ≤ 8 MB
+  raw (size-limit, fails CI).
 - Tests: Vitest in every workspace. Server test files run one at a time because each boots a
   real Colyseus server (`fileParallelism: false`).
 
@@ -89,18 +90,41 @@ npm run tournament -w @neljan-suora/bots -- greedy brs mcts@i400 --games 100 [--
 npm run strength -w @neljan-suora/bots          # the requirements in packages/neljan-suora-bots/strength.json
 ```
 
-- Bots: a registry name (`random`, `greedy`, `brs`, `mcts`, `negamax`) with an optional budget, `@<n>ms`,
-  `@d<n>` (search depth) or `@i<n>` (MCTS iterations). Depth and iteration budgets give identical
+- Bots: a registry name (`random`, `greedy`, `brs`, `mcts`, `negamax`, `perfect`) with an optional
+  budget, `@<n>ms`, `@d<n>` (search depth) or `@i<n>` (MCTS iterations; the perfect bot's solve
+  nodes). Depth and iteration budgets give identical
   results on any machine and job count; time limits do not (the report says so), so
   `strength.json` uses depth budgets only.
 - Every game starts from a 2-disc random opening drawn from its seed (`openedGame`), the same for
   both seat orders, so deterministic bots do not replay one game.
 - `npm run bench -w @neljan-suora/bots [-- --ms 800]`: depth reached and nodes per second of the
-  negamax and of the kit's search at full width, for a quick speed check.
+  negamax and of the kit's search at full width, for a quick speed check; `-- --solver` instead
+  measures the solver: nodes needed to settle positions at plies 6–16.
 - The report (Markdown) goes to stdout; the JSON with every game to
   `packages/neljan-suora-bots/tournament-results/` (git-ignored) or `--out`.
 - A new bot: add it to `BOTS` in `packages/neljan-suora-bots/src/tournament.ts`, then add a
   requirement "new beats previous ≥ 60 % over 200 games" to `strength.json`.
+
+### Opening book
+
+```
+npm run book -w @neljan-suora/bots [-- --jobs 5 --table-bits 24 --max-plies 8 --narrow]
+```
+
+- First download John Tromp's 8-disc database (UCI Machine Learning Repository, "Connect-4",
+  CC BY 4.0) into the git-ignored `packages/neljan-suora-bots/book/.cache/`:
+  `curl -L -o connect-4.zip https://archive.ics.uci.edu/static/public/26/connect+4.zip`, unzip,
+  `gzip -dc connect-4.data.Z > connect-4.data`. The generator stops its searches at 8 discs with it
+  (checking 20 entries against the solver first); without it the shallow positions take a day or
+  more. It is a generation aid only: never committed, never shipped.
+- Regenerate it when the solver's verdicts, `SOLVE_NODES` or the book format change; commit
+  `packages/neljan-suora-bots/book/neljan-suora-book.bin`. A full run takes hours on all cores but
+  one (see the `perfect-bot` design for the measured time), so start it detached.
+- Progress is saved after every judged position in `book/.progress/` (git-ignored): stopping and
+  running the command again resumes. Delete that folder to start over (required when `SOLVE_NODES`
+  or `--narrow` change). `--max-plies` stops early; its work is reused by the next run.
+- The run ends with self-checks against the known theory (the start is won only by column 3; first
+  discs in columns 2 and 4 draw, in 0, 1, 5 and 6 lose) and refuses to write a book that fails them.
 
 ### E2E smoke
 

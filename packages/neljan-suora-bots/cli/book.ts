@@ -23,6 +23,7 @@ import { Book, canonicalKey, writeBook, type BookEntry } from "../src/perfect/bo
 import { SOLVE_NODES } from "../src/perfect/bot.js";
 import type { BookResult } from "./book-worker.js";
 import { BOOK_FILE } from "./load-book.js";
+import { checkOracle, loadOracle, ORACLE_FILE } from "./oracle.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const BOOK_DIR = join(here, "..", "book");
@@ -168,6 +169,13 @@ function selfCheck(book: Book): void {
 
 async function main(): Promise<void> {
   mkdirSync(PROGRESS_DIR, { recursive: true });
+  const oracle = loadOracle();
+  if (oracle) {
+    process.stderr.write(`oracle: ${oracle.size} positions of 8 discs; checking 20 against the solver…\n`);
+    checkOracle(oracle, 20);
+  } else {
+    process.stderr.write(`no oracle at ${ORACLE_FILE}: the shallow positions take hours (development → Opening book)\n`);
+  }
   const state = loadState();
   const pool = new Pool(jobs, Number(values["table-bits"]));
   const started = Date.now();

@@ -36,7 +36,7 @@
 
 ## 3. The opening book
 
-- [ ] 3.1 `cli/book.ts` + `npm run book -w @neljan-suora/bots`: roots = every position with ≤ 2 discs,
+- [x] 3.1 `cli/book.ts` + `npm run book -w @neljan-suora/bots`: roots = every position with ≤ 2 discs,
   waves by disc count, worker threads, the adaptive storing and expansion rules, checkpoints in
   `book/.progress/` (git-ignored), the self-checks, output `book/neljan-suora-book.bin`; a
   `--max-plies` option for dry runs (design 3, 4). Verify: a dry run with `--max-plies 4` finishes,
@@ -77,7 +77,7 @@
 
 ## 6. Docs and roadmap
 
-- [ ] 6.1 `docs/architecture.md` → Bots (solver, perfect bot, book, loading), `docs/development.md`
+- [x] 6.1 `docs/architecture.md` → Bots (solver, perfect bot, book, loading), `docs/development.md`
   (generating the book: command, time, when to regenerate), `openspec/context/product.md` → Bot
   ambition (perfect play, user's decision to replace), `openspec/context/nfr.md` → Performance
   (book ≤ 8 MB, fetched on demand), roadmap: add `perfect-bot` as done and remove it from "Later".

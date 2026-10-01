@@ -34,6 +34,12 @@ iterative deepening within the time budget. Decided in `bot-v1` by measurement: 
 searcher; the kit's best-reply search (built for more players) prunes the opponent's replies to the
 three most central and searches about half as deep, so it stays a baseline only.
 
+The offered bot plays **perfectly** (`perfect-bot`, the user's decision 2026-10-01: it replaces the
+searcher, no difficulty levels): it keeps the best outcome under perfect play whenever an opening book
+or a solve within about 3 s settles the position, and lets the searcher choose among the columns of
+that outcome. As the first seat it never loses; as the second it wins or draws whenever the person
+errs into such a position. "Vihje" uses the same bot.
+
 ## Modes
 
 - **Against bots on the device:** a person against bots, fully in the browser (no server), also
