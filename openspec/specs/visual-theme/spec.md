@@ -38,13 +38,15 @@ surface, and each berry at least 3:1 with an empty hole, in both themes.
 - **THEN** the light theme is shown
 
 ### Requirement: Motion of a placed piece
-A newly placed berry SHALL settle with a short squish (it lands flattened and springs back) that
-ends within 250 ms, and the last move SHALL stay marked until the next move. When the device asks
-for reduced motion, the berry SHALL appear at rest at once and the mark SHALL remain.
+A newly placed berry SHALL drop from the top of its column to its cell, faster the shorter the fall
+and speeding up as it falls, then settle with a short squish (it lands flattened and springs back);
+the whole motion SHALL end within 500 ms. The last move SHALL stay marked until the next move. When
+the device asks for reduced motion, the berry SHALL appear at rest at once and the mark SHALL remain.
 
 #### Scenario: A move settles in
 - **WHEN** a move is made
-- **THEN** the new berry squishes and is at rest within 250 ms, and it is marked as the last move
+- **THEN** the new berry drops down its column, squishes, is at rest within 500 ms, and is marked
+  as the last move
 
 #### Scenario: Reduced motion
 - **WHEN** the device asks for reduced motion and a move is made

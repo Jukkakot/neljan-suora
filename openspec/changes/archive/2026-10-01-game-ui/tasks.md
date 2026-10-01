@@ -15,6 +15,6 @@
 - [x] 3.1 Run the check chain once and fix failures.
 - [x] 3.2 UI check on `playwright-mobile` portrait, light and dark: a bot game mid-play with a ghost (`/?dev=1v1`), and a won game watched (`/?dev=0v2` at 4×): faded rest, ring, falling leaves; one landscape glance. Screenshots under `.playwright-mcp/`.
 - [x] 3.3 Docs: `docs/architecture.md` (the board line and "A move"), `product.md` Controls (as built); roadmap `game-ui` done.
-- [ ] 3.4 Refresh the front page card: `npm run homepage-card -- --push` (dev server running).
+- [x] 3.4 Refresh the front page card: `npm run homepage-card -- --push` (dev server running).
 
 ## Notes
