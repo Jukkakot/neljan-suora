@@ -45,6 +45,12 @@ a notice until `VITE_SERVER_URL` / `RENDER_DEPLOY_HOOK_URL` exist), `tools/axiom
 6. **Fix-forward:** if the first deploy fails on something in the repo (CORS origin, base path,
    build command, Node version), fix it in this change with a `fix:` commit; record the cause in
    `tasks.md`. If a fix is generic (template file), note it as a kit TODO for `game-kit/template/`.
+7. **Axiom deferred** (user's choice 2026-10-01): the Axiom personal tier allows 3 datasets and
+   `labyrinth`, `monopoly` and `palikka` (all active) take them, so `neljan-suora` cannot be
+   created for free. The user wants one dataset shared by all games, with each line telling which
+   game and which side (server/client) it came from; that is planned separately as roadmap item
+   `shared-logs`. Here the server runs without `AXIOM_TOKEN` (ships nothing) and production logs
+   are read from Render (MCP `list_logs`). Tasks 1.1–1.3, 3.2 and 4.3 move to `shared-logs`.
 
 ## NFR (openspec/context/nfr.md)
 
