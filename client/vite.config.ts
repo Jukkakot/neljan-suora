@@ -39,9 +39,22 @@ export default defineConfig(({ command }) => ({
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,ico,webmanifest}"],
         cleanupOutdatedCaches: true,
+        // The bot's opening book (several MB) is not precached: it is fetched on the first bot move
+        // and then kept, so later visits play from it offline. Its hashed name makes it immutable.
+        runtimeCaching: [
+          {
+            urlPattern: /\/assets\/neljan-suora-book-[^/]*\.bin$/,
+            handler: "CacheFirst",
+            options: { cacheName: "opening-book", expiration: { maxEntries: 2 } },
+          },
+        ],
       },
     }),
   ],
+  build: {
+    // The book always stays its own file (the empty placeholder would otherwise be inlined).
+    assetsInlineLimit: (file) => (file.endsWith(".bin") ? false : undefined),
+  },
   define: {
     // UTC time of `vite build`, shown on the start screen; null ("dev") for the dev server and tests.
     __BUILD_TIME__: JSON.stringify(command === "build" ? new Date().toISOString() : null),

@@ -9,6 +9,8 @@ export interface MoveControlsProps {
   /** What the status line says: the next step. */
   status: string;
   onHint(): void;
+  /** A hint is being worked out: "Vihje" waits. */
+  hinting?: boolean;
   /** Games against bots on the device only: takes back the last move. */
   onUndo?(): void;
   canUndo?: boolean;
@@ -18,7 +20,7 @@ export interface MoveControlsProps {
  * Under the board during play: the status line (what to do next), "Vihje" and, against bots on the
  * device, "Peru". Shown on every turn, disabled when it is not the viewer's.
  */
-export function MoveControls({ enabled, pending, status, onHint, onUndo, canUndo = false }: MoveControlsProps) {
+export function MoveControls({ enabled, pending, status, onHint, hinting = false, onUndo, canUndo = false }: MoveControlsProps) {
   return (
     <div className={styles.controls}>
       <p className={styles.status} role="status">
@@ -26,7 +28,7 @@ export function MoveControls({ enabled, pending, status, onHint, onUndo, canUndo
       </p>
       <div className={styles.bar}>
         {onUndo && <UndoButton disabled={!canUndo || pending} onUndo={onUndo} />}
-        <HintButton disabled={!enabled || pending} onHint={onHint} />
+        <HintButton disabled={!enabled || pending || hinting} onHint={onHint} />
       </div>
     </div>
   );

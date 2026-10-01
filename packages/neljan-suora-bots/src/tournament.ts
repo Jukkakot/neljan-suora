@@ -1,12 +1,20 @@
 import { createRng, legalColumns, playMove, startGame, type Game } from "@neljan-suora/rules";
 import { systemClock, type Bot, type Budget, type GameResult, type MoveTiming, type ScheduledGame } from "@game-kit/bots";
 import { brsPlayer, greedyPlayer, mctsPlayer, negamaxPlayer, randomPlayer } from "./adapter.js";
+import { perfectBot, SOLVE_NODES } from "./perfect/bot.js";
+import type { Outcome } from "./perfect/solve.js";
 
 /** A bot a tournament can use, with the budget it gets when its name carries none. */
 interface RegisteredBot {
   readonly bot: Bot<Game, number>;
   readonly budget: Budget;
+  /** The outcome it judged its last answer's position to be, when it judges positions. */
+  readonly verdict?: () => Outcome | undefined;
 }
+
+let perfectVerdict: Outcome | undefined;
+/** The perfect bot as tournaments play it; the CLI hands it the book from disk. */
+export const tournamentPerfect = perfectBot({ report: (info) => (perfectVerdict = info.verdict?.outcome) });
 
 /** The known bots by name. */
 export const BOTS: Readonly<Record<string, RegisteredBot>> = {
@@ -15,6 +23,7 @@ export const BOTS: Readonly<Record<string, RegisteredBot>> = {
   brs: { bot: brsPlayer, budget: { depth: 4 } },
   mcts: { bot: mctsPlayer, budget: { iterations: 400 } },
   negamax: { bot: negamaxPlayer, budget: { depth: 8 } },
+  perfect: { bot: tournamentPerfect, budget: { depth: 8, iterations: SOLVE_NODES }, verdict: () => perfectVerdict },
 };
 
 /** Random discs every tournament game starts with, so deterministic bots do not replay one game. */
@@ -40,6 +49,7 @@ export interface TournamentBot {
   readonly name: string;
   readonly bot: Bot<Game, number>;
   readonly budget: Budget;
+  readonly verdict?: () => Outcome | undefined;
 }
 
 /** Parses a bot name with an optional budget; throws with the known names listed when it is not valid. */
@@ -61,7 +71,7 @@ export function parseBot(label: string): TournamentBot {
   if ((budget.timeMs ?? 1) < 1 || (budget.depth ?? 1) < 1 || (budget.iterations ?? 1) < 1) {
     throw new RangeError(`Bot "${label}" needs a budget of at least 1`);
   }
-  return { label, name: name!, bot: registered.bot, budget };
+  return { label, name: name!, bot: registered.bot, budget, ...(registered.verdict ? { verdict: registered.verdict } : {}) };
 }
 
 /** Tournament formats (`--colours`): the seats each side of a pairing plays. Neljän suora has one. */
@@ -90,6 +100,8 @@ export function parseColours(value: string): Colours {
 export interface PlayedGame {
   readonly result: GameResult;
   readonly timing: Record<string, MoveTiming>;
+  /** Bots that judged their first position a win or a draw and still lost the game. */
+  readonly lostSettled: readonly string[];
 }
 
 /**
@@ -112,11 +124,13 @@ export function playTournamentGame(colours: Colours, bots: ReadonlyMap<string, T
   const rng = createRng(game.seed);
   const seats = [...bySeat.keys()].sort((a, b) => a - b);
   let state = openedGame(game.seed, seats);
+  const firstVerdicts = new Map<number, Outcome | undefined>();
   while (!state.over) {
     const player = bySeat.get(state.turn)!;
     const started = systemClock();
     const column = player.bot.choose(state, player.budget, rng);
     const ms = systemClock() - started;
+    if (player.verdict && !firstVerdicts.has(state.turn)) firstVerdicts.set(state.turn, player.verdict());
     if (column === undefined) throw new Error(`${player.label} on seat ${state.turn} has no move`);
     const applied = playMove(state, state.turn, { column });
     if (!applied.ok) throw new Error(`${player.label} played a refused move: ${applied.code}`);
@@ -130,6 +144,9 @@ export function playTournamentGame(colours: Colours, bots: ReadonlyMap<string, T
   return {
     result: { ...game, seats: seats.map((s) => bySeat.get(s)!.label), scores: seats.map((s) => (state.winners.includes(s) ? 1 : 0)) },
     timing,
+    lostSettled: [...firstVerdicts]
+      .filter(([seat, outcome]) => outcome !== undefined && outcome >= 0 && state.winners.length > 0 && !state.winners.includes(seat))
+      .map(([seat]) => bySeat.get(seat)!.label),
   };
 }
 

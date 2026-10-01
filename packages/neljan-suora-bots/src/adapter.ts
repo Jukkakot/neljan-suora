@@ -2,6 +2,7 @@ import { createRng, legalColumns, playMove, type Game, type Move, type Rng } fro
 import { bestReplyBot, greedyBot, mctsBot, randomBot, type Bot, type Budget, type MultiplayerGame } from "@game-kit/bots";
 import { evaluate } from "./evaluation.js";
 import { negamaxBot } from "./negamax/search.js";
+import { perfectBot, type PerfectBot } from "./perfect/bot.js";
 
 /** `seat` drops a disc into `column`, on turn or not (search may play out of turn). */
 function played(game: Game, seat: number, column: number): Game {
@@ -48,8 +49,11 @@ export const randomPlayer: Bot<Game, number> = randomBot(neljanSuoraGame);
 /** Negamax on the game's bitboards (`bot-v1`): the strongest bot. */
 export const negamaxPlayer: Bot<Game, number> = negamaxBot();
 
+/** The perfect bot (`perfect-bot`): best outcome from the book or a solve, the negamax among equals. */
+export const perfectPlayer: PerfectBot = perfectBot();
+
 /** The bot people play against. */
-export const devicePlayer: Bot<Game, number> = negamaxPlayer;
+export const devicePlayer: PerfectBot = perfectPlayer;
 
 /**
  * The bot worker's entry point: the move of the seat on turn in `game` within `budget`, or

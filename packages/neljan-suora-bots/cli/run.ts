@@ -41,8 +41,8 @@ export function checkOptions(options: TournamentOptions): void {
   for (const bot of bots) parseBot(bot);
 }
 
-/** Plays a whole tournament and rates it. */
-export async function runTournament(options: TournamentOptions): Promise<TournamentResult> {
+/** Plays a whole tournament and rates it; also counts, per bot, the games it lost from a settled win or draw. */
+export async function runTournament(options: TournamentOptions): Promise<TournamentResult & { readonly lostSettled: ReadonlyMap<string, number> }> {
   checkOptions(options);
   const games = schedule(options.bots, options.games, options.seed);
   const played = await playGames(options.colours, options.bots, games, options.jobs);
@@ -55,7 +55,7 @@ export async function runTournament(options: TournamentOptions): Promise<Tournam
     version: codeVersion(),
     jobs: options.jobs,
   };
-  return tournamentResult(setup, played.games, played.timing);
+  return { ...tournamentResult(setup, played.games, played.timing), lostSettled: played.lostSettled };
 }
 
 /** A tournament result as plain JSON (maps become objects). */

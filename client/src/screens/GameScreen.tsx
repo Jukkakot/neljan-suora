@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { chooseMove } from "@neljan-suora/bots";
 import type { BotSpeed } from "@neljan-suora/protocol";
 import { useTranslation } from "react-i18next";
 import { AutoplayButton, AutoplayPanel } from "../game/AutoplayControls.tsx";
@@ -16,6 +15,8 @@ import { TurnLine } from "../game/TurnLine.tsx";
 import { useEnded, useLastMove } from "../motion/hooks.ts";
 import { LeafFall } from "../motion/LeafFall.tsx";
 import { NOTICE_MS, type GameSession } from "../session/useGameSession.ts";
+import { botBudget } from "../bots/botMoves.ts";
+import { askBotWorker } from "../bots/botWorkerClient.ts";
 import type { GameView } from "../session/viewModel.ts";
 import { SettingsButton, SettingsScreen } from "../settings/SettingsScreen.tsx";
 import { useTurnAlert } from "../settings/turnAlert.ts";
@@ -72,10 +73,18 @@ export function GameScreen({ view, session }: GameScreenProps) {
       sending.current = false;
     }
   };
-  const showHint = () => {
-    if (!view.game) return;
-    const best = chooseMove(view.game, { depth: 4 }, view.turn);
-    if (best) setHint({ turn: view.turn, column: best.column });
+  // The hint is the bot's move, worked out in the bot worker; it is dropped if the turn has passed.
+  const [hinting, setHinting] = useState(false);
+  const showHint = async () => {
+    if (!view.game || hinting) return;
+    const turn = view.turn;
+    setHinting(true);
+    try {
+      const best = await askBotWorker({ game: view.game, budget: botBudget(), seed: turn });
+      if (best) setHint({ turn, column: best.column });
+    } finally {
+      setHinting(false);
+    }
   };
 
   // Announce a player leaving the running game (left, kicked or timed out; the reason is not synced).
@@ -95,7 +104,13 @@ export function GameScreen({ view, session }: GameScreenProps) {
   }, [departed]);
 
   const message = notice ? t(notice) : departed !== undefined ? t("progress.left", { name: departed }) : undefined;
-  const status = !isMyTurn ? t("move.wait") : hinted === undefined ? t("move.tap") : t("move.hinted", { column: hinted + 1 });
+  const status = !isMyTurn
+    ? t("move.wait")
+    : hinted !== undefined
+      ? t("move.hinted", { column: hinted + 1 })
+      : hinting
+        ? t("move.hinting")
+        : t("move.tap");
   const canMove = isMyTurn && !view.myAutoplay && !view.finished;
 
   // Settings (and the language) open over the game; the game keeps running underneath.
@@ -151,7 +166,8 @@ export function GameScreen({ view, session }: GameScreenProps) {
               enabled={canMove}
               pending={pending}
               status={status}
-              onHint={showHint}
+              onHint={() => void showHint()}
+              hinting={hinting}
               onUndo={view.canUndo ? () => void undo?.() : undefined}
               canUndo={view.undoable}
             />

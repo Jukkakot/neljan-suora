@@ -60,6 +60,13 @@
       "path": "dist/assets/bot.worker-*.js",
       "limit": "30 kB",
       "gzip": true
+    },
+    {
+      "name": "opening book (raw)",
+      "path": "dist/assets/neljan-suora-book-*.bin",
+      "limit": "8 MB",
+      "gzip": false,
+      "brotli": false
     }
   ]
 }

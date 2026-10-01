@@ -1,7 +1,7 @@
-export { brsPlayer, chooseMove, devicePlayer, greedyPlayer, mctsPlayer, negamaxPlayer, randomPlayer, neljanSuoraGame } from "./adapter.js";
+export { brsPlayer, chooseMove, devicePlayer, greedyPlayer, mctsPlayer, negamaxPlayer, perfectPlayer, randomPlayer, neljanSuoraGame } from "./adapter.js";
 export { evaluate, WIN } from "./evaluation.js";
 export { playGame } from "./match.js";
-export { negamaxBot, type NegamaxOptions } from "./negamax/search.js";
+export { negamaxBot, type NegamaxBot, type NegamaxOptions } from "./negamax/search.js";
 export type { Bot, Budget } from "@game-kit/bots";
 export {
   addTiming,
@@ -18,3 +18,6 @@ export {
   type PlayedGame,
   type TournamentBot,
 } from "./tournament.js";
+export { Book, BOOK_VERSION, bookEntry, canonicalKey, writeBook, type BookEntry, type BookVerdict } from "./perfect/book.js";
+export { perfectBot, SOLVE_NODES, type PerfectBot, type PerfectOptions, type VerdictSource } from "./perfect/bot.js";
+export { Solver, type Outcome, type RootVerdict, type SolveLimits } from "./perfect/solve.js";

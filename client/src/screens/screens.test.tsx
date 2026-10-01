@@ -124,7 +124,7 @@ describe("game screen › a move", () => {
   it("Asking for a hint shows the ghost and sends nothing; Ignoring the hint sends the tapped column", async () => {
     const board = gridOf({ 0: [1, 1, 1], 1: [2, 2, 2] });
     const { container, move } = setup(gameView({ board, game: { seed: 0, seats: [1, 2], left: [], cells: board, turn: 1, moves: 6, over: false, winners: [], line: [] } }));
-    fireEvent.click(screen.getByRole("button", { name: "Vihje" }));
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Vihje" })));
     // Three berries in column 0: the ghost is in the fourth hole from the bottom.
     expect(ghostAt(container, 14)).not.toBeNull();
     expect(screen.getByText("Vihje: sarake 1")).toBeTruthy();

@@ -16,5 +16,15 @@
     "games": 100,
     "seed": 1,
     "minShare": 0.9
+  },
+  {
+    "name": "the perfect bot beats negamax at depth 8 and never loses a settled game",
+    "candidate": "perfect",
+    "baseline": "negamax@d8",
+    "colours": 2,
+    "games": 100,
+    "seed": 1,
+    "minShare": 0.8,
+    "noLossWhenSettled": true
   }
 ]

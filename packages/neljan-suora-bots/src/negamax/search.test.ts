@@ -64,6 +64,14 @@ describe("negamax answers", () => {
     expect(first.depth).toBe(6);
   });
 
+  it("searches only the candidate columns at the root", () => {
+    const game = gameAfter([3, 3, 2]);
+    const favourite = ask(game, 6).column!;
+    const candidates = [0, 1, 4, 5, 6].filter((column) => column !== favourite);
+    const column = negamaxBot({ tableBits: 16 }).chooseAmong(game, { depth: 6 }, createRng(1), candidates);
+    expect(candidates).toContain(column);
+  });
+
   it("stops at the deadline and still answers legally", () => {
     let time = 0;
     const bot = negamaxBot({ tableBits: 16, now: () => (time += 1) });

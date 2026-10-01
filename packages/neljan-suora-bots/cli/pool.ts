@@ -1,10 +1,13 @@
 import { Worker } from "node:worker_threads";
 import type { GameResult, MoveTiming, ScheduledGame } from "@game-kit/bots";
 import { addTiming, parseBot, playTournamentGame, type Colours, type PlayedGame } from "../src/index.js";
+import { giveTournamentsTheBook } from "./load-book.js";
 
 export interface Played {
   readonly games: GameResult[];
   readonly timing: Map<string, MoveTiming>;
+  /** Per bot, the games it lost after judging its first position a win or a draw. */
+  readonly lostSettled: Map<string, number>;
 }
 
 /** Reports progress on stderr about every tenth of the games (CI logs show the run is alive). */
@@ -22,14 +25,17 @@ function progress(total: number): (done: number) => void {
 export async function playGames(colours: Colours, labels: readonly string[], games: readonly ScheduledGame[], jobs: number): Promise<Played> {
   const results: GameResult[] = [];
   const timing = new Map<string, MoveTiming>();
+  const lostSettled = new Map<string, number>();
   const tick = progress(games.length);
   const collect = (played: PlayedGame) => {
     results.push(played.result);
     addTiming(timing, played.timing);
+    for (const label of played.lostSettled) lostSettled.set(label, (lostSettled.get(label) ?? 0) + 1);
     tick(results.length);
   };
 
   if (jobs <= 1) {
+    giveTournamentsTheBook();
     const bots = new Map(labels.map((label) => [label, parseBot(label)]));
     for (const game of games) collect(playTournamentGame(colours, bots, game));
   } else {
@@ -61,5 +67,5 @@ export async function playGames(colours: Colours, labels: readonly string[], gam
       }
     });
   }
-  return { games: results.sort((a, b) => a.index - b.index), timing };
+  return { games: results.sort((a, b) => a.index - b.index), timing, lostSettled };
 }

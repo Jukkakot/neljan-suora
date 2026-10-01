@@ -31,6 +31,12 @@ export interface NegamaxOptions {
   readonly report?: (info: { readonly depth: number; readonly nodes: number; readonly score: number }) => void;
 }
 
+/** The searcher as a bot, and with its root limited to some columns (the perfect bot's best ones). */
+export interface NegamaxBot extends Bot<Game, number> {
+  /** As `choose`, searching only `candidates` (open columns) at the root; all open columns when omitted. */
+  chooseAmong(game: Game, budget: Budget, rng: Rng, candidates?: readonly number[]): number | undefined;
+}
+
 /** The transposition table: typed arrays, allocated on the first search. */
 class Table {
   readonly keys: Float64Array;
@@ -83,18 +89,20 @@ const inSet = (lo: number, hi: number, position: Position, column: number): bool
  * a transposition table, threats-then-centre move order and iterative deepening within the budget.
  * The table is cleared for every answer, so a depth budget and a seed always give the same column.
  */
-export function negamaxBot(options: NegamaxOptions = {}): Bot<Game, number> {
+export function negamaxBot(options: NegamaxOptions = {}): NegamaxBot {
   const now = options.now ?? systemClock;
   const weights = options.weights ?? DEFAULT_WEIGHTS;
   const defaultDepth = options.defaultDepth ?? 8;
   let table: Table | undefined;
 
-  return {
-    choose(game: Game, budget: Budget, rng: Rng): number | undefined {
+  const bot: NegamaxBot = {
+    choose: (game, budget, rng) => bot.chooseAmong(game, budget, rng),
+
+    chooseAmong(game: Game, budget: Budget, rng: Rng, candidates?: readonly number[]): number | undefined {
       checkBudget(budget);
       if (game.over) return undefined;
       const position = Position.fromGame(game);
-      const legal = CENTRE_ORDER.filter((column) => position.canPlay(column));
+      const legal = CENTRE_ORDER.filter((column) => position.canPlay(column) && (candidates?.includes(column) ?? true));
       if (legal.length === 0) return undefined;
       if (legal.length === 1) return legal[0];
 
@@ -265,6 +273,7 @@ export function negamaxBot(options: NegamaxOptions = {}): Bot<Game, number> {
       return pick(answer, rng);
     },
   };
+  return bot;
 }
 
 /** The winning cells the side to move has after dropping into `column`. */

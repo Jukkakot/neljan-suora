@@ -55,11 +55,37 @@ to 70 % of it, the heuristic the rest (at least 200 ms of the original budget's 
 skips the solve.
 
 Client: `BOT_BUDGET = { timeMs: 3000, iterations: SOLVE_NODES }`, divided by the watching speed (time
-and nodes both). `SOLVE_NODES` is fixed after measurement (task 1): what the solver searches in
-~2 s on a desktop divided by 4 (the nfr reference: a mid-range phone a few years old), so it settles
-in about 2 s on such a phone. The visible pause: the kit already shows the bot's move after its
-pause even when the answer comes earlier; verify in task 4, and if the kit waits only for the answer,
-keep today's pause. "<bot> miettii…" is already the turn line while a bot is on turn.
+and nodes both). `SOLVE_NODES` = **1 500 000**: measured (task 1.2, `npm run bench -- --solver`) the
+solver runs ~2.9 M nodes/s on this desktop; 2 s ÷ 4 for the nfr reference phone. Nodes needed to
+settle positions from depth-4 self-play after a random opening (20 per ply):
+
+| ply | median | p80 | p95 |
+|---|---|---|---|
+| 16 | 52 k | 63 k | 171 k |
+| 14 | 132 k | 347 k | 556 k |
+| 12 | 546 k | 1.5 M | 2.9 M |
+| 10 | 1.3 M | 3.4 M | 7.1 M |
+| 8 | 3.1 M | 15 M | > 20 M |
+| 6 | 11 M | > 20 M | > 20 M |
+
+So the book reaches about ply 10–14 along its lines, as the user's "~12 plies" expected. Full solves
+(probe, single thread, 2^25 table): 4 discs (3322) 12 M nodes / 5 s; 3 discs (333) 234 M / 83 s.
+
+The visible pause: verified in the kit (task 4.1) — the local room and the online bot runner both
+show the move at max(pause, answer), so a quick answer keeps today's pause. "<bot> miettii…" is
+already the turn line while a bot is on turn.
+
+**Immediate wins:** `solveRoot` answers only the columns that win at once when there are any (not
+every winning column); the bot plays one of them, which is also the shortest win.
+
+**First question waits for the book a little:** the first question of the visit waits up to 1.5 s
+for the book (it is usually the bot's first move, where the book matters most); later questions never
+wait. Without that wait the first move would always be an unsettled 3 s think.
+
+**"Vihje" goes through the worker:** it used to call the bot synchronously in the page at depth 4; with
+the perfect bot that would block the UI thread. It now asks the bot worker with the move budget,
+the button waits ("Vihje kypsyy…" in the status line), and an answer for a passed turn is dropped.
+The book is fetched only where a worker keeps it (not in jsdom tests).
 
 Online: 3 s is well inside the room's 10 s runner silence; no server change.
 

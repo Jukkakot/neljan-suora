@@ -7,15 +7,10 @@
 import { appendFileSync, readFileSync } from "node:fs";
 import { availableParallelism } from "node:os";
 import { parseArgs } from "node:util";
-import { checkRequirement, markdownReport, type StrengthRequirement } from "@game-kit/bots";
+import { checkRequirement, markdownReport } from "@game-kit/bots";
 import { isColours } from "../src/index.js";
 import { defaultOut, runTournament, toJson, writeJson } from "./run.js";
-
-interface Requirement extends StrengthRequirement {
-  readonly colours: number;
-  readonly games: number;
-  readonly seed: number;
-}
+import { checkWithSettled, type Requirement } from "./settled.js";
 
 const REQUIREMENTS = new URL("../strength.json", import.meta.url);
 
@@ -42,7 +37,8 @@ async function main(): Promise<void> {
       seed: requirement.seed,
       jobs: Number(values.jobs),
     });
-    const check = checkRequirement(requirement, result.summary);
+    const share = checkRequirement(requirement, result.summary);
+    const check = { ...share, ...checkWithSettled(requirement, share, result.lostSettled) };
     lines.push(check.line);
     reports.push(`### ${requirement.name}\n\n${markdownReport(result)}`);
     results.push({ requirement, share: check.share, passed: check.passed, result: toJson(result) });

@@ -25,3 +25,4 @@ tournament-results/
 
 # Background agents' git worktrees
 .claude/worktrees/
+book/.progress/

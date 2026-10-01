@@ -232,6 +232,7 @@
   "move": {
     "wait": "Wait for your turn",
     "tap": "Tap a column",
+    "hinting": "The hint is ripening…",
     "hinted": "Hint: column {{column}}"
   },
   "berry": {

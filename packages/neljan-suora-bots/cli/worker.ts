@@ -1,6 +1,9 @@
 import { parentPort, workerData } from "node:worker_threads";
 import type { ScheduledGame } from "@game-kit/bots";
 import { parseBot, playTournamentGame, type Colours } from "../src/index.js";
+import { giveTournamentsTheBook } from "./load-book.js";
+
+giveTournamentsTheBook();
 
 /** Plays each game the pool sends and answers with the played game. */
 const { colours, labels } = workerData as { colours: Colours; labels: string[] };

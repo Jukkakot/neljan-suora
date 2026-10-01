@@ -232,6 +232,7 @@
   "move": {
     "wait": "Odota vuoroasi",
     "tap": "Napauta saraketta",
+    "hinting": "Vihje kypsyy…",
     "hinted": "Vihje: sarake {{column}}"
   },
   "berry": {
