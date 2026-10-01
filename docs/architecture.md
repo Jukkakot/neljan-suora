@@ -158,10 +158,10 @@ kit packages come built (`dist/` only).
   against: a win/draw/loss solver (null-window search on the same bitboards, its own bounds table,
   a node limit) settles the position, from the **opening book** when the position is in it; the
   negamax then chooses among the columns of the best outcome (all columns when lost or unsettled).
-  The book holds only the positions the browser cannot settle within `SOLVE_NODES` (1.5 M nodes,
-  ~2 s on a mid-range phone), each with its outcome and best columns, mirror images shared; the
-  `NSB1` binary file is generated offline (development → Opening book) and committed under
-  `packages/neljan-suora-bots/book/`.
+  The book is Pascal Pons' `7x6.book` (AGPL-3.0, 33.5 MB): exact scores of positions up to 14
+  discs, committed under `packages/neljan-suora-bots/book/` and fetched by the client on the first
+  bot question; the bot plays the columns of the best score (soonest win), and past the book the
+  solve settles positions within `SOLVE_NODES` (1.5 M nodes, ~2 s on a mid-range phone).
 - **Tournaments:** the bot registry with budgets (`perfect` = depth 8 + `SOLVE_NODES`,
   `negamax@d8`, `brs@d4`, `mcts@i400`, `greedy@200ms`), formats, the random opening,
   `playTournamentGame`; `cli/` runs games on worker threads and gives `perfect` the book from disk.

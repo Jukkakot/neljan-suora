@@ -10,12 +10,6 @@ export interface RootVerdict {
   readonly columns: readonly number[];
 }
 
-/** Known outcomes (for the side to move) of some positions with at most `discs` discs. */
-export interface Oracle {
-  readonly discs: number;
-  outcome(position: Position): Outcome | undefined;
-}
-
 export interface SolveLimits {
   /** Nodes the whole answer may search; the solve gives up beyond it. */
   readonly nodes?: number;
@@ -53,14 +47,8 @@ export class Solver {
   /** Nodes searched by the last call. */
   nodes = 0;
 
-  private readonly oracle: Oracle | undefined;
-
-  /**
-   * `tableBits`: log2 of the table's entries (default 21: about 21 MB); halved while refused.
-   * `oracle`: known outcomes the search stops at (the book generator's; never in the browser).
-   */
-  constructor(tableBits = 21, oracle?: Oracle) {
-    this.oracle = oracle;
+  /** `tableBits`: log2 of the table's entries (default 21: about 21 MB); halved while refused. */
+  constructor(tableBits = 21) {
     for (let bits = tableBits; ; bits--) {
       try {
         const size = 2 ** bits;
@@ -173,10 +161,6 @@ export class Solver {
     if (possLo === 0 && possHi === 0) return -1;
     // Two cells or fewer left and a safe disc to drop: nobody can win any more.
     if (position.moves >= CELLS - 2) return 0;
-    if (this.oracle && position.moves <= this.oracle.discs) {
-      const known = this.oracle.outcome(position);
-      if (known !== undefined) return known;
-    }
 
     const key = position.key();
     const slot = this.index(key);

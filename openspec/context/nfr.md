@@ -16,8 +16,9 @@ Apply to every change. Designs and task lists must show how they are met.
 
 ## Performance (mid-range phone a few years old)
 - Usable within 3 s on 4G; JS bundle budget 200 kB gzip and the bot worker 30 kB,
-  checked in CI (`npm run size`). The bot's opening book (≤ 8 MB raw) is not part of the first
-  load: it is fetched on the first bot move and then cached for offline play.
+  checked in CI (`npm run size`). The bot's opening book (Pons' book, 33.5 MB raw, limit 34 MB) is
+  not part of the first load: it is fetched on the first bot move and then cached for offline play
+  (a few seconds on 4G, about a minute on a weak connection; the bot plays without it meanwhile).
 - Animations at 60 fps; animate only transform and opacity.
 - Every tap gives immediate feedback (pending state); target server response
   under 300 ms.

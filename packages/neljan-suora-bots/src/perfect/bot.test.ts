@@ -3,14 +3,23 @@ import { createRng, legalColumns, playMove, startGame, type Game } from "@neljan
 import { gameAfter } from "@neljan-suora/rules/testing";
 import { Position } from "../negamax/position.js";
 import { negamaxBot } from "../negamax/search.js";
-import { Book, bookEntry, writeBook } from "./book.js";
+import { Book, writeBook } from "./book.js";
 import { perfectBot, SOLVE_NODES, type VerdictSource } from "./bot.js";
 import { Solver } from "./solve.js";
 
 const solver = new Solver(18);
 const small = { solverTableBits: 18, searchTableBits: 16 };
-const bookOf = (...entries: [number[], -1 | 0 | 1, number[]][]) =>
-  Book.parse(writeBook(entries.map(([line, outcome, columns]) => bookEntry(Position.fromGame(gameAfter(line)), outcome, columns)), SOLVE_NODES))!;
+/** A book where the position after `line` has `outcome` reached by exactly `columns` (scores ±1, 0). */
+const bookOf = ([line, outcome, columns]: [number[], -1 | 0 | 1, number[]]) => {
+  const position = Position.fromGame(gameAfter(line));
+  const scores: [Position, number][] = [[position, outcome]];
+  for (let column = 0; column < 7; column++) {
+    if (!position.canPlay(column)) continue;
+    const child = Position.fromGame(gameAfter([...line, column]));
+    scores.push([child, columns.includes(column) ? -outcome : 1 - outcome]);
+  }
+  return Book.parse(writeBook(scores))!;
+};
 
 /** A random game of `discs` discs that is not over, or undefined. */
 function randomGame(seed: number, discs: number): Game | undefined {

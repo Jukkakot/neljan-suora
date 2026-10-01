@@ -1,40 +1,50 @@
 import { describe, expect, it } from "vitest";
 import { gameAfter } from "@neljan-suora/rules/testing";
 import { Position } from "../negamax/position.js";
-import { Book, BOOK_VERSION, bookEntry, writeBook } from "./book.js";
+import { Book, bookKey, writeBook } from "./book.js";
 
 const at = (columns: number[]) => Position.fromGame(gameAfter(columns));
 
 describe("opening book", () => {
-  it("round-trips its entries", () => {
-    const buffer = writeBook(
-      [bookEntry(at([]), 1, [3]), bookEntry(at([0]), 1, [3]), bookEntry(at([2, 3]), 0, [1, 2, 3]), bookEntry(at([3, 3, 3]), -1, [0, 1, 2, 3, 4, 5, 6])],
-      1234,
-    );
-    const book = Book.parse(buffer)!;
-    expect(book.size).toBe(4);
-    expect(book.solveNodes).toBe(1234);
-    expect(book.lookup(at([]))).toEqual({ outcome: 1, columns: [3] });
-    expect(book.lookup(at([2, 3]))).toEqual({ outcome: 0, columns: [1, 2, 3] });
-    expect(book.lookup(at([3, 3, 3]))).toEqual({ outcome: -1, columns: [0, 1, 2, 3, 4, 5, 6] });
-    expect(book.lookup(at([1]))).toBeUndefined();
+  it("keys a position like Pons' key3, mirror images alike", () => {
+    expect(bookKey(at([]))).toBe(0);
+    // One disc of the side that just moved (2) in column 0; the reverse column order is smaller.
+    expect(bookKey(at([0]))).toBe(2);
+    expect(bookKey(at([0]))).toBe(bookKey(at([6])));
+    expect(bookKey(at([0, 1]))).toBe(bookKey(at([6, 5])));
   });
 
-  it("finds a mirrored position with mirrored columns", () => {
-    const book = Book.parse(writeBook([bookEntry(at([0, 1]), 0, [2, 3])], 1))!;
-    expect(book.lookup(at([6, 5]))).toEqual({ outcome: 0, columns: [3, 4] });
-    expect(book.lookup(at([0, 1]))).toEqual({ outcome: 0, columns: [2, 3] });
+  it("reads scores for the side to move, mirror images included, misses as unknown", () => {
+    const book = Book.parse(writeBook([[at([]), 1], [at([3]), -1], [at([0]), 2]]))!;
+    expect(book.depth).toBe(14);
+    expect(book.score(at([]))).toBe(1);
+    expect(book.score(at([3]))).toBe(-1);
+    expect(book.score(at([6]))).toBe(2);
+    expect(book.score(at([2]))).toBeUndefined();
   });
 
-  it("stores a position and its mirror once", () => {
-    const book = Book.parse(writeBook([bookEntry(at([0]), 1, [3]), bookEntry(at([6]), 1, [3])], 1))!;
-    expect(book.size).toBe(1);
+  it("gives the columns of the best score, and nothing when a missing column could be better", () => {
+    // Children's scores are for the other side: -3 there is the mover's soonest win. Mirror images
+    // share a key, so a column and its mirror are held or missing together.
+    const scores = [2, 1, 0, -3, 0, 1, 2];
+    const children = (...skip: number[]) => scores.flatMap((score, column) => (skip.includes(column) ? [] : [[at([column]), score] as const]));
+    const lookup = (entries: ReturnType<typeof children>) => Book.parse(writeBook(entries))!.lookup(at([]));
+    expect(lookup(children())).toEqual({ outcome: 1, columns: [3] });
+    expect(lookup(children(3))).toBeUndefined();
+    expect(lookup([...children(1, 5), [at([]), 3]])).toEqual({ outcome: 1, columns: [3] });
+    expect(lookup([...children(3), [at([]), 3]])).toBeUndefined();
   });
 
-  it("reads another version as no book", () => {
-    const buffer = writeBook([bookEntry(at([]), 1, [3])], 1);
-    new Uint32Array(buffer, 4, 1)[0] = BOOK_VERSION + 1;
+  it("answers an immediate win without the book and nothing past its depth", () => {
+    const book = Book.parse(writeBook([], 2))!;
+    expect(book.lookup(at([0, 1, 0, 1, 0, 1]))).toEqual({ outcome: 1, columns: [0] });
+    expect(book.lookup(at([3, 3]))).toBeUndefined();
+  });
+
+  it("reads anything else as no book", () => {
+    const buffer = writeBook([[at([]), 1]]);
+    expect(Book.parse(buffer.slice(0, 100))).toBeUndefined();
+    new Uint8Array(buffer)[0] = 8;
     expect(Book.parse(buffer)).toBeUndefined();
-    expect(Book.parse(new ArrayBuffer(8))).toBeUndefined();
   });
 });

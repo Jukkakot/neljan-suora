@@ -91,6 +91,8 @@ Online: 3 s is well inside the room's 10 s runner silence; no server change.
 
 ### 3. The opening book: adaptive depth, best columns, both seats
 
+*Superseded by Decision 7 during apply; kept as the record of what was tried.*
+
 The book holds exactly the positions the browser cannot settle within `SOLVE_NODES`, from the roots
 until play reaches positions it can. Leaves are not stored (the solver settles them at play time).
 Roots: **every position with at most 2 discs** (covers both seats' openings, the tournament's
@@ -116,6 +118,8 @@ can solve in reasonable time and needs exact scores; the adaptive book stores on
 cannot do itself, which is what the user's "~12 plies, several MB" was for.
 
 ### 4. Generating the book
+
+*Superseded by Decision 7 during apply; the generator was removed.*
 
 `cli/book.ts` (`npm run book -w @neljan-suora/bots`): Node worker threads (cores − 1), each with a
 large table (2^25 entries), positions processed top-down in breadth-first waves (shallow positions
@@ -184,6 +188,32 @@ entries: `perfect` vs `negamax@d8` share ≥ 0.8, 100 games; and a `noLossWhenSe
 started settled as a win or draw). The kit's tournament core is not changed: the extra check lives in
 the game's `cli/strength.ts`.
 
+### 7. Pons' book replaces our own (decided during apply, user's decision 2026-10-01)
+
+The narrow generator run reached wave 12 after about two hours (11 579 positions queued at 12 discs,
+~4 900 entries stored) with its end still unclear. Pascal Pons publishes `7x6.book`
+(github.com/PascalPons/connect4, release `book`): exact scores of positions up to 14 discs from his
+solver, 33.5 MB (26.6 MB gzipped). The user chose to ship it as is: the AGPL-3.0 licence is accepted
+for this hobby project, and the larger file over the 8 MB budget (a few seconds on 4G, about a
+minute on a weak connection, once per device; the bot plays without it meanwhile).
+
+- **Reader** (`src/perfect/book.ts`): Pons' format as his `OpeningBook.hpp` writes it (header, a
+  hash table of partial keys and one-byte values, `key3` keys shared by mirror images). The slot and
+  the partial key together pin down every key up to 14 discs, so a hit is exact; positions the table
+  lost read as unknown. Measured on random positions: it holds ~72 % at 8 discs, ~37 % at 12, ~21 %
+  at 14; it agreed with Tromp's database on 820 of 820 shared positions and with our solver on 20
+  random 14-disc ones.
+- **Verdict:** an immediate win first; else every column's next position is looked up and the
+  columns of the best score are the verdict (the soonest win, the latest loss), when that score is
+  the position's own or no column is missing. Otherwise the bot solves as before.
+- **Budget:** the book is 33.5 MB raw; size-limit 34 MB; still CacheFirst at runtime, not precached.
+  The page drops its copy once the worker has it.
+- **Removed:** the generator (`cli/book.ts`, its worker, Tromp's 8-disc oracle, the solver's oracle
+  hook) and the `NSB1` format. Our narrow run's data was discarded.
+- **Alternatives:** Pons' `7x6_small.book` (6.3 MB, sparser, up to 16 discs) fits the old budget but
+  its coverage was not measured; finishing our generator (hours more, coverage of the narrow lines
+  only).
+
 ### NFR
 
 - **Logging:** one `client.warn` per visit when the book cannot be fetched; nothing per move.
@@ -191,7 +221,7 @@ the game's `cli/strength.ts`.
   test); book format round trip, mirror lookup, lookup of a hand-made book; the perfect bot's budget
   split and fallback with a fake clock; client: book fetched on first ask only, failure logged once,
   request carries the book once. Strength and the book's self-checks are not in the unit run.
-- **Limits:** worker bundle stays ≤ 30 kB gzip (solver code only); book ≤ 8 MB raw (size-limit);
+- **Limits:** worker bundle stays ≤ 30 kB gzip (solver code only); book ≤ 34 MB raw (size-limit; Decision 7);
   memory: two tables in the worker (~12 MB + ~19 MB, both halving on failure).
 
 ## Risks / Trade-offs

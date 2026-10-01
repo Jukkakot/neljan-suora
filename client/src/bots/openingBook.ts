@@ -37,7 +37,10 @@ export function withOpeningBook(ask: AskBot, deps: BookDeps): AskBot {
     }
     if (book && !handedOver) {
       handedOver = true;
-      return ask({ ...request, book });
+      // The worker keeps it; the page lets go of its copy (tens of MB).
+      const bytes = book;
+      book = undefined;
+      return ask({ ...request, book: bytes });
     }
     return ask(request);
   };

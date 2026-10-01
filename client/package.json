@@ -63,8 +63,8 @@
     },
     {
       "name": "opening book (raw)",
-      "path": "dist/assets/neljan-suora-book-*.bin",
-      "limit": "8 MB",
+      "path": "dist/assets/7x6-*.book",
+      "limit": "34 MB",
       "gzip": false,
       "brotli": false
     }

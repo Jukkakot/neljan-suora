@@ -4,8 +4,8 @@ import { fileURLToPath } from "node:url";
 import { Book } from "../src/perfect/book.js";
 import { tournamentPerfect } from "../src/tournament.js";
 
-/** The committed opening book file. */
-export const BOOK_FILE = join(dirname(fileURLToPath(import.meta.url)), "..", "book", "neljan-suora-book.bin");
+/** The committed opening book file (Pons' 7x6.book). */
+export const BOOK_FILE = join(dirname(fileURLToPath(import.meta.url)), "..", "book", "7x6.book");
 
 /** The opening book read from disk (tournaments, benchmarks), or undefined when there is none. */
 export function loadBook(file = BOOK_FILE): Book | undefined {

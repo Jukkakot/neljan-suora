@@ -14,7 +14,7 @@ tasks written), **planned**.
 | 5 | `first-deploy` | done | The rest of the setup checklist (docs/operations.md): Pages, Render, Axiom, prod smoke; done with the user's go-ahead (creates external services); the front page card links the game. Axiom moved to `shared-logs` (dataset limit) |
 | 6 | `one-tap-drop` | done | A tap on a column drops the berry at once in every game type; "Aseta" goes; "Vihje" only shows the column (user's request 2026-10-01) |
 | 7 | `shared-logs` | done | One Axiom dataset shared by all the user's games (personal tier allows 3 datasets, all taken): lines carry which game and which side (server/client) they come from; queries and dashboards filter by it. Likely a game-kit change first; then wire this game's `AXIOM_TOKEN`, dashboard and the log query check |
-| 8 | `perfect-bot` | done | The offered bot plays perfectly (user's decision 2026-10-01: replaces the searcher, no levels): a win/draw/loss solver plus a lazily fetched opening book of the positions a phone cannot settle in ~2 s (generated offline with Tromp's 8-disc database), the searcher choosing among the best-outcome columns; up to 3 s per move; "Vihje" through the worker |
+| 8 | `perfect-bot` | done | The offered bot plays perfectly (user's decision 2026-10-01: replaces the searcher, no levels): a win/draw/loss solver plus a lazily fetched opening book (Pascal Pons' `7x6.book`, exact scores up to 14 discs, 33.5 MB), the searcher choosing among the best-outcome columns; up to 3 s per move; "Vihje" through the worker |
 
 ## Later, to consider (not now)
 

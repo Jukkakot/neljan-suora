@@ -48,7 +48,7 @@ npm run e2e   # smoke test, when UI or connection code changed
   release, see below). No formatter.
 - Workspace order matters for the build: `rules`, `protocol`, the bots, `server`, `client` (root
   `package.json`).
-- Bundle budget: client JavaScript ≤ 200 kB gzip, the bot worker ≤ 30 kB, the opening book ≤ 8 MB
+- Bundle budget: client JavaScript ≤ 200 kB gzip, the bot worker ≤ 30 kB, the opening book ≤ 34 MB
   raw (size-limit, fails CI).
 - Tests: Vitest in every workspace. Server test files run one at a time because each boots a
   real Colyseus server (`fileParallelism: false`).
@@ -107,28 +107,14 @@ npm run strength -w @neljan-suora/bots          # the requirements in packages/n
 
 ### Opening book
 
-```
-npm run book -w @neljan-suora/bots [-- --jobs 5 --table-bits 24 --max-plies 8 --narrow]
-```
-
-- First download John Tromp's 8-disc database (UCI Machine Learning Repository, "Connect-4",
-  CC BY 4.0) into the git-ignored `packages/neljan-suora-bots/book/.cache/`:
-  `curl -L -o connect-4.zip https://archive.ics.uci.edu/static/public/26/connect+4.zip`, unzip,
-  `gzip -dc connect-4.data.Z > connect-4.data`. The generator stops its searches at 8 discs with it
-  (checking 20 entries against the solver first); without it the shallow positions take a day or
-  more. Also download Pascal Pons' opening book (AGPL-3.0) there:
-  `curl -L -o 7x6.book https://github.com/PascalPons/connect4/releases/download/book/7x6.book`
-  (33.5 MB): exact outcomes of a fifth to most of the positions up to 14 discs, which end the
-  searches sooner (also checked against the solver at start). Both are generation aids only: never
-  committed, never shipped.
-- Regenerate it when the solver's verdicts, `SOLVE_NODES` or the book format change; commit
-  `packages/neljan-suora-bots/book/neljan-suora-book.bin`. A full run takes hours on all cores but
-  one (see the `perfect-bot` design for the measured time), so start it detached.
-- Progress is saved after every judged position in `book/.progress/` (git-ignored): stopping and
-  running the command again resumes. Delete that folder to start over (required when `SOLVE_NODES`
-  or `--narrow` change). `--max-plies` stops early; its work is reused by the next run.
-- The run ends with self-checks against the known theory (the start is won only by column 3; first
-  discs in columns 2 and 4 draw, in 0, 1, 5 and 6 lose) and refuses to write a book that fails them.
+- The book is Pascal Pons' `7x6.book` (github.com/PascalPons/connect4, release `book`, AGPL-3.0;
+  the user accepted the licence for this hobby project): exact scores of positions up to 14 discs,
+  33.5 MB, committed as `packages/neljan-suora-bots/book/7x6.book` and read as is. Nothing is
+  generated here.
+- Its unit test checks the opening theory against the real file (the start is won only by column 3;
+  first discs in columns 2 and 4 draw, in 0, 1, 5 and 6 lose) and a few verdicts against the solver.
+- To replace it (another book of Pons' format): swap the file and keep its name, or change the
+  package export, the Workbox route and the size-limit entry together.
 
 ### E2E smoke
 

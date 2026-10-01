@@ -26,6 +26,3 @@ tournament-results/
 # Background agents' git worktrees
 .claude/worktrees/
 
-# Opening book generation: resumable progress and the downloaded 8-disc database
-packages/neljan-suora-bots/book/.progress/
-packages/neljan-suora-bots/book/.cache/

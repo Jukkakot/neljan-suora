@@ -39,11 +39,12 @@ export default defineConfig(({ command }) => ({
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,ico,webmanifest}"],
         cleanupOutdatedCaches: true,
-        // The bot's opening book (several MB) is not precached: it is fetched on the first bot move
-        // and then kept, so later visits play from it offline. Its hashed name makes it immutable.
+        // The bot's opening book (Pons' 7x6.book, 33.5 MB) is not precached: it is fetched on the
+        // first bot move and then kept, so later visits play from it offline. Its hashed name makes
+        // it immutable.
         runtimeCaching: [
           {
-            urlPattern: /\/assets\/neljan-suora-book-[^/]*\.bin$/,
+            urlPattern: /\/assets\/7x6-[^/]*\.book$/,
             handler: "CacheFirst",
             options: { cacheName: "opening-book", expiration: { maxEntries: 2 } },
           },
@@ -52,8 +53,8 @@ export default defineConfig(({ command }) => ({
     }),
   ],
   build: {
-    // The book always stays its own file (the empty placeholder would otherwise be inlined).
-    assetsInlineLimit: (file) => (file.endsWith(".bin") ? false : undefined),
+    // The book always stays its own file.
+    assetsInlineLimit: (file) => (file.endsWith(".book") ? false : undefined),
   },
   define: {
     // UTC time of `vite build`, shown on the start screen; null ("dev") for the dev server and tests.

@@ -11,11 +11,11 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./book": "./book/neljan-suora-book.bin"
+    "./book": "./book/7x6.book"
   },
   "files": [
     "dist",
-    "book/neljan-suora-book.bin"
+    "book/7x6.book"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -23,8 +23,7 @@
     "test": "vitest run",
     "tournament": "tsx --conditions=source cli/tournament.ts",
     "strength": "tsx --conditions=source cli/strength.ts",
-    "bench": "tsx --conditions=source cli/bench.ts",
-    "book": "tsx --conditions=source cli/book.ts"
+    "bench": "tsx --conditions=source cli/bench.ts"
   },
   "dependencies": {
     "@game-kit/bots": "https://github.com/Jukkakot/game-kit/releases/download/v0.2.0/game-kit-bots-0.2.0.tgz",

@@ -18,6 +18,6 @@ export {
   type PlayedGame,
   type TournamentBot,
 } from "./tournament.js";
-export { Book, BOOK_VERSION, bookEntry, canonicalKey, writeBook, type BookEntry, type BookVerdict } from "./perfect/book.js";
+export { Book, bookKey, writeBook, type BookVerdict } from "./perfect/book.js";
 export { perfectBot, SOLVE_NODES, type PerfectBot, type PerfectOptions, type VerdictSource } from "./perfect/bot.js";
 export { Solver, type Outcome, type RootVerdict, type SolveLimits } from "./perfect/solve.js";
