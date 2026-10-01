@@ -1,0 +1,35 @@
+{
+  "name": "@neljan-suora/bots",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Neljän suora's bots: the rules adapter for the @game-kit/bots library and the evaluation",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.cli.json",
+    "test": "vitest run",
+    "tournament": "tsx --conditions=source cli/tournament.ts",
+    "strength": "tsx --conditions=source cli/strength.ts"
+  },
+  "dependencies": {
+    "@game-kit/bots": "https://github.com/Jukkakot/game-kit/releases/download/v0.1.0/game-kit-bots-0.1.0.tgz",
+    "@neljan-suora/rules": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "tsx": "^4.21.0",
+    "typescript": "~6.0.2",
+    "vitest": "^5.0.2"
+  }
+}

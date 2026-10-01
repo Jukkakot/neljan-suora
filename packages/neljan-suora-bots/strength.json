@@ -1,0 +1,11 @@
+[
+  {
+    "name": "search beats random",
+    "candidate": "brs",
+    "baseline": "random",
+    "colours": 2,
+    "games": 100,
+    "seed": 1,
+    "minShare": 0.8
+  }
+]

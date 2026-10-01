@@ -1,0 +1,237 @@
+{
+  "app": {
+    "title": "Neljän suora",
+    "tagline": "Selainpeli kavereita tai botteja vastaan"
+  },
+  "language": {
+    "label": "Kieli",
+    "fi": "Suomi",
+    "en": "English"
+  },
+  "footer": {
+    "rulesVersion": "Säännöt v{{version}}"
+  },
+  "build": {
+    "client": "Client {{time}}",
+    "server": "Server {{time}}",
+    "serverWaking": "Server: herätetään…",
+    "serverNoAnswer": "Server: ei vastannut",
+    "dev": "dev",
+    "unknown": "?",
+    "time": "{{date}} {{time}}"
+  },
+  "crash": {
+    "title": "Jokin meni rikki",
+    "body": "Peli kohtasi odottamattoman virheen. Lataa sivu uudelleen jatkaaksesi.",
+    "reload": "Lataa uudelleen"
+  },
+  "common": {
+    "waiting": "Odotetaan palvelinta…"
+  },
+  "board": {
+    "label": "Pelilauta",
+    "cellEmpty": "Rivi {{row}}, sarake {{col}}: tyhjä",
+    "cellChosen": "Rivi {{row}}, sarake {{col}}: valittu, napauta uudelleen merkitäksesi",
+    "cellTaken": "Rivi {{row}}, sarake {{col}}: pelaajan {{seat}} merkki"
+  },
+  "start": {
+    "connecting": "Yhdistetään palvelimeen…",
+    "slow": "Palvelin saattaa olla heräämässä talviunilta. Tämä voi kestää hetken.",
+    "errorTitle": "Peliin ei päästy",
+    "errorBody": "Yhteyttä palvelimeen ei saatu. Yritä hetken päästä uudelleen.",
+    "retry": "Yritä uudelleen",
+    "waking": "Herätetään palvelinta talviunilta…",
+    "wakingSlow": "Palvelin on nukkunut sikeästi. Herääminen voi kestää noin minuutin.",
+    "wakeFailed": "Palvelin ei vastannut vielä – voit silti yrittää.",
+    "kicked": "Sinut poistettiin pelistä, koska vuorosi aika loppui.",
+    "nickname": "Nimimerkki",
+    "nicknameLength": "Nimimerkissä pitää olla 2–16 merkkiä",
+    "nicknameCharacters": "Nimimerkissä on merkkejä, joita ei voi käyttää",
+    "openGames": "Avoimet pelit",
+    "gameEntryLabel": "Liity peliin: {{host}}, {{count}}/{{max}} pelaajaa",
+    "hostLeft": "Pelin luoja poistui, joten peli suljettiin",
+    "notOpen": "Peli ei ole enää avoinna",
+    "serverFull": "Palvelin on täynnä – yritä hetken päästä uudelleen",
+    "resumeTitle": "Kesken jäänyt peli",
+    "resumeBody": "Paikkasi pelissä on vielä tallessa.",
+    "resume": "Jatka peliä",
+    "resumeGone": "Peliä ei voi enää jatkaa",
+    "wakingFor": "Odotettu {{time}}",
+    "invited": "Sinut on kutsuttu peliin",
+    "joinInvite": "Liity peliin",
+    "otherGames": "Muut pelit",
+    "playMyself": "Pelaan itse",
+    "randomName": "Arvo uusi nimi",
+    "runningGames": "Käynnissä olevat pelit",
+    "runningEntryLabel": "Katso peliä: {{host}}, {{count}} pelaajaa",
+    "runningCount": "{{count}} pelaajaa",
+    "botsTitle": "Pelaa bottia vastaan",
+    "botsBody": "Botti pelaa heti, myös ilman verkkoa.",
+    "friendsTitle": "Luo peli kavereille",
+    "friendsBody": "Saat kutsulinkin kavereille. Tyhjät paikat voi täyttää boteilla.",
+    "create": "Luo peli",
+    "joinTitle": "Liity peliin",
+    "playBot": "Pelaa bottia vastaan",
+    "watchBots": "Katso bottien peliä"
+  },
+  "game": {
+    "copyLine": "Peli {{id}} · {{date}} {{time}} · v {{ver}}",
+    "copied": "Kopioitu",
+    "localLabel": "Oma peli",
+    "copyFallback": "Kopioi tämä rivi bugiraporttiin:",
+    "linkLabel": "Peli {{id}}. Napauta jakaaksesi pelin linkin.",
+    "watchShareText": "Katso Neljän suora-peliäni",
+    "linkFallback": "Kopioi pelin linkki:",
+    "copyLineNoGame": "{{date}} {{time}} · v {{ver}}"
+  },
+  "turn": {
+    "mine": "Sinun vuorosi",
+    "other": "{{name}} miettii…",
+    "timeUp": "Aika loppui",
+    "disconnected": "{{name}} – yhteys katkennut",
+    "timeLeft": "Aikaa jäljellä {{time}}",
+    "autoplayMine": "Botti pelaa puolestasi",
+    "autoplay": "Botti pelaa: {{name}}"
+  },
+  "errors": {
+    "NOT_SEATED": "Et ole mukana tässä pelissä",
+    "NOT_YOUR_TURN": "Ei ole sinun vuorosi",
+    "WRONG_PHASE": "Sitä ei voi tehdä juuri nyt",
+    "generic": "Siirto ei onnistunut. Yritä uudelleen.",
+    "NOT_KICKABLE": "Tätä pelaajaa ei voi poistaa nyt",
+    "TURN_NOT_EXPIRED": "Pelaajan aika ei ole vielä loppunut",
+    "NOT_HOST": "Vain pelin luoja voi aloittaa pelin",
+    "NOT_ENOUGH_PLAYERS": "Pelaajia ei ole vielä tarpeeksi",
+    "SEAT_TAKEN": "Paikka on jo varattu",
+    "NOT_A_BOT": "Paikalla ei ole bottia",
+    "NOT_SPECTATOR": "Vain katsoja voi muuttaa nopeutta",
+    "PEOPLE_PLAYING": "Nopeutta voi muuttaa vain, kun pelaavat pelkät botit",
+    "SERVER_FULL": "Palvelin on täynnä – yritä hetken päästä uudelleen",
+    "AUTOPLAYING": "Botti pelaa vuoroasi – ota vuoro takaisin ensin",
+    "NOT_BOT_RUNNER": "Bottien siirrot laskee nyt toinen pelaaja",
+    "NOT_BOT_SEAT": "Tällä paikalla ei pelaa botti",
+    "CELL_TAKEN": "Ruutu on jo varattu",
+    "TOO_MANY_PLAYERS": "Peliin eivät mahdu kaikki pelaajat"
+  },
+  "hint": {
+    "button": "Vihje",
+    "title": "Valitse botin ruutu valmiiksi"
+  },
+  "progress": {
+    "label": "Pelaajat",
+    "seat": "{{name}}",
+    "seatMe": "{{name}} (sinä)",
+    "disconnected": "yhteys katkennut",
+    "left": "{{name}} lähti pelistä",
+    "bot": "botti",
+    "autoplay": "botti pelaa hänen puolestaan",
+    "autoplayMine": "botti pelaa puolestasi",
+    "marks_one": "{{count}} merkki",
+    "marks_other": "{{count}} merkkiä"
+  },
+  "result": {
+    "mine": "Voitit!",
+    "other": "{{name}} voitti",
+    "rematch": "Pelaa uudelleen",
+    "home": "Alkuun",
+    "shared": "Jaettu voitto: {{names}}",
+    "sharedMine": "Jaettu voitto! {{names}}",
+    "label": "Tulokset",
+    "rank": "Sija",
+    "player": "Pelaaja",
+    "winner": "Voittaja",
+    "departed": "Lähti",
+    "draw": "Tasapeli",
+    "marks": "Merkit"
+  },
+  "kick": {
+    "timeUp": "{{name}} – aika loppui",
+    "button": "Poista {{name}}",
+    "confirm": "Poistetaanko {{name}} pelistä?",
+    "yes": "Poista",
+    "cancel": "Peru"
+  },
+  "waiting": {
+    "title": "Odotushuone",
+    "seats": "Pelaajat",
+    "you": "sinä",
+    "host": "isäntä",
+    "freeSeat": "Vapaa paikka",
+    "disconnected": "yhteys katkennut",
+    "invite": "Kutsu pelaajia",
+    "shareText": "Liity Neljän suora-peliini",
+    "copied": "Linkki kopioitu",
+    "copyFailed": "Kopioi linkki: {{url}}",
+    "start": "Aloita peli",
+    "needTwo": "Tarvitaan vähintään 2 pelaajaa",
+    "waitingFor": "Odotetaan, että {{name}} aloittaa pelin",
+    "leave": "Poistu",
+    "leaveConfirm": "Peli suljetaan kaikilta. Poistutaanko?",
+    "cancel": "Peru",
+    "bot": "botti",
+    "addBot": "Lisää botti",
+    "addBotLabel": "Lisää botti paikalle {{seat}}",
+    "removeBot": "Poista botti {{name}}",
+    "needPlayers": "Tarvitaan {{count}} pelaajaa"
+  },
+  "leave": {
+    "button": "Poistu pelistä",
+    "confirm": "Lähdetkö pelistä? Merkkisi jäävät laudalle, mutta et enää pelaa.",
+    "yes": "Poistu",
+    "cancel": "Peru"
+  },
+  "spectate": {
+    "watching": "Katsot peliä",
+    "count": "Katsojia: {{count}}",
+    "speed": "Bottien nopeus",
+    "lateInvite": "Peli oli jo alkanut – katsot sitä",
+    "newBotGame": "Uusi bottipeli"
+  },
+  "tips": {
+    "goal": "Saa kolme merkkiä riviin – vaakaan, pystyyn tai vinottain.",
+    "place": "Napauta tyhjää ruutua ja vahvista napauttamalla sitä uudelleen tai painamalla Merkitse.",
+    "close": "Sulje vinkki",
+    "reset": "Näytä vinkit uudelleen",
+    "resetDone": "Vinkit näytetään seuraavassa pelissä."
+  },
+  "autoplay": {
+    "handOver": "Anna botin pelata",
+    "takeBack": "Ota vuoro takaisin",
+    "playing": "Botti pelaa puolestasi. Voit ottaa vuoron takaisin milloin vain."
+  },
+  "turnAlert": {
+    "title": "● Sinun vuorosi – {{title}}"
+  },
+  "settings": {
+    "open": "Asetukset",
+    "title": "Asetukset",
+    "back": "Takaisin",
+    "theme": "Teema",
+    "themes": {
+      "system": "Laite",
+      "light": "Vaalea",
+      "dark": "Tumma"
+    },
+    "feedback": "Äänet ja vuoroilmoitus",
+    "sounds": "Äänet",
+    "soundsNote": "Lyhyt äänimerkki, kun vuorosi alkaa.",
+    "turnTitle": "Välilehden otsikko",
+    "turnTitleNote": "Kun peli on taustalla, välilehden otsikko kertoo vuorosi alkaneen.",
+    "vibration": "Värinä",
+    "vibrationNote": "Lyhyt värinä, kun vuorosi alkaa.",
+    "vibrationUnsupported": "Tämä laite ei tue värinää.",
+    "deviceOnly": "Asetukset tallentuvat vain tähän laitteeseen.",
+    "help": "Ohjeet",
+    "report": "Vianilmoitus",
+    "copyDetails": "Kopioi pelin tiedot"
+  },
+  "undo": {
+    "label": "Peru siirto"
+  },
+  "move": {
+    "wait": "Odota vuoroasi",
+    "choose": "Valitse tyhjä ruutu",
+    "ready": "Napauta ruutua uudelleen tai paina Merkitse",
+    "confirm": "Merkitse"
+  }
+}

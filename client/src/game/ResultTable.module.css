@@ -1,0 +1,98 @@
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-s);
+}
+
+.table th,
+.table td {
+  padding: var(--space-2) 2px;
+  text-align: right;
+  border-bottom: 1px solid var(--border);
+}
+
+.table thead th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.table .player {
+  text-align: left;
+}
+
+.rank {
+  width: 2em;
+}
+
+.who {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+  font-weight: 600;
+}
+
+/* A player's colour marks (two in Tuplaväri), kept tight. */
+.marks {
+  flex: none;
+  display: inline-flex;
+  gap: 2px;
+}
+
+/* Long names end in an ellipsis (as in the player strip), so five columns fit a 360 px phone. */
+.name {
+  max-width: 5.5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.winner {
+  background: var(--surface-2);
+}
+
+.trophy {
+  color: var(--seat-2);
+}
+
+.departed {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.shared {
+  color: var(--muted);
+}
+
+/* Two colour marks (Tuplaväri) stack, so the row is as narrow as with one and fits a phone. */
+.marks:has(> :nth-child(2)) {
+  flex-direction: column;
+}
+
+/* A game seen ending: the winners' rows get one frost sweep. */
+.shimmer {
+  background-image: linear-gradient(100deg, transparent 30%, color-mix(in srgb, var(--snow) 45%, transparent) 50%, transparent 70%);
+  background-size: 250% 100%;
+  background-repeat: no-repeat;
+  background-position: 120% 0;
+  animation: shimmer var(--motion-slow) ease-out 300ms both;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -120% 0;
+  }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

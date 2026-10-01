@@ -1,0 +1,71 @@
+name: Deploy client
+
+# The server is deployed by the deploy-server job in ci.yml, after CI passes.
+on:
+  push:
+    branches: [main]
+    paths:
+      - client/**
+      - packages/rules/**
+      - packages/protocol/**
+      - package-lock.json
+      - .github/workflows/deploy-client.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  # A fresh repo has no Pages site or server yet (docs/operations.md → Setup checklist): skip
+  # with a notice until the repository variable VITE_SERVER_URL is set.
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+    steps:
+      - id: check
+        env:
+          SERVER_URL: ${{ vars.VITE_SERVER_URL }}
+        run: |
+          if [ -n "$SERVER_URL" ]; then echo "ready=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          echo "::notice::Client deploy skipped: VITE_SERVER_URL is not set (docs/operations.md → Setup checklist)"
+
+  build:
+    needs: gate
+    if: needs.gate.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Version from commit
+        run: echo "VITE_APP_VERSION=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+      - run: npm ci
+      - run: npm test -w @neljan-suora/rules -w @neljan-suora/protocol -w @neljan-suora/bots -w @neljan-suora/client
+      - run: npm run build -w @neljan-suora/client
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/
+          VITE_SERVER_URL: ${{ vars.VITE_SERVER_URL }}
+      - name: Version file for the production smoke
+        run: echo "{\"version\":\"${GITHUB_SHA::7}\"}" > client/dist/version.json
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: client/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

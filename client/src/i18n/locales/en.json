@@ -1,0 +1,237 @@
+{
+  "app": {
+    "title": "Neljän suora",
+    "tagline": "A browser game against friends or bots"
+  },
+  "language": {
+    "label": "Language",
+    "fi": "Suomi",
+    "en": "English"
+  },
+  "footer": {
+    "rulesVersion": "Rules v{{version}}"
+  },
+  "build": {
+    "client": "Client {{time}}",
+    "server": "Server {{time}}",
+    "serverWaking": "Server: waking up…",
+    "serverNoAnswer": "Server: no answer",
+    "dev": "dev",
+    "unknown": "?",
+    "time": "{{date}} {{time}}"
+  },
+  "crash": {
+    "title": "Something broke",
+    "body": "The game ran into an unexpected error. Reload the page to continue.",
+    "reload": "Reload"
+  },
+  "common": {
+    "waiting": "Waiting for the server…"
+  },
+  "board": {
+    "label": "Game board",
+    "cellEmpty": "Row {{row}}, column {{col}}: empty",
+    "cellChosen": "Row {{row}}, column {{col}}: chosen, tap again to mark",
+    "cellTaken": "Row {{row}}, column {{col}}: player {{seat}}'s mark"
+  },
+  "start": {
+    "connecting": "Connecting to the server…",
+    "slow": "The server may be waking from hibernation. This can take a moment.",
+    "errorTitle": "Could not join",
+    "errorBody": "Could not reach the server. Try again in a moment.",
+    "retry": "Try again",
+    "waking": "Waking the server from hibernation…",
+    "wakingSlow": "The server was sound asleep. Waking up can take about a minute.",
+    "wakeFailed": "The server has not answered yet – you can still try.",
+    "kicked": "You were removed from the game because your turn time ran out.",
+    "nickname": "Nickname",
+    "nicknameLength": "A nickname needs 2–16 characters",
+    "nicknameCharacters": "The nickname has characters that cannot be used",
+    "openGames": "Open games",
+    "gameEntryLabel": "Join game: {{host}}, {{count}}/{{max}} players",
+    "hostLeft": "The game's creator left, so the game was closed",
+    "notOpen": "The game is no longer open",
+    "serverFull": "The server is full – try again in a moment",
+    "resumeTitle": "Unfinished game",
+    "resumeBody": "Your seat in the game is still held.",
+    "resume": "Continue game",
+    "resumeGone": "The game can no longer be continued",
+    "wakingFor": "Waited {{time}}",
+    "invited": "You have been invited to a game",
+    "joinInvite": "Join game",
+    "otherGames": "Other games",
+    "playMyself": "I play myself",
+    "randomName": "Pick a new name",
+    "runningGames": "Running games",
+    "runningEntryLabel": "Watch game: {{host}}, {{count}} players",
+    "runningCount": "{{count}} players",
+    "botsTitle": "Play against a bot",
+    "botsBody": "The bot plays at once, offline too.",
+    "friendsTitle": "Create a game for friends",
+    "friendsBody": "You get an invite link for your friends. Empty seats can be filled with bots.",
+    "create": "Create game",
+    "joinTitle": "Join a game",
+    "playBot": "Play against a bot",
+    "watchBots": "Watch bots play"
+  },
+  "game": {
+    "copyLine": "Game {{id}} · {{date}} {{time}} · v {{ver}}",
+    "copied": "Copied",
+    "localLabel": "Own game",
+    "copyFallback": "Copy this line into the bug report:",
+    "linkLabel": "Game {{id}}. Tap to share the game link.",
+    "watchShareText": "Watch my Neljän suora game",
+    "linkFallback": "Copy the game link:",
+    "copyLineNoGame": "{{date}} {{time}} · v {{ver}}"
+  },
+  "turn": {
+    "mine": "Your turn",
+    "other": "{{name}} is thinking…",
+    "timeUp": "Time is up",
+    "disconnected": "{{name}} – connection lost",
+    "timeLeft": "Time left {{time}}",
+    "autoplayMine": "The bot plays for you",
+    "autoplay": "The bot plays: {{name}}"
+  },
+  "errors": {
+    "NOT_SEATED": "You are not in this game",
+    "NOT_YOUR_TURN": "It is not your turn",
+    "WRONG_PHASE": "That cannot be done right now",
+    "generic": "The move did not go through. Try again.",
+    "NOT_KICKABLE": "This player cannot be removed now",
+    "TURN_NOT_EXPIRED": "The player's time is not up yet",
+    "NOT_HOST": "Only the game's creator can start the game",
+    "NOT_ENOUGH_PLAYERS": "Not enough players yet",
+    "SEAT_TAKEN": "The seat is already taken",
+    "NOT_A_BOT": "There is no bot in that seat",
+    "NOT_SPECTATOR": "Only a spectator can change the speed",
+    "PEOPLE_PLAYING": "The speed can only change while only bots play",
+    "SERVER_FULL": "The server is full – try again in a moment",
+    "AUTOPLAYING": "The bot is playing your turn – take it back first",
+    "NOT_BOT_RUNNER": "Another player is computing the bots’ moves now",
+    "NOT_BOT_SEAT": "No bot plays in that seat",
+    "CELL_TAKEN": "That cell is already taken",
+    "TOO_MANY_PLAYERS": "Not every player fits in this game"
+  },
+  "hint": {
+    "button": "Hint",
+    "title": "Choose the bot's cell for you"
+  },
+  "progress": {
+    "label": "Players",
+    "seat": "{{name}}",
+    "seatMe": "{{name}} (you)",
+    "disconnected": "connection lost",
+    "left": "{{name}} left the game",
+    "bot": "bot",
+    "autoplay": "the bot plays for them",
+    "autoplayMine": "the bot plays for you",
+    "marks_one": "{{count}} mark",
+    "marks_other": "{{count}} marks"
+  },
+  "result": {
+    "mine": "You won!",
+    "other": "{{name}} won",
+    "rematch": "Play again",
+    "home": "Home",
+    "shared": "A shared win: {{names}}",
+    "sharedMine": "A shared win! {{names}}",
+    "label": "Results",
+    "rank": "Rank",
+    "player": "Player",
+    "winner": "Winner",
+    "departed": "Left",
+    "draw": "A draw",
+    "marks": "Marks"
+  },
+  "kick": {
+    "timeUp": "{{name}} – time is up",
+    "button": "Remove {{name}}",
+    "confirm": "Remove {{name}} from the game?",
+    "yes": "Remove",
+    "cancel": "Cancel"
+  },
+  "waiting": {
+    "title": "Waiting room",
+    "seats": "Players",
+    "you": "you",
+    "host": "host",
+    "freeSeat": "Free seat",
+    "disconnected": "connection lost",
+    "invite": "Invite players",
+    "shareText": "Join my Neljän suora game",
+    "copied": "Link copied",
+    "copyFailed": "Copy the link: {{url}}",
+    "start": "Start game",
+    "needTwo": "At least 2 players are needed",
+    "waitingFor": "Waiting for {{name}} to start the game",
+    "leave": "Leave",
+    "leaveConfirm": "The game closes for everyone. Leave?",
+    "cancel": "Cancel",
+    "bot": "bot",
+    "addBot": "Add bot",
+    "addBotLabel": "Add a bot to seat {{seat}}",
+    "removeBot": "Remove bot {{name}}",
+    "needPlayers": "{{count}} players are needed"
+  },
+  "leave": {
+    "button": "Leave game",
+    "confirm": "Leave the game? Your marks stay on the board, but you no longer play.",
+    "yes": "Leave",
+    "cancel": "Cancel"
+  },
+  "spectate": {
+    "watching": "You are watching",
+    "count": "Spectators: {{count}}",
+    "speed": "Bot speed",
+    "lateInvite": "The game had already started – you are watching it",
+    "newBotGame": "New bot game"
+  },
+  "tips": {
+    "goal": "Get three marks in a row – across, down or diagonally.",
+    "place": "Tap an empty cell and confirm by tapping it again or pressing Mark.",
+    "close": "Close tip",
+    "reset": "Show tips again",
+    "resetDone": "Tips will show in the next game."
+  },
+  "autoplay": {
+    "handOver": "Let the bot play",
+    "takeBack": "Take the turn back",
+    "playing": "The bot plays for you. You can take the turn back at any time."
+  },
+  "turnAlert": {
+    "title": "● Your turn – {{title}}"
+  },
+  "settings": {
+    "open": "Settings",
+    "title": "Settings",
+    "back": "Back",
+    "theme": "Theme",
+    "themes": {
+      "system": "Device",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "feedback": "Sounds and turn alert",
+    "sounds": "Sounds",
+    "soundsNote": "A short sound when your turn begins.",
+    "turnTitle": "Tab title",
+    "turnTitleNote": "While the game is in the background, the tab title says your turn has begun.",
+    "vibration": "Vibration",
+    "vibrationNote": "A short vibration when your turn begins.",
+    "vibrationUnsupported": "This device cannot vibrate.",
+    "deviceOnly": "Settings are saved on this device only.",
+    "help": "Help",
+    "report": "Bug report",
+    "copyDetails": "Copy game details"
+  },
+  "undo": {
+    "label": "Undo move"
+  },
+  "move": {
+    "wait": "Wait for your turn",
+    "choose": "Choose an empty cell",
+    "ready": "Tap the cell again or press Mark",
+    "confirm": "Mark"
+  }
+}
