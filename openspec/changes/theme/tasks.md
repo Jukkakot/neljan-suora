@@ -25,7 +25,7 @@
 - [x] 5.1 Run the check chain once (`npm run lint && npm run typecheck && npm test && npm run build && npm run size -w @neljan-suora/client`) and the E2E smoke; fix failures (smoke selectors relying on the old marks or "Merkitse").
 - [x] 5.2 UI check on `playwright-mobile`, portrait, light and dark: start screen, a bot game mid-play (`/?dev=1v1`: berries, chosen preview, last-move dot) and a won game (shine, leaves). One screenshot per state under `.playwright-mcp/`.
 - [x] 5.3 Docs: `product.md` → Theme "Marjat" (concept, seats, motion, voice; drop the TODO), `nfr.md` → Theme, `.claude/CLAUDE.md` theme line, `docs/README.md`, `docs/architecture.md` (tokens.css line), `docs/development.md` (UI check line); mark `theme` done in `openspec/context/roadmap.md`. Kit TODO noted here: the template's `Snowfall` could take a shape (square / leaf / none). Verify: grep for "Placeholder" in docs, context and CLAUDE.md finds only historical mentions.
-- [ ] 5.4 Refresh the games front page card with `npm run homepage-card -- --push` (dev server running). Verify: the card on https://jukkakot.github.io shows the berry board in dark.
+- [x] 5.4 Refresh the games front page card with `npm run homepage-card -- --push` (dev server running). Verify: the card on https://jukkakot.github.io shows the berry board in dark.
 
 ## Notes
 
