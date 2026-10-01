@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { joinOptionsSchema as kitJoinOptionsSchema } from "@game-kit/protocol";
-import { BOARD_CELLS, type MovePayload, type NeljanSuoraOptions } from "./game-codes.js";
+import { BOARD_COLUMNS, type MovePayload, type NeljanSuoraOptions } from "./game-codes.js";
 
 // The kit's generic payload schemas, next to the game's own.
 export {
@@ -14,9 +14,9 @@ export {
   watchRequestSchema,
 } from "@game-kit/protocol";
 
-/** Neljän suora's move (in `move` and `botMove`): a board cell. */
+/** Neljän suora's move (in `move` and `botMove`): a column of the grid. */
 export const moveSchema = z.strictObject({
-  cell: z.int().min(0).max(BOARD_CELLS - 1),
+  column: z.int().min(0).max(BOARD_COLUMNS - 1),
 }) satisfies z.ZodType<MovePayload>;
 
 /** Neljän suora's options (in the join options, the listing and `setOptions`): none yet. */

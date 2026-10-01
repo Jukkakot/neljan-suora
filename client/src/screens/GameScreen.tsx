@@ -33,8 +33,8 @@ export interface GameScreenProps {
 
 /**
  * The game's shell around the board: whose turn it is, the players, the board, the controls and the
- * result. On the viewer's turn they tap an empty cell to choose it and confirm with a second tap or
- * the confirm button (one deliberate confirm per move); "Vihje" chooses the bot's cell for them.
+ * result. On the viewer's turn they tap a column to choose it and confirm with a second tap or the
+ * confirm button (one deliberate confirm per move); "Vihje" chooses the bot's column for them.
  * Against bots on the device "Peru" takes back the viewer's last move. A finished game shows the
  * result table with "Pelaa uudelleen" and "Alkuun". A spectator gets no turn controls: the bots'
  * speed while only bots play, and "Uusi bottipeli" after a bot-only game. Once the current player's
@@ -50,28 +50,28 @@ export function GameScreen({ view, session }: GameScreenProps) {
   useTurnAlert(view);
 
   const { isMyTurn, mySeat } = view;
-  // The cell the viewer chose on this turn; forgotten when the turn changes.
-  const [choice, setChoice] = useState<{ turn: number; cell: number }>();
-  const chosen = choice?.turn === view.turn && isMyTurn && view.board[choice.cell] === 0 ? choice.cell : undefined;
+  // The column the viewer chose on this turn; forgotten when the turn changes or the column fills.
+  const [choice, setChoice] = useState<{ turn: number; column: number }>();
+  const chosen = choice?.turn === view.turn && isMyTurn && view.board[choice.column] === 0 ? choice.column : undefined;
   const lastMove = useLastMove(view.board, view.roomId);
   const shownLastMove = view.finished ? undefined : lastMove;
   // The end, seen as it happens and with a winner: counts count up; falling leaves when the viewer won or watches.
   const celebrate = useEnded(view.finished) && view.winners.length > 0;
   const leaves = celebrate && (view.spectating || view.results.some((r) => r.winner && r.isMe));
 
-  const send = async (cell: number | undefined) => {
-    if (cell === undefined || pending) return;
-    const result = await move({ cell });
+  const send = async (column: number | undefined) => {
+    if (column === undefined || pending) return;
+    const result = await move({ column });
     if (result?.ok) setChoice(undefined);
   };
-  const tap = (cell: number) => {
-    if (chosen === cell) void send(cell);
-    else setChoice({ turn: view.turn, cell });
+  const tap = (column: number) => {
+    if (chosen === column) void send(column);
+    else setChoice({ turn: view.turn, column });
   };
   const hint = () => {
     if (!view.game) return;
-    const best = chooseMove(view.game, { depth: 9 }, view.turn);
-    if (best) setChoice({ turn: view.turn, cell: best.cell });
+    const best = chooseMove(view.game, { depth: 4 }, view.turn);
+    if (best) setChoice({ turn: view.turn, column: best.column });
   };
 
   // Announce a player leaving the running game (left, kicked or timed out; the reason is not synced).
@@ -115,7 +115,7 @@ export function GameScreen({ view, session }: GameScreenProps) {
           <PlayerStrip view={view} />
         </div>
         <div className={styles.board}>
-          <Board board={view.board} line={view.line} chosen={chosen} seat={mySeat} lastMove={shownLastMove} busy={pending} onCell={canMove ? tap : undefined} />
+          <Board board={view.board} line={view.line} chosen={chosen} seat={mySeat} lastMove={shownLastMove} busy={pending} onColumn={canMove ? tap : undefined} />
         </div>
         <div className={styles.side}>
           {view.finished && view.results.length > 0 && <ResultTable rows={view.results} celebrate={celebrate} />}

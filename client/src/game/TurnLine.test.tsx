@@ -41,9 +41,9 @@ describe("board-view › Whose turn is shown", () => {
 });
 
 describe("board-view › Rejected command message", () => {
-  it("CELL_TAKEN is explained without technical details", () => {
-    render(<Notice message={i18n.t(noticeKey("CELL_TAKEN"))} />);
-    expect(screen.getByRole("status").textContent).toBe("Ruutu on jo varattu");
+  it("COLUMN_FULL is explained without technical details", () => {
+    render(<Notice message={i18n.t(noticeKey("COLUMN_FULL"))} />);
+    expect(screen.getByRole("status").textContent).toBe("Sarake on täynnä");
   });
 
   it("Server says not your turn", () => {

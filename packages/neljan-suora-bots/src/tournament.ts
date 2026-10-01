@@ -12,7 +12,7 @@ interface RegisteredBot {
 export const BOTS: Readonly<Record<string, RegisteredBot>> = {
   random: { bot: randomPlayer, budget: { depth: 1 } },
   greedy: { bot: greedyPlayer, budget: { depth: 1 } },
-  brs: { bot: brsPlayer, budget: { depth: 9 } },
+  brs: { bot: brsPlayer, budget: { depth: 4 } },
   mcts: { bot: mctsPlayer, budget: { iterations: 400 } },
 };
 
@@ -47,7 +47,7 @@ export function parseBot(label: string): TournamentBot {
   return { label, name: name!, bot: registered.bot, budget };
 }
 
-/** Tournament formats (`--colours`): the seats each side of a pairing plays. The placeholder has one. */
+/** Tournament formats (`--colours`): the seats each side of a pairing plays. Neljän suora has one. */
 export const FORMATS = {
   /** Two seats, one each. */
   2: { description: "2 seats", sides: [[1], [2]] },
@@ -98,10 +98,10 @@ export function playTournamentGame(colours: Colours, bots: ReadonlyMap<string, T
   while (!state.over) {
     const player = bySeat.get(state.turn)!;
     const started = systemClock();
-    const cell = player.bot.choose(state, player.budget, rng);
+    const column = player.bot.choose(state, player.budget, rng);
     const ms = systemClock() - started;
-    if (cell === undefined) throw new Error(`${player.label} on seat ${state.turn} has no move`);
-    const applied = playMove(state, state.turn, { cell });
+    if (column === undefined) throw new Error(`${player.label} on seat ${state.turn} has no move`);
+    const applied = playMove(state, state.turn, { column });
     if (!applied.ok) throw new Error(`${player.label} played a refused move: ${applied.code}`);
     state = applied.game;
     const t = (timing[player.label] ??= { moves: 0, totalMs: 0, maxMs: 0 });

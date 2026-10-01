@@ -5,9 +5,9 @@ export type { GamePhase, SyncedPlayer };
 
 /** Neljän suora's synced game data (`state.game`) as the client receives it. */
 export interface SyncedGame {
-  /** The mark of every cell (0 = empty, else the seat), row-major. */
+  /** The disc in every cell (0 = empty, else the seat), row-major, top row first. */
   cells?: Iterable<number>;
-  /** The winning line's cells once someone has three in a row. */
+  /** The cells of the winning lines of four once someone has won. */
   line?: Iterable<number>;
 }
 
@@ -36,7 +36,7 @@ export interface ResultRow {
 
 /** What Neljän suora shows on top of the kit's lobby view: the board and the result. */
 export interface NeljanSuoraView {
-  /** The mark per cell (0 = empty, else the seat), row-major. */
+  /** The disc per cell (0 = empty, else the seat), row-major, top row first. */
   board: readonly number[];
   /** The winning line's cells; empty until someone wins. */
   line: readonly number[];

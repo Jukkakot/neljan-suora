@@ -6,17 +6,16 @@ in `openspec/specs/`, the spec wins. The parts marked **TODO** are agreed in the
 
 ## The game (rules in our own words)
 
-Neljän suora is the classic gravity four-in-a-row game, with our own name and look. The rules land
-in roadmap `rules-engine`; until then the placeholder game Ristinolla (tic-tac-toe) stands in, so
-every part of the contract runs.
+Neljän suora is the classic gravity four-in-a-row game, with our own name and look. Rules in spec
+`game-rules`.
 
 - Two seats. An upright grid of 7 columns and 6 rows.
 - A move is choosing a column that is not full; the disc drops to the lowest free cell of it.
 - Four of the mover's discs in a row horizontally, vertically or diagonally win at once, and the
   winning row is shown. A full grid without such a row is a draw. No passing, no scores beyond
   win, draw or loss.
-- Who starts is drawn from the game's seed; a rematch lets the other seat start (`rules-engine`
-  confirms).
+- Who starts is drawn from the game's seed, also in a rematch (the kit's rematch makes a new room
+  and tells the rules nothing about the previous game; letting the other seat start is a kit TODO).
 - The commercial game's name, logos, box look and signature colours never appear in the UI,
   assets, texts or repo (nfr → Legal).
 

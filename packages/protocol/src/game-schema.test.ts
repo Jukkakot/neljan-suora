@@ -3,12 +3,12 @@ import { botMovePayloadSchema, movePayloadSchema, optionsPayloadSchema } from "@
 import { joinOptionsSchema, moveSchema, optionsSchema } from "./game-schema.js";
 
 describe("moveSchema", () => {
-  it("accepts every board cell", () => {
-    for (let cell = 0; cell < 9; cell++) expect(moveSchema.safeParse({ cell }).success).toBe(true);
+  it("accepts every column", () => {
+    for (let column = 0; column < 7; column++) expect(moveSchema.safeParse({ column }).success).toBe(true);
   });
 
-  it("rejects out-of-range cells, non-integers, missing and extra fields", () => {
-    for (const bad of [{ cell: 9 }, { cell: -1 }, { cell: 1.5 }, { cell: "1" }, {}, { cell: 1, extra: 1 }, { cell: 1, seat: 1 }, null]) {
+  it("rejects off-grid columns, non-integers, missing and extra fields", () => {
+    for (const bad of [{ column: 7 }, { column: -1 }, { column: 1.5 }, { column: "1" }, {}, { cell: 1 }, { column: 1, extra: 1 }, { column: 1, seat: 1 }, null]) {
       expect(moveSchema.safeParse(bad).success).toBe(false);
     }
   });
@@ -16,7 +16,7 @@ describe("moveSchema", () => {
 
 describe("move and botMove with the game's move", () => {
   it("wrap a move, the bot move with a seat", () => {
-    const move = { cell: 4 };
+    const move = { column: 4 };
     expect(movePayloadSchema(moveSchema).safeParse({ move }).success).toBe(true);
     expect(movePayloadSchema(moveSchema).safeParse(move).success).toBe(false);
     expect(botMovePayloadSchema(moveSchema).safeParse({ seat: 2, move }).success).toBe(true);

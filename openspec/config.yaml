@@ -2,9 +2,8 @@ schema: spec-driven
 
 context: |
   Neljän suora: a turn-based browser game on the game kit (Jukkakot/game-kit), humans and
-  bots, mobile first. Its rules, name and theme are agreed in the first changes
-  (roadmap: theme, rules-engine); until then a placeholder game (Ristinolla) and the
-  neutral theme "Placeholder" stand in. Bots are computed in the browser (Web Worker);
+  bots, mobile first: gravity four in a row on a 7 x 6 grid, theme "Marjat" (berries in
+  a birch crate). Bots are computed in the browser (Web Worker);
   the server only validates.
 
   Monorepo (npm workspaces, TypeScript):

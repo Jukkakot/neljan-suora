@@ -110,12 +110,12 @@
     "AUTOPLAYING": "The bot is playing your turn – take it back first",
     "NOT_BOT_RUNNER": "Another player is computing the bots’ moves now",
     "NOT_BOT_SEAT": "No bot plays in that seat",
-    "CELL_TAKEN": "That cell is already taken",
+    "COLUMN_FULL": "That column is full",
     "TOO_MANY_PLAYERS": "Not every player fits in this game"
   },
   "hint": {
     "button": "Hint",
-    "title": "Choose the bot's cell for you"
+    "title": "Choose the bot's column for you"
   },
   "progress": {
     "label": "Players",
@@ -188,8 +188,8 @@
     "newBotGame": "New bot game"
   },
   "tips": {
-    "goal": "Get three berries in a row – across, down or diagonally.",
-    "place": "Tap an empty cell and confirm by tapping it again or pressing Place.",
+    "goal": "Get four berries in a row – across, up or diagonally.",
+    "place": "Tap a column and confirm by tapping it again or pressing Place. The berry drops to the bottom.",
     "close": "Close tip",
     "reset": "Show tips again",
     "resetDone": "Tips will show in the next game."
@@ -230,8 +230,8 @@
   },
   "move": {
     "wait": "Wait for your turn",
-    "choose": "Choose an empty cell",
-    "ready": "Tap the cell again or press Place",
+    "choose": "Choose a column",
+    "ready": "Tap the column again or press Place",
     "confirm": "Place"
   },
   "berry": {

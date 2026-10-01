@@ -5,9 +5,8 @@ component behaviour) live in the code and in [`openspec/specs/`](../openspec/spe
 only points to them. Status markers: **Implemented** = on `main`; **Planned (`change`)** = agreed,
 delivered by that roadmap change.
 
-> The game is still the placeholder **Ristinolla** (tic-tac-toe) from the game-kit template; the
-> real rules replace it in `rules-engine` and `game-ui` (roadmap). Everything around the rules is
-> the game kit's and works as described.
+> The rules are Neljän suora's own (`rules-engine`); the board UI is still the template's minimal
+> grid until `game-ui` (roadmap). Everything around the rules is the game kit's and works as described.
 
 ## Overview — Implemented
 
@@ -118,17 +117,22 @@ kit packages come built (`dist/` only).
 
 - Synced: the kit's `LobbyState` (players, `phase`, `turnSeat`, `turn`, `hostSeat`, `winners`,
   `turnDeadline`, `turnExpired`, `botRunnerSeat`, `spectators`, `botSpeed`, `rematchRoomId`) and
-  `game`, the game's child (`server/src/rooms/schema/GameState.ts`; placeholder: `cells`, the mark
-  per cell, and `line`, the winning cells). No hidden information.
+  `game`, the game's child (`server/src/rooms/schema/GameState.ts`; `cells`, the disc per cell of
+  the 7 × 6 grid, row-major with the top row first, and `line`, the winning cells). No hidden information.
 - The client rebuilds the rules' game from it (`GameView.game`), so the hint and the bot runner use
-  the same rules as the server. UI-only state (the chosen cell) never crosses the network.
+  the same rules as the server. UI-only state (the chosen column) never crosses the network.
 
 ## Rules package — Implemented
 
 - `rng.ts`: the seeded random source (`createRng`, `shuffle`); the same seed always gives the same
   game, so the server's fallback moves and device games are reproducible from `dealSeed`.
-- `game.ts` (placeholder): the game state as plain JSON data, `startGame`, `playMove` (refusals
-  change nothing), `removeSeat`, `endGame`, `randomMove`.
+- `game.ts`: gravity four in a row as plain JSON data (`cells`, `line`, …); a move is `{ column }`.
+  `startGame` (the seed draws the starter), `playMove` (refusals `COLUMN_FULL`/`INVALID_COMMAND`
+  change nothing), `legalColumns`, `landingCell`, `removeSeat`, `endGame`, `randomMove`.
+- `bitboard.ts`: the grid constants, `LINES` (the 69 lines of four) and the bitboard win check: a
+  seat's discs in the 7 × (6 + 1) layout split into two 32-bit words (`lo` columns 0–3, `hi` 4–6),
+  so JavaScript's bitwise operators work; property tests check it against a plain scan. The base
+  for `bot-v1`'s search.
 - `contract.ts`: `neljanSuoraRules`, the contract over `game.ts`; no rules live there.
 - `testing.ts` (`@neljan-suora/rules/testing`): fixtures for the other workspaces' tests.
 
@@ -143,7 +147,7 @@ kit packages come built (`dist/` only).
   (the bot people play against), `playGame`, and `chooseMove(game, budget, seed | rng, bot?)`.
 - **Tournaments:** the bot registry with budgets (`brs@d4`, `mcts@i400`, `greedy@200ms`), formats,
   `playTournamentGame`; `cli/` runs games on worker threads. Requirements in `strength.json`
-  ("candidate beats baseline ≥ X over N games"; placeholder: search beats random).
+  ("candidate beats baseline ≥ X over N games"; until `bot-v1`: search beats random).
 - **In the client** (`client/src/bots/`): `bot.worker.ts` serves `chooseMove` in a module Web
   Worker (own size-limit entry); `askBotWorker` asks it and answers in the page where no worker can
   run. Budget 800 ms (divided by the watching speed); the bot thinks during the 1 s pause.
@@ -158,7 +162,7 @@ client/src/
   session/      useGameSession (the kit's useKitSession + move), viewModel (toView: state.game +
                 lobby view → GameView), neljanSuoraClient (the client definition), devShortcut
   bots/         the bot worker and its client
-  game/         Board and MoveControls (placeholder), turn line, player strip, result table,
+  game/         Board and MoveControls, turn line, player strip, result table,
                 generic controls (undo, hint, kick, leave, autoplay, spectate, game id badge)
   tips/         first-game tips and the start screen's reset link
   settings/     device settings store, settings screen, theme, generated sounds, turn alert
@@ -171,8 +175,8 @@ client/src/
   state into an immutable `GameView` (`LobbyView<SeatView> & NeljanSuoraView`); components render it.
 - **UI foundation:** every colour, spacing and radius is a token in `ui/tokens.css`; CSS Modules;
   anything shown twice is a shared component (`Berry` = a seat's piece everywhere; `SeatMark` is its small fixed-size form).
-- **A move:** the first tap on an empty cell chooses it, the second tap or "Aseta" makes the
-  move (one deliberate confirm); "Vihje" chooses the search bot's cell.
+- **A move:** the first tap in a column chooses it (the berry is previewed where it lands), the
+  second tap or "Aseta" drops it (one deliberate confirm); "Vihje" chooses the search bot's column.
 - **Session:** a per-tab reconnection token rejoins after a reload; a seated player's unfinished
   game is remembered, so a newly opened app offers "Jatka peliä".
 - **Local play:** a game against bots is the kit's `LocalRoom` with the game's definition, the

@@ -17,10 +17,10 @@ afterEach(() => localStorage.clear());
 describe("first-game-tips › One-time tips in the first game", () => {
   it("First turn: the goal first, how to place after closing it", () => {
     render(<FirstGameTips {...myTurn} />);
-    expect(screen.getByRole("status").textContent).toContain("Saa kolme marjaa riviin");
+    expect(screen.getByRole("status").textContent).toContain("Saa neljä marjaa riviin");
 
     fireEvent.click(screen.getByRole("button", { name: "Sulje vinkki" }));
-    expect(screen.getByRole("status").textContent).toContain("Napauta tyhjää ruutua");
+    expect(screen.getByRole("status").textContent).toContain("Napauta saraketta");
     expect(JSON.parse(localStorage.getItem("neljan-suora.tips.seen")!)).toEqual(["goal", "place"]);
   });
 

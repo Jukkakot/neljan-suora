@@ -7,14 +7,14 @@ import { endGame, playMove, randomMove, removeSeat, startGame, type Game, type M
  */
 
 /**
- * Neljän suora's options (set by the host in the waiting room). The placeholder game has none; a real
- * game adds its own here (a variant, a board size …) and in the protocol's `optionsSchema`.
+ * Neljän suora's options (set by the host in the waiting room): none yet; a variant (a larger grid …)
+ * would go here and in the protocol's `optionsSchema`.
  */
 export type NeljanSuoraOptions = Record<string, never>;
 
 export const DEFAULT_OPTIONS: NeljanSuoraOptions = {};
 
-export const moveText = (move: Move): string => `c${move.cell}`;
+export const moveText = (move: Move): string => `col${move.column}`;
 
 export const neljanSuoraRules: GameRules<Game, Move, NeljanSuoraOptions> = {
   seatRange: () => ({ min: 2, max: 2 }),
@@ -28,7 +28,7 @@ export const neljanSuoraRules: GameRules<Game, Move, NeljanSuoraOptions> = {
   play(game, seat, move) {
     const result = playMove(game, seat, move);
     if (result.ok) return result;
-    const withMove = result.code === "CELL_TAKEN" || result.code === "INVALID_COMMAND";
+    const withMove = result.code === "COLUMN_FULL" || result.code === "INVALID_COMMAND";
     return { ok: false, code: result.code, ...(withMove && { facts: { seat, move: moveText(move) } }) };
   },
 

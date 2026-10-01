@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import "../i18n";
 import type { ServerWake } from "@game-kit/client";
@@ -86,38 +86,48 @@ describe("game screen › a move", () => {
   }
   const cell = (container: HTMLElement, i: number) => container.querySelector(`[data-cell='${i}']`) as HTMLButtonElement;
 
-  it("the first tap chooses a cell, the second makes the move", async () => {
+  /** A grid from column stacks (bottom up): `{ 0: [1, 2] }` puts seat 1 at the bottom of column 0 and seat 2 above it. */
+  const gridOf = (stacks: Record<number, number[]>) => {
+    const board = Array.from({ length: 42 }, () => 0);
+    for (const [column, stack] of Object.entries(stacks)) stack.forEach((seat, height) => (board[(5 - height) * 7 + Number(column)] = seat));
+    return board;
+  };
+
+  it("the first tap chooses a column, the second makes the move", async () => {
     const { container, move } = setup();
-    fireEvent.click(cell(container, 4));
+    fireEvent.click(cell(container, 3));
     expect(move).not.toHaveBeenCalled();
-    expect(cell(container, 4).getAttribute("aria-pressed")).toBe("true");
-    expect(screen.getByText("Napauta ruutua uudelleen tai paina Aseta")).toBeTruthy();
-    await act(async () => fireEvent.click(cell(container, 4)));
-    expect(move).toHaveBeenCalledExactlyOnceWith({ cell: 4 });
+    // The berry is previewed where it would land: the bottom of column 3.
+    expect(cell(container, 38).getAttribute("aria-pressed")).toBe("true");
+    expect(screen.getByText("Napauta saraketta uudelleen tai paina Aseta")).toBeTruthy();
+    await act(async () => fireEvent.click(cell(container, 38)));
+    expect(move).toHaveBeenCalledExactlyOnceWith({ column: 3 });
   });
 
-  it("the confirm button makes the chosen move; it is disabled until a cell is chosen", async () => {
+  it("the confirm button makes the chosen move; it is disabled until a column is chosen", async () => {
     const { container, move } = setup();
     const confirm = screen.getByRole("button", { name: "Aseta" }) as HTMLButtonElement;
     expect(confirm.disabled).toBe(true);
     fireEvent.click(cell(container, 0));
     fireEvent.click(cell(container, 2));
     await act(async () => fireEvent.click(confirm));
-    expect(move).toHaveBeenCalledExactlyOnceWith({ cell: 2 });
+    expect(move).toHaveBeenCalledExactlyOnceWith({ column: 2 });
   });
 
-  it("taken cells and the other's turn cannot be tapped", () => {
-    const { container } = setup(gameView({ board: [1, 0, 0, 0, 0, 0, 0, 0, 0], turnSeat: 2, isMyTurn: false }));
-    expect(cell(container, 0).disabled).toBe(true);
-    expect(cell(container, 1).disabled).toBe(true);
+  it("a full column and the other's turn cannot be tapped", () => {
+    const board = gridOf({ 0: [1, 2, 1, 2, 1, 2] });
+    expect(cell(setup(gameView({ board })).container, 35).disabled).toBe(true);
+    cleanup();
+    const { container } = setup(gameView({ board, turnSeat: 2, isMyTurn: false }));
+    expect(cell(container, 36).disabled).toBe(true);
     expect(screen.getByText("Odota vuoroasi")).toBeTruthy();
   });
 
-  it("the hint chooses the winning cell", () => {
-    const board = [1, 1, 0, 2, 2, 0, 0, 0, 0];
-    const { container } = setup(gameView({ board, game: { seed: 0, seats: [1, 2], left: [], cells: board, turn: 1, moves: 4, over: false, winners: [], line: [] } }));
+  it("the hint chooses the winning column", () => {
+    const board = gridOf({ 0: [1, 1, 1], 1: [2, 2, 2] });
+    const { container } = setup(gameView({ board, game: { seed: 0, seats: [1, 2], left: [], cells: board, turn: 1, moves: 6, over: false, winners: [], line: [] } }));
     fireEvent.click(screen.getByRole("button", { name: "Vihje" }));
-    expect(cell(container, 2).getAttribute("aria-pressed")).toBe("true");
+    expect(cell(container, 14).getAttribute("aria-pressed")).toBe("true");
   });
 
   it("a finished game shows the result and Pelaa uudelleen", () => {

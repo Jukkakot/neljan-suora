@@ -12,9 +12,9 @@ export function playGame(start: Game, bots: Readonly<Record<number, Bot<Game, nu
   while (!game.over) {
     const bot = bots[game.turn];
     if (!bot) throw new Error(`No bot for seat ${game.turn}`);
-    const cell = bot.choose(game, budget, rng);
-    if (cell === undefined) throw new Error(`Seat ${game.turn} on turn but its bot has no move`);
-    const result = playMove(game, game.turn, { cell });
+    const column = bot.choose(game, budget, rng);
+    if (column === undefined) throw new Error(`Seat ${game.turn} on turn but its bot has no move`);
+    const result = playMove(game, game.turn, { column });
     if (!result.ok) throw new Error(`Bot move refused: ${result.code}`);
     game = result.game;
     states.push(game);

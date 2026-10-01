@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { boot, type ColyseusTestServer } from "@colyseus/testing";
-import { BOARD_CELLS } from "@neljan-suora/protocol";
-import { CELLS } from "@neljan-suora/rules";
+import { BOARD_CELLS, BOARD_COLUMNS } from "@neljan-suora/protocol";
+import { CELLS, COLUMNS } from "@neljan-suora/rules";
 import appConfig from "../src/app.config.js";
 import type { GameState } from "../src/rooms/schema/GameState.js";
 import { gameOf, startedGame, waitingRoom } from "./support/game.js";
@@ -19,8 +19,8 @@ describe("GameRoom", () => {
     await colyseus.cleanup();
   });
 
-  it("protocol and rules agree on the board", () => {
-    expect(BOARD_CELLS).toBe(CELLS);
+  it("protocol and rules agree on the grid", () => {
+    expect([BOARD_CELLS, BOARD_COLUMNS]).toEqual([CELLS, COLUMNS]);
   });
 
   it("adds a connected player on join and removes them on leave", async () => {
@@ -38,22 +38,22 @@ describe("GameRoom", () => {
   it("plays a game to the end, syncing the board and the winning line", async () => {
     const { room, clients } = await startedGame(colyseus);
     const state = room.state as GameState;
-    // Seat 1 takes the top row; seat 2 the middle row's first two cells.
-    for (const [i, cell] of [[0, 0], [1, 3], [0, 1], [1, 4], [0, 2]] as const) {
-      expect(await clients[i]!.request("move", { move: { cell } })).toEqual({ ok: true });
+    // Seat 1 stacks four in column 0; seat 2 stacks three in column 1.
+    for (const [i, column] of [[0, 0], [1, 1], [0, 0], [1, 1], [0, 0], [1, 1], [0, 0]] as const) {
+      expect(await clients[i]!.request("move", { move: { column } })).toEqual({ ok: true });
     }
-    expect([...state.game.cells]).toEqual([1, 1, 1, 2, 2, 0, 0, 0, 0]);
-    expect([...state.game.line]).toEqual([0, 1, 2]);
+    expect([...state.game.cells].filter((c) => c !== 0)).toHaveLength(7);
+    expect([...state.game.line]).toEqual([14, 21, 28, 35]);
     expect(state.phase).toBe("finished");
     expect([...state.winners]).toEqual([1]);
   });
 
-  it("refuses a taken cell and leaves the game as it was", async () => {
+  it("refuses a full column and leaves the game as it was", async () => {
     const { room, clients } = await startedGame(colyseus);
-    await clients[0]!.request("move", { move: { cell: 4 } });
+    for (let i = 0; i < 6; i++) await clients[i % 2]!.request("move", { move: { column: 3 } });
     const before = gameOf(room);
-    expect(await clients[1]!.request("move", { move: { cell: 4 } })).toEqual({ ok: false, code: "CELL_TAKEN" });
-    expect(await clients[1]!.request("move", { move: { cell: 9 } })).toMatchObject({ ok: false, code: "INVALID_COMMAND" });
+    expect(await clients[0]!.request("move", { move: { column: 3 } })).toEqual({ ok: false, code: "COLUMN_FULL" });
+    expect(await clients[0]!.request("move", { move: { column: 7 } })).toMatchObject({ ok: false, code: "INVALID_COMMAND" });
     expect(gameOf(room)).toBe(before);
   });
 

@@ -1,13 +1,13 @@
 import { expect, test, type Page } from "@playwright/test";
-import { board, createGame, gameId, isMyTurn, isOver, joinByInvite, markFirstFree, uniquePool } from "./helpers.ts";
+import { board, createGame, gameId, isMyTurn, isOver, joinByInvite, playFirstColumn, uniquePool } from "./helpers.ts";
 
-/** Plays until the game is over: whichever page is on turn marks its first empty cell. */
+/** Plays until the game is over: whichever page is on turn plays its leftmost open column. */
 async function playToTheEnd(pages: Page[]) {
   for (let moves = 0; moves < 20; moves++) {
     if (await isOver(pages[0]!)) return;
     for (const page of pages) {
       if (await isMyTurn(page)) {
-        await markFirstFree(page);
+        await playFirstColumn(page);
         break;
       }
     }
@@ -31,7 +31,7 @@ test("a game against a bot on the device, played to the end", async ({ page }) =
   await page.goto(`/?pool=${uniquePool("bot")}`);
   await page.getByRole("textbox", { name: "Nimimerkki" }).fill("Maija");
   await page.getByRole("button", { name: "Pelaa bottia vastaan" }).click();
-  await expect(board(page).locator("[data-cell]")).toHaveCount(9);
+  await expect(board(page).locator("[data-cell]")).toHaveCount(42);
   await fitsPhone(page);
 
   await playToTheEnd([page]);
@@ -57,7 +57,7 @@ test("two players meet in the waiting room, the host starts, and they play to th
     [host, "Maija (sinä)"],
     [guest, "Pekka (sinä)"],
   ] as const) {
-    await expect(board(page).locator("[data-cell]")).toHaveCount(9);
+    await expect(board(page).locator("[data-cell]")).toHaveCount(42);
     await expect(page.getByRole("list", { name: "Pelaajat" })).toContainText(me);
     await fitsPhone(page);
   }
@@ -67,7 +67,7 @@ test("two players meet in the waiting room, the host starts, and they play to th
     await expect(page.getByRole("table", { name: "Tulokset" })).toBeVisible();
     await expect(board(page).locator("[data-owner='1']").first()).toBeVisible();
   }
-  // Both boards show the same marks.
+  // Both boards show the same discs.
   const marks = (page: Page) => board(page).locator("[data-cell]").evaluateAll((cells) => cells.map((c) => c.getAttribute("data-owner")));
   expect(await marks(guest)).toEqual(await marks(host));
 });

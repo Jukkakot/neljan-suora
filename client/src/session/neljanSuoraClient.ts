@@ -29,10 +29,10 @@ export function checkGame(value: unknown): Game {
   return game;
 }
 
-/** The `move` payload as a move; undefined when the cell is missing or not an integer. */
+/** The `move` payload as a move; undefined when the column is missing or not an integer. */
 function moveOf(payload: unknown): Move | undefined {
-  const { cell } = (payload ?? {}) as Record<string, unknown>;
-  return Number.isInteger(cell) ? { cell: cell as number } : undefined;
+  const { column } = (payload ?? {}) as Record<string, unknown>;
+  return Number.isInteger(column) ? { column: column as number } : undefined;
 }
 
 /** The game's synced data as the server's `sync` writes it, from the rules' game. */

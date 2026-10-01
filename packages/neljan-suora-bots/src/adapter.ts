@@ -1,35 +1,35 @@
-import { createRng, freeCells, playMove, type Game, type Move, type Rng } from "@neljan-suora/rules";
+import { createRng, legalColumns, playMove, type Game, type Move, type Rng } from "@neljan-suora/rules";
 import { bestReplyBot, greedyBot, mctsBot, randomBot, type Bot, type Budget, type MultiplayerGame } from "@game-kit/bots";
 import { evaluate } from "./evaluation.js";
 
-/** `seat` marks `cell`, on turn or not (search may play out of turn). */
-function played(game: Game, seat: number, cell: number): Game {
-  const result = playMove({ ...game, turn: seat }, seat, { cell });
-  if (!result.ok) throw new Error(`Bot move c${cell} for seat ${seat} refused: ${result.code}`);
+/** `seat` drops a disc into `column`, on turn or not (search may play out of turn). */
+function played(game: Game, seat: number, column: number): Game {
+  const result = playMove({ ...game, turn: seat }, seat, { column });
+  if (!result.ok) throw new Error(`Bot move col${column} for seat ${seat} refused: ${result.code}`);
   return result.game;
 }
 
-/** Centre first, then the corners, then the edges: a cheap move order for search. */
-const CELL_KEYS = [1, 0, 1, 0, 2, 0, 1, 0, 1];
+/** Centre first, then outwards: a cheap move order for search (higher is tried first). */
+const COLUMN_KEYS = [0, 1, 2, 3, 2, 1, 0];
 
 /**
- * Neljän suora as the bot library sees it: the rules' game as the state, the cell as the move and
- * the seat as the player. The pattern to copy for the real game: the adapter turns the rules into
- * the library's game interface; the evaluation rates a state.
+ * Neljän suora as the bot library sees it: the rules' game as the state, the column as the move and
+ * the seat as the player. The adapter turns the rules into the library's game interface; the
+ * evaluation rates a state.
  */
 export const neljanSuoraGame: MultiplayerGame<Game, number, number> = {
   toMove: (game) => game.turn,
   isOver: (game) => game.over,
-  moves: (game) => (game.over ? [] : freeCells(game.cells)),
-  play: (game, cell) => played(game, game.turn, cell),
+  moves: (game) => (game.over ? [] : legalColumns(game.cells)),
+  play: (game, column) => played(game, game.turn, column),
   players(game) {
     if (game.over) return [];
     const from = game.seats.indexOf(game.turn);
     return game.seats.map((_, step) => game.seats[(from + step + 1) % game.seats.length]!);
   },
-  movesOf: (game, seat) => (game.over || !game.seats.includes(seat) ? [] : freeCells(game.cells)),
+  movesOf: (game, seat) => (game.over || !game.seats.includes(seat) ? [] : legalColumns(game.cells)),
   playAs: played,
-  moveKey: (_game, _seat, cell) => CELL_KEYS[cell] ?? 0,
+  moveKey: (_game, _seat, column) => COLUMN_KEYS[column] ?? 0,
 };
 
 /** One ply, greedy on `evaluate`: takes a win, but does not see the other's threat. */
@@ -54,6 +54,6 @@ export const devicePlayer: Bot<Game, number> = brsPlayer;
  */
 export function chooseMove(game: Game, budget: Budget, rng: Rng | number, bot: Bot<Game, number> = devicePlayer): Move | undefined {
   if (game.over) return undefined;
-  const cell = bot.choose(game, budget, typeof rng === "number" ? createRng(rng) : rng);
-  return cell === undefined ? undefined : { cell };
+  const column = bot.choose(game, budget, typeof rng === "number" ? createRng(rng) : rng);
+  return column === undefined ? undefined : { column };
 }

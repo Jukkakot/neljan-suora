@@ -17,22 +17,31 @@ const state = (cells: number[], extra: Partial<SyncedState> = {}): SyncedState =
   ...extra,
 });
 
+/** A 7 × 6 board whose bottom row starts with `row`. */
+const bottom = (row: number[]) => Array.from({ length: 42 }, (_, i) => (i >= 35 ? (row[i - 35] ?? 0) : 0));
+
 describe("view model", () => {
   it("waits for the board", () => {
     expect(toGameView({ players, phase: "waiting" }, "r", "a")).toBeUndefined();
   });
 
   it("gives the board, each seat's marks and the running game for the bots", () => {
-    const view = toGameView(state([1, 0, 0, 0, 2, 0, 0, 0, 1], { turnSeat: 2 }), "r", "a")!;
-    expect(view.board).toEqual([1, 0, 0, 0, 2, 0, 0, 0, 1]);
+    const board = bottom([1, 2, 1]);
+    const view = toGameView(state(board, { turnSeat: 2 }), "r", "a")!;
+    expect(view.board).toEqual(board);
     expect(view.seats.map((s) => s.marks)).toEqual([2, 1]);
     expect(view.game).toMatchObject({ seats: [1, 2], turn: 2, moves: 3, over: false });
     expect(view.results).toEqual([]);
   });
 
+  it("refuses a board of the wrong size", () => {
+    expect(toGameView(state([1, 0, 0, 0, 2, 0, 0, 0, 1]), "r", "a")).toBeUndefined();
+  });
+
   it("a won game ranks the winner first, with the line", () => {
-    const view = toGameView(state([1, 1, 1, 2, 2, 0, 0, 0, 0], { phase: "finished", turnSeat: 0, winners: [1], game: { cells: [1, 1, 1, 2, 2, 0, 0, 0, 0], line: [0, 1, 2] } }), "r", "b")!;
-    expect(view.line).toEqual([0, 1, 2]);
+    const board = bottom([1, 1, 1, 1, 2, 2, 2]);
+    const view = toGameView(state(board, { phase: "finished", turnSeat: 0, winners: [1], game: { cells: board, line: [35, 36, 37, 38] } }), "r", "b")!;
+    expect(view.line).toEqual([35, 36, 37, 38]);
     expect(view.game).toBeUndefined();
     expect(view.results.map((r) => [r.seat, r.rank, r.winner, r.isMe])).toEqual([
       [1, 1, true, false],
@@ -41,13 +50,13 @@ describe("view model", () => {
   });
 
   it("a draw ranks both first", () => {
-    const view = toGameView(state([1, 2, 1, 1, 2, 2, 2, 1, 1], { phase: "finished", turnSeat: 0, winners: [] }), "r", "a")!;
+    const view = toGameView(state(bottom([1, 2, 1, 1, 2, 2, 2]), { phase: "finished", turnSeat: 0, winners: [] }), "r", "a")!;
     expect(view.results.map((r) => r.rank)).toEqual([1, 1]);
   });
 });
 
 describe("client definition", () => {
-  const client = createNeljanSuoraClient(async () => ({ cell: 0 }));
+  const client = createNeljanSuoraClient(async () => ({ column: 0 }));
 
   it("seats the player and a bot, or two bots to watch", () => {
     expect(client.local.seats({ nickname: "Maija", bots: 1, options: {} }).map((s) => [s.seat, s.bot])).toEqual([
@@ -60,9 +69,9 @@ describe("client definition", () => {
     ]);
   });
 
-  it("reads a move's cell and refuses a malformed one", () => {
-    expect(client.local.parseMove({ cell: 4 })).toEqual({ cell: 4 });
-    expect(client.local.parseMove({ cell: "4" })).toBeUndefined();
+  it("reads a move's column and refuses a malformed one", () => {
+    expect(client.local.parseMove({ column: 4 })).toEqual({ column: 4 });
+    expect(client.local.parseMove({ column: "4" })).toBeUndefined();
     expect(client.local.parseMove(undefined)).toBeUndefined();
   });
 

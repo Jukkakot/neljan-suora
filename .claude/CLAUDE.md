@@ -10,8 +10,8 @@ wiki pages it affects (enforced by `openspec/config.yaml` rules and archive guid
 Theme: **Marjat** – berries in a birch crate (`openspec/context/product.md` → Theme). Every UI change
 and every text follows it; check light and dark.
 
-The project was made from the game kit's template (`create-game`); the game is the placeholder
-Ristinolla until `rules-engine` replaces it.
+The project was made from the game kit's template (`create-game`); the rules are the game's own
+(`rules-engine`, spec `game-rules`).
 
 ## Session start
 

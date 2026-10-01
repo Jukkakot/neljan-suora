@@ -4,17 +4,21 @@ import { LINES, type Game } from "@neljan-suora/rules";
 export const WIN = 1000;
 
 /**
- * Rates `game` for `seat`: ±`WIN` once decided (0 for a draw), else the open lines: a line holding
- * only `seat`'s marks counts its marks squared, a line holding only the other's counts against.
- * The placeholder's evaluation: replace it with the real game's.
+ * Rates `game` for `seat`: ±`WIN` once decided (0 for a draw), else the open lines of four: a line
+ * holding only `seat`'s discs counts its discs squared, a line holding only the other's counts
+ * against. A simple stand-in until `bot-v1`.
  */
 export function evaluate(game: Game, seat: number): number {
   if (game.over) return game.winners.includes(seat) ? WIN : game.winners.length > 0 ? -WIN : 0;
   let value = 0;
   for (const line of LINES) {
-    const marks = line.map((i) => game.cells[i]!);
-    const mine = marks.filter((m) => m === seat).length;
-    const theirs = marks.filter((m) => m !== 0 && m !== seat).length;
+    let mine = 0;
+    let theirs = 0;
+    for (const i of line) {
+      const owner = game.cells[i]!;
+      if (owner === seat) mine++;
+      else if (owner !== 0) theirs++;
+    }
     if (theirs === 0) value += mine * mine;
     else if (mine === 0) value -= theirs * theirs;
   }

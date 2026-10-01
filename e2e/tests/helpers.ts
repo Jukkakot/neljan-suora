@@ -28,17 +28,17 @@ export const isMyTurn = (page: Page) => page.getByText("Sinun vuorosi", { exact:
 export const isOver = (page: Page) => page.getByRole("table", { name: "Tulokset" }).isVisible();
 
 /**
- * Marks the first empty cell as on a phone: tap it to choose, tap it again to confirm. Taps, not
- * clicks, so the test moves like a player does. Returns the cell.
+ * Plays the leftmost column that is not full as on a phone: tap it to choose (the berry is previewed
+ * where it would land), tap the preview to confirm. Taps, not clicks, so the test moves like a
+ * player does. Returns the cell the disc landed in.
  */
-export async function markFirstFree(page: Page): Promise<number> {
-  const free = board(page).locator("[data-owner='0']:not([disabled])").first();
-  const cell = Number(await free.getAttribute("data-cell"));
-  const target = board(page).locator(`[data-cell='${cell}']`);
-  await target.tap();
-  await expect(target).toHaveAttribute("aria-pressed", "true");
-  await target.tap();
-  await expect(target).not.toHaveAttribute("data-owner", "0");
+export async function playFirstColumn(page: Page): Promise<number> {
+  const open = board(page).locator("[data-cell]:not([disabled])").first();
+  await open.tap();
+  const landing = board(page).locator("[aria-pressed='true']");
+  const cell = Number(await landing.getAttribute("data-cell"));
+  await landing.tap();
+  await expect(board(page).locator(`[data-cell='${cell}']`)).not.toHaveAttribute("data-owner", "0");
   return cell;
 }
 

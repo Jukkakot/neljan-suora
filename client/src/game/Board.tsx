@@ -1,41 +1,47 @@
+import { COLUMNS, landingCell } from "@neljan-suora/rules";
+import type { CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
 import { Berry } from "./Berry.tsx";
 import styles from "./Board.module.css";
 
 export interface BoardProps {
-  /** The berry per cell (0 = empty, else the seat), row-major, 3×3. */
+  /** The berry per cell (0 = empty, else the seat), row-major, top row first. */
   board: readonly number[];
+  /** Columns of the grid. */
+  columns?: number;
   /** The winning line's cells. */
   line?: readonly number[];
-  /** The cell the viewer chose, shown with their berry until they confirm. */
+  /** The column the viewer chose, previewed with their berry where it would land until they confirm. */
   chosen?: number;
-  /** The viewer's seat (the chosen cell's berry). */
+  /** The viewer's seat (the chosen column's berry). */
   seat?: number;
   /** The cells of the last move: marked with a dot and settling in. */
   lastMove?: ReadonlySet<number>;
   /** A command is on its way: taps wait. */
   busy?: boolean;
-  /** Tapping an empty cell; undefined when the viewer cannot move now. */
-  onCell?(cell: number): void;
+  /** Tapping a column that is not full; undefined when the viewer cannot move now. */
+  onColumn?(column: number): void;
 }
 
 /**
- * The placeholder game's board as a birch crate: 3×3 round moss holes, each a full square button. On
- * the viewer's turn an empty hole is tappable; the first tap chooses it (shown with the viewer's
- * berry, faded) and a second tap on it, or the confirm button below the board, makes the move. The
- * last move's berry squishes in and keeps a dot; the winning line's berries shine once it is won.
+ * The upright grid as a birch crate: round moss holes, each a square button. On the viewer's turn a
+ * tap anywhere in a column that is not full chooses it (the viewer's berry is previewed, faded, in
+ * the cell it would land in) and a second tap in it, or the confirm button below the board, drops
+ * it. The last move's berry squishes in and keeps a dot; the winning line's berries shine.
  */
-export function Board({ board, line = [], chosen, seat, lastMove, busy = false, onCell }: BoardProps) {
+export function Board({ board, columns = COLUMNS, line = [], chosen, seat, lastMove, busy = false, onColumn }: BoardProps) {
   const { t } = useTranslation();
-  const size = Math.sqrt(board.length);
+  const rows = Math.ceil(board.length / columns);
+  const landing = chosen === undefined ? undefined : landingCell(board, chosen);
   return (
-    <div className={styles.board} role="grid" aria-label={t("board.label")} aria-busy={busy || undefined}>
-      {Array.from({ length: size }, (_, row) => (
+    <div className={styles.board} style={{ "--columns": columns, "--rows": rows } as CSSProperties} role="grid" aria-label={t("board.label")} aria-busy={busy || undefined}>
+      {Array.from({ length: rows }, (_, row) => (
         <div key={row} role="row" className={styles.row}>
-          {Array.from({ length: size }, (_, col) => {
-            const cell = row * size + col;
+          {Array.from({ length: columns }, (_, col) => {
+            const cell = row * columns + col;
             const owner = board[cell] ?? 0;
-            const isChosen = chosen === cell && owner === 0;
+            const full = board[col] !== 0;
+            const isChosen = cell === landing;
             const isLast = owner !== 0 && lastMove?.has(cell);
             const label = owner
               ? t("board.cellTaken", { row: row + 1, col: col + 1, berry: t(owner === 1 ? "berry.1" : "berry.2") })
@@ -48,11 +54,12 @@ export function Board({ board, line = [], chosen, seat, lastMove, busy = false, 
                 role="gridcell"
                 className={cls}
                 data-cell={cell}
+                data-column={col}
                 data-owner={owner}
                 aria-label={label}
                 aria-pressed={isChosen || undefined}
-                disabled={owner !== 0 || !onCell || busy}
-                onClick={() => onCell?.(cell)}
+                disabled={full || !onColumn || busy}
+                onClick={() => onColumn?.(col)}
               >
                 <span className={styles.hole}>
                   {owner !== 0 && <Berry seat={owner} size="88%" className={styles.piece} />}

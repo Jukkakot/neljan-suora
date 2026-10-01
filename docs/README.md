@@ -1,8 +1,8 @@
 # Neljän suora wiki
 
 Neljän suora is a turn-based browser game on the game kit (`Jukkakot/game-kit`), against people and
-bots, mobile first (Android primary). Its theme is "Marjat" (berries in a birch crate); its rules come with
-`rules-engine`, until then the placeholder game Ristinolla stands in. Everything
+bots, mobile first (Android primary). Its theme is "Marjat" (berries in a birch crate); the game is gravity four in a row on a
+7 × 6 grid. Everything
 you need to know about the solution starts here.
 
 - Play: https://jukkakot.github.io/neljan-suora/ (after the [setup checklist](operations.md#setup-checklist))

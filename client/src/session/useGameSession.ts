@@ -61,6 +61,6 @@ export function useGameSession(connector?: Connector): GameSession {
   });
   const playBots = useCallback((nickname: string) => kitPlayBots(nickname, SEAT_COUNT - 1), [kitPlayBots]);
   const watchBots = useCallback((nickname: string, speed?: BotSpeed) => kitWatchBots(nickname, SEAT_COUNT, speed), [kitWatchBots]);
-  const move = useCallback(({ cell }: MovePayload) => command("move", { move: { cell } }), [command]);
+  const move = useCallback(({ column }: MovePayload) => command("move", { move: { column } }), [command]);
   return { ...session, playBots, watchBots, move, notice: notice as NoticeKey | undefined };
 }

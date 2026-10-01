@@ -25,7 +25,7 @@ Apply to every change. Designs and task lists must show how they are met.
   once the real rules exist).
 
 ## Error UX
-- Rejected command: short localized message ("That cell is already taken").
+- Rejected command: short localized message ("That column is full").
 - Connection lost: banner "Reconnecting…". Crash: "Something went wrong –
   reload" screen.
 - Technical details go to the logs only, never to the UI.

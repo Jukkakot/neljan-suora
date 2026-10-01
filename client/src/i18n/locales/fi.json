@@ -110,12 +110,12 @@
     "AUTOPLAYING": "Botti pelaa vuoroasi – ota vuoro takaisin ensin",
     "NOT_BOT_RUNNER": "Bottien siirrot laskee nyt toinen pelaaja",
     "NOT_BOT_SEAT": "Tällä paikalla ei pelaa botti",
-    "CELL_TAKEN": "Ruutu on jo varattu",
+    "COLUMN_FULL": "Sarake on täynnä",
     "TOO_MANY_PLAYERS": "Peliin eivät mahdu kaikki pelaajat"
   },
   "hint": {
     "button": "Vihje",
-    "title": "Valitse botin ruutu valmiiksi"
+    "title": "Valitse botin sarake valmiiksi"
   },
   "progress": {
     "label": "Pelaajat",
@@ -188,8 +188,8 @@
     "newBotGame": "Uusi bottipeli"
   },
   "tips": {
-    "goal": "Saa kolme marjaa riviin – vaakaan, pystyyn tai vinottain.",
-    "place": "Napauta tyhjää ruutua ja vahvista napauttamalla sitä uudelleen tai painamalla Aseta.",
+    "goal": "Saa neljä marjaa riviin – vaakaan, pystyyn tai vinottain.",
+    "place": "Napauta saraketta ja vahvista napauttamalla sitä uudelleen tai painamalla Aseta. Marja putoaa pohjalle.",
     "close": "Sulje vinkki",
     "reset": "Näytä vinkit uudelleen",
     "resetDone": "Vinkit näytetään seuraavassa pelissä."
@@ -230,8 +230,8 @@
   },
   "move": {
     "wait": "Odota vuoroasi",
-    "choose": "Valitse tyhjä ruutu",
-    "ready": "Napauta ruutua uudelleen tai paina Aseta",
+    "choose": "Valitse sarake",
+    "ready": "Napauta saraketta uudelleen tai paina Aseta",
     "confirm": "Aseta"
   },
   "berry": {
