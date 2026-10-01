@@ -24,6 +24,7 @@ import { SOLVE_NODES } from "../src/perfect/bot.js";
 import type { BookResult } from "./book-worker.js";
 import { BOOK_FILE } from "./load-book.js";
 import { checkOracle, loadOracle, ORACLE_FILE } from "./oracle.js";
+import { loadPonsBook, PONS_FILE } from "./pons-book.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const BOOK_DIR = join(here, "..", "book");
@@ -175,6 +176,13 @@ async function main(): Promise<void> {
     checkOracle(oracle, 20);
   } else {
     process.stderr.write(`no oracle at ${ORACLE_FILE}: the shallow positions take hours (development → Opening book)\n`);
+  }
+  const pons = loadPonsBook();
+  if (pons) {
+    process.stderr.write(`Pons' book: positions up to ${pons.depth} discs; checking 20 against the solver…\n`);
+    checkOracle(pons, 20);
+  } else {
+    process.stderr.write(`no opening book at ${PONS_FILE}: positions up to 14 discs take far longer (development → Opening book)\n`);
   }
   const state = loadState();
   const pool = new Pool(jobs, Number(values["table-bits"]));

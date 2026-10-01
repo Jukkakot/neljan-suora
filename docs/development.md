@@ -116,7 +116,11 @@ npm run book -w @neljan-suora/bots [-- --jobs 5 --table-bits 24 --max-plies 8 --
   `curl -L -o connect-4.zip https://archive.ics.uci.edu/static/public/26/connect+4.zip`, unzip,
   `gzip -dc connect-4.data.Z > connect-4.data`. The generator stops its searches at 8 discs with it
   (checking 20 entries against the solver first); without it the shallow positions take a day or
-  more. It is a generation aid only: never committed, never shipped.
+  more. Also download Pascal Pons' opening book (AGPL-3.0) there:
+  `curl -L -o 7x6.book https://github.com/PascalPons/connect4/releases/download/book/7x6.book`
+  (33.5 MB): exact outcomes of a fifth to most of the positions up to 14 discs, which end the
+  searches sooner (also checked against the solver at start). Both are generation aids only: never
+  committed, never shipped.
 - Regenerate it when the solver's verdicts, `SOLVE_NODES` or the book format change; commit
   `packages/neljan-suora-bots/book/neljan-suora-book.bin`. A full run takes hours on all cores but
   one (see the `perfect-bot` design for the measured time), so start it detached.

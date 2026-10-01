@@ -10,7 +10,7 @@ export interface RootVerdict {
   readonly columns: readonly number[];
 }
 
-/** Known outcomes of every position with `discs` discs (for the side to move), where it has one. */
+/** Known outcomes (for the side to move) of some positions with at most `discs` discs. */
 export interface Oracle {
   readonly discs: number;
   outcome(position: Position): Outcome | undefined;
@@ -173,7 +173,7 @@ export class Solver {
     if (possLo === 0 && possHi === 0) return -1;
     // Two cells or fewer left and a safe disc to drop: nobody can win any more.
     if (position.moves >= CELLS - 2) return 0;
-    if (this.oracle && position.moves === this.oracle.discs) {
+    if (this.oracle && position.moves <= this.oracle.discs) {
       const known = this.oracle.outcome(position);
       if (known !== undefined) return known;
     }

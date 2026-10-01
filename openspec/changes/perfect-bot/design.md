@@ -144,6 +144,24 @@ against the solver on 20 random entries at every run, and never committed or shi
 solver has no oracle. Alternative considered: hard-coding the known opening theory — it gives the
 outcomes of the first discs but not the best columns deeper down, which the book needs.
 
+**Cost gate outcome: `--narrow`.** The full-width run finished waves 0–6 in about 30 minutes (2 829
+entries), but stored positions had 3.2–4.0 best columns on average, so the queue grew about 3.5×
+per wave (6 461 positions queued at 7 discs, 25 187 at 8, where the oracle no longer helps and a
+solve takes seconds). That projects far past 24 h and likely past 8 MB, so the run was restarted
+with `--narrow`: at the bot's turn only the most central best column is stored and followed. Inside
+the book the bot therefore always plays that column (the seed varies play only once the book ends).
+
+**Pons' book as a second oracle (decided during apply, user's go-ahead 2026-10-01).** Pascal Pons'
+`7x6.book` (github.com/PascalPons/connect4, AGPL-3.0, 33.5 MB) holds exact scores of positions up to
+14 discs in a lossy hash table; its slot index and partial key together pin down every key that
+deep, so a hit is exact and a miss falls back to the search. Measured: it knows ~72 % of random
+8-disc, ~37 % of 12-disc and ~21 % of 14-disc positions; it agrees with Tromp's database on 820 of 820
+shared positions and with the solver on random 14-disc ones. The generator's full solver asks it at
+every node up to 14 discs (Tromp's database where it misses at 8). The narrow run was restarted with
+it in wave 10, keeping the results judged so far (the verdicts are exact either way); wave 10 went
+from ~350 to ~600 positions a minute. Like Tromp's file it is a local generation aid, not committed
+and not shipped, so the AGPL does not reach the game; our book holds only outcomes and best columns.
+
 ### 5. Shipping the book to the browser
 
 The book is a Vite asset (`import bookUrl from "@neljan-suora/bots/book?url"` via a package export)

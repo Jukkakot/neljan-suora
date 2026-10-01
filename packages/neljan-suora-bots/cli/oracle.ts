@@ -65,16 +65,16 @@ export function loadOracle(file = ORACLE_FILE): (Oracle & { readonly size: numbe
 }
 
 /**
- * Checks the oracle against the solver on `samples` random 8-disc positions found in it; throws on
- * the first disagreement (a wrong file or a wrong reading of it).
+ * Checks the oracle against the solver on `samples` random positions of its depth found in it; throws
+ * on the first disagreement (a wrong file or a wrong reading of it).
  */
 export function checkOracle(oracle: Oracle, samples: number, seed = 1): void {
   const rng = createRng(seed);
   const solver = new Solver(22);
   for (let checked = 0, tries = 0; checked < samples; tries++) {
-    if (tries > samples * 50) throw new Error("Oracle check: too few random positions found in the database");
+    if (tries > samples * 50) throw new Error("Oracle check: too few random positions found in the oracle");
     let game = startGame(seed + tries, [1, 2]);
-    while (game.moves < DISCS && !game.over) {
+    while (game.moves < oracle.discs && !game.over) {
       const legal = legalColumns(game.cells);
       const result = playMove(game, game.turn, { column: legal[rng.int(0, legal.length - 1)]! });
       if (!result.ok) throw new Error(result.code);
@@ -85,7 +85,7 @@ export function checkOracle(oracle: Oracle, samples: number, seed = 1): void {
     const known = oracle.outcome(position);
     if (known === undefined) continue;
     const solved = solver.solve(position);
-    if (solved !== known) throw new Error(`Oracle check: database says ${known}, the solver ${solved} (seed ${seed + tries})`);
+    if (solved !== known) throw new Error(`Oracle check: oracle says ${known}, the solver ${solved} (seed ${seed + tries})`);
     checked++;
   }
 }
