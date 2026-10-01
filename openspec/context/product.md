@@ -30,8 +30,9 @@ line (spec `game-board`). Same "few taps, one deliberate confirm" rule as under 
 
 The game is solved (the first player wins with perfect play), so strong play is reachable in the
 browser: bitboard negamax with alpha-beta, a transposition table, centre-first move ordering and
-iterative deepening within the time budget. Whether the kit's generic search is fast enough or the
-game needs its own searcher is decided in `bot-v1` by measurement.
+iterative deepening within the time budget. Decided in `bot-v1` by measurement: the game has its own
+searcher; the kit's best-reply search (built for more players) prunes the opponent's replies to the
+three most central and searches about half as deep, so it stays a baseline only.
 
 ## Modes
 

@@ -38,8 +38,12 @@ alpha-beta with beams that prune the opponent's replies, which is exactly what l
 Widening the beams on the adapter's `Game` objects would stay slow (an allocation and a 42-cell
 copy per node). A searcher on its own bitboard position does make/unmake with a few integer ops per
 node, so it is chosen. Alternative considered: kit `bestReplyBot` with `replyWidth: 7, width: 7` —
-kept as a measured baseline (task 4.1 records its nodes/s and head-to-head next to the new bot's),
-not as the product.
+kept as a measured baseline, not as the product.
+
+**Measured (task 4.1, `npm run bench`, desktop, 800 ms):** negamax ~2.3–2.6 M nodes/s, depth 14 in
+the opening and 16 in a 12-disc middle game; the kit's search with full widths reaches depth 9 and
+10. Head-to-head at an equal 100 ms per move over 60 games: negamax 100 %. Conclusion: the game's
+own searcher.
 
 ### 2. Position and search
 
@@ -58,10 +62,14 @@ not as the product.
 - Move order: transposition-table move first, then by the number of own winning cells the move
   creates (threats), then centre-first (3, 2, 4, 1, 5, 0, 6).
 - Transposition table: fixed-size typed arrays (2^20 entries, ~12 MB as two `Uint32Array` key words,
-  an `Int16Array` score, a `Uint8Array` flag+depth and a `Uint8Array` best move), key = Zobrist-like
-  hash of the two word pairs (`mask + cur` per word, mixed), replace-always. Created once per
-  `Bot` instance and reused between moves (cleared when the position is not a successor of the last
-  one). If 12 MB proves too much for a phone worker, 2^18.
+  an `Int16Array` score, a `Uint8Array` flag+depth and a `Uint8Array` best move), key = `cur + mask`
+  (exact, below 2^49, stored in a `Float64Array`), index = a multiplicative hash of the two words,
+  replace-always. Allocated on the first answer of a `Bot` instance (halved while allocation
+  fails) and **cleared for every answer** (implementation decision: reusing it between answers
+  would make a depth budget non-reproducible; the clear costs a few ms).
+- **Forced replies cost no depth** (added during implementation): a node with exactly one
+  non-losing move searches it at the same depth. It took `negamax@d8` vs `brs@d4` from 92 % to
+  96.5 % over 200 games.
 - Iterative deepening from depth 1 up, stopping when the time budget expires (checked every 1024
   nodes), the depth budget is reached, or the result is a proven win/loss; the answer is the last
   completed depth's, or a better move fully searched at the interrupted depth (as the kit does).
@@ -70,12 +78,15 @@ not as the product.
 
 ### 3. Evaluation
 
-At the leaves: the side to move's score minus the other's, where each side counts its winning
-cells (empty cells that would complete a four) weighted by height and parity — a threat on a row
-the side can claim by zugzwang (odd rows from the bottom for the first seat, even for the second)
-counts more — plus a small term for open lines of two and three via the 69 line masks on the
-words, and centre-column discs. Exact weights are tuned by tournament (task 4.2) and recorded in
-the code's doc comment. The old `evaluate` stays for greedy, brs and mcts baselines.
+At the leaves, for the side to move: per column, the lowest winning cell (an empty cell that would
+complete four) of either side decides the column: it counts 40 when it lies on its side's parity
+(odd rows from the bottom for the side that moved first, even for the other; zugzwang) and 12
+otherwise; every winning cell above a column's lowest counts 4. Plus the difference of the discs'
+cell weights (the classic "lines through the cell" table, kept incrementally). No open-two term:
+not needed by measurement. Tuning (task 4.2, `negamax@d8` vs `brs@d4`, 100 games): a flat count
+of winning cells with parity weights gave 85–88 %; the lowest-per-column rule 92–95 %; with the
+forced-reply extension 96.5 % over 200 games (nearby weights within noise). The old `evaluate`
+stays for the greedy, brs and mcts baselines.
 
 ### 4. Tournaments and requirements
 
@@ -87,8 +98,11 @@ the code's doc comment. The old `evaluate` stays for greedy, brs and mcts baseli
   or two games and the share means nothing. Requirements and ad-hoc tournaments both get it; the
   unit tests of `playTournamentGame` are updated.
 - `strength.json` (spec "Measured strength"): `negamax` vs `random` 100 games ≥ 0.98;
-  `negamax@d8` vs `brs@d4` 100 games ≥ 0.9; `negamax@100ms` vs `brs@100ms` 60 games ≥ 0.8. The
-  old "search beats random" entry is replaced by the first. If a threshold is not met after
+  `negamax@d8` vs `brs@d4` 100 games ≥ 0.9 (measured 100 % and 99 %). The old "search beats
+  random" entry is replaced by the first. The equal-time requirement planned here was dropped
+  during implementation: the project's rule (`cli/strength.test.ts`) keeps requirements
+  machine-independent, and a CI runner's load would make a time-limited share flaky; the
+  equal-time result is recorded in Decision 1 instead. If a threshold is not met after
   tuning, the bot is improved, not the threshold; a threshold is only lowered when measurement
   shows the bot already plays near-perfectly against that baseline's draws (recorded here).
 - `devicePlayer = negamaxPlayer`; `BOT_BUDGET` stays `{ timeMs: 800 }`.
@@ -121,8 +135,6 @@ candidate in the wiki, not extracted now.
   even on a slow device); the spec allows 50 ms.
 - [Threshold 0.9 at depth 8 vs depth 4 not met due to draws] → see 4: improve the bot; draws are
   rare in this game between unequal bots.
-- [A 100 ms equal-time match in CI is noisy] → 60 games, threshold 0.8 well below the expected
-  share; failures are investigated, not re-run until green.
 
 ## Migration Plan
 

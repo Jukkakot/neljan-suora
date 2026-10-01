@@ -89,9 +89,14 @@ npm run tournament -w @neljan-suora/bots -- greedy brs mcts@i400 --games 100 [--
 npm run strength -w @neljan-suora/bots          # the requirements in packages/neljan-suora-bots/strength.json
 ```
 
-- Bots: a registry name (`random`, `greedy`, `brs`, `mcts`) with an optional budget, `@<n>ms`,
+- Bots: a registry name (`random`, `greedy`, `brs`, `mcts`, `negamax`) with an optional budget, `@<n>ms`,
   `@d<n>` (search depth) or `@i<n>` (MCTS iterations). Depth and iteration budgets give identical
-  results on any machine and job count; time limits do not (the report says so).
+  results on any machine and job count; time limits do not (the report says so), so
+  `strength.json` uses depth budgets only.
+- Every game starts from a 2-disc random opening drawn from its seed (`openedGame`), the same for
+  both seat orders, so deterministic bots do not replay one game.
+- `npm run bench -w @neljan-suora/bots [-- --ms 800]`: depth reached and nodes per second of the
+  negamax and of the kit's search at full width, for a quick speed check.
 - The report (Markdown) goes to stdout; the JSON with every game to
   `packages/neljan-suora-bots/tournament-results/` (git-ignored) or `--out`.
 - A new bot: add it to `BOTS` in `packages/neljan-suora-bots/src/tournament.ts`, then add a

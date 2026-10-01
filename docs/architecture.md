@@ -131,8 +131,8 @@ kit packages come built (`dist/` only).
   change nothing), `legalColumns`, `landingCell`, `removeSeat`, `endGame`, `randomMove`.
 - `bitboard.ts`: the grid constants, `LINES` (the 69 lines of four) and the bitboard win check: a
   seat's discs in the 7 × (6 + 1) layout split into two 32-bit words (`lo` columns 0–3, `hi` 4–6),
-  so JavaScript's bitwise operators work; property tests check it against a plain scan. The base
-  for `bot-v1`'s search.
+  so JavaScript's bitwise operators work; property tests check it against a plain scan. The bots'
+  searcher uses the same layout.
 - `contract.ts`: `neljanSuoraRules`, the contract over `game.ts`; no rules live there.
 - `testing.ts` (`@neljan-suora/rules/testing`): fixtures for the other workspaces' tests.
 
@@ -143,11 +143,22 @@ kit packages come built (`dist/` only).
   `choose(state, budget, rng)`; `Budget` is plain JSON (`timeMs`, `depth`, `iterations`). Players:
   `greedyBot`, `bestReplyBot` (best-reply search, iterative deepening), `mctsBot`, `randomBot`;
   `rankMoves` for hints; the worker harness; tournaments and Elo.
-- **`@neljan-suora/bots`**: `neljanSuoraGame` (the adapter), `evaluate`, the players, **`devicePlayer`**
-  (the bot people play against), `playGame`, and `chooseMove(game, budget, seed | rng, bot?)`.
-- **Tournaments:** the bot registry with budgets (`brs@d4`, `mcts@i400`, `greedy@200ms`), formats,
-  `playTournamentGame`; `cli/` runs games on worker threads. Requirements in `strength.json`
-  ("candidate beats baseline ≥ X over N games"; until `bot-v1`: search beats random).
+- **`@neljan-suora/bots`**: `neljanSuoraGame` (the adapter), `evaluate`, the kit's players as
+  baselines, `playGame`, and `chooseMove(game, budget, seed | rng, bot?)`.
+- **The game's own searcher** (`src/negamax/`, `bot-v1`): negamax with alpha-beta on the two-word
+  bitboards, made and taken back in place; immediate wins, forced blocks and "no disc under the
+  other's winning cell" decided before searching; forced replies cost no depth; a typed-array
+  transposition table (2^20 entries, ~12 MB, cleared per answer so a depth and seed always give the
+  same column); threats-then-centre move order; iterative deepening under the budget. The leaf
+  rating counts each column's lowest winning cell by row parity (zugzwang) plus cell weights.
+  **`devicePlayer`** (the bot people play against) is this searcher. Measured at 800 ms on a
+  desktop: ~2.3 M nodes/s, depth 14–16 in the opening (the kit's search at full width: 9–10).
+  Reusable for other two-player games (a kit candidate): the iterative deepening with a time check,
+  the typed-array table, exact root ties broken by the seed.
+- **Tournaments:** the bot registry with budgets (`negamax@d8`, `brs@d4`, `mcts@i400`,
+  `greedy@200ms`), formats, the random opening, `playTournamentGame`; `cli/` runs games on worker
+  threads. Requirements in `strength.json` (negamax beats random ≥ 98 %, negamax@d8 beats the kit's
+  `brs@d4` ≥ 90 %).
 - **In the client** (`client/src/bots/`): `bot.worker.ts` serves `chooseMove` in a module Web
   Worker (own size-limit entry); `askBotWorker` asks it and answers in the page where no worker can
   run. Budget 800 ms (divided by the watching speed); the bot thinks during the 1 s pause.

@@ -1,6 +1,7 @@
-export { brsPlayer, chooseMove, devicePlayer, greedyPlayer, mctsPlayer, randomPlayer, neljanSuoraGame } from "./adapter.js";
+export { brsPlayer, chooseMove, devicePlayer, greedyPlayer, mctsPlayer, negamaxPlayer, randomPlayer, neljanSuoraGame } from "./adapter.js";
 export { evaluate, WIN } from "./evaluation.js";
 export { playGame } from "./match.js";
+export { negamaxBot, type NegamaxOptions } from "./negamax/search.js";
 export type { Bot, Budget } from "@game-kit/bots";
 export {
   addTiming,
@@ -8,6 +9,8 @@ export {
   FORMATS,
   isColours,
   isTimeLimited,
+  openedGame,
+  OPENING_PLIES,
   parseColours,
   parseBot,
   playTournamentGame,

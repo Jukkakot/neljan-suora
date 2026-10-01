@@ -1,11 +1,20 @@
 [
   {
-    "name": "search beats random",
-    "candidate": "brs",
+    "name": "negamax beats random",
+    "candidate": "negamax",
     "baseline": "random",
     "colours": 2,
     "games": 100,
     "seed": 1,
-    "minShare": 0.8
+    "minShare": 0.98
+  },
+  {
+    "name": "negamax beats the kit's search at depth",
+    "candidate": "negamax@d8",
+    "baseline": "brs@d4",
+    "colours": 2,
+    "games": 100,
+    "seed": 1,
+    "minShare": 0.9
   }
 ]

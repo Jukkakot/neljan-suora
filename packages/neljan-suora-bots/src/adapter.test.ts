@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { legalColumns, startGame } from "@neljan-suora/rules";
 import { gameAfter } from "@neljan-suora/rules/testing";
-import { brsPlayer, chooseMove, greedyPlayer, mctsPlayer, randomPlayer, neljanSuoraGame as game } from "./adapter.js";
+import { brsPlayer, chooseMove, greedyPlayer, mctsPlayer, negamaxPlayer, randomPlayer, neljanSuoraGame as game } from "./adapter.js";
 import { evaluate, WIN } from "./evaluation.js";
 import { playGame } from "./match.js";
-import { parseBot, playTournamentGame } from "./tournament.js";
+import { OPENING_PLIES, openedGame, parseBot, playTournamentGame } from "./tournament.js";
 
 describe("adapter", () => {
   it("offers the open columns of the seat on turn, and none once over", () => {
@@ -33,6 +33,7 @@ describe("bots", () => {
     ["greedy", greedyPlayer],
     ["brs", brsPlayer],
     ["mcts", mctsPlayer],
+    ["negamax", negamaxPlayer],
   ] as const)("%s takes a winning column", (_, bot) => {
     // Seat 1 has three in column 0, seat 2 three in column 1; seat 1 to move wins in column 0.
     expect(chooseMove(gameAfter([0, 1, 0, 1, 0, 1]), { depth: 2, iterations: 200 }, 1, bot)).toEqual({ column: 0 });
@@ -68,5 +69,18 @@ describe("tournament", () => {
     expect(() => parseBot("nobody")).toThrow(/Unknown bot/);
     expect(() => parseBot("greedy@d0")).toThrow(/at least 1/);
     expect(parseBot("brs@d3").budget).toEqual({ depth: 3 });
+    expect(parseBot("negamax").budget).toEqual({ depth: 8 });
+    expect(parseBot("negamax@100ms").budget).toEqual({ timeMs: 100 });
+  });
+
+  it("starts every game from a random opening of the seed, the same for both seat orders", () => {
+    const opened = openedGame(3, [1, 2]);
+    expect(opened.moves).toBe(OPENING_PLIES);
+    expect(openedGame(3, [1, 2])).toEqual(opened);
+    const bots = new Map(["random", "negamax@d2"].map((label) => [label, parseBot(label)]));
+    for (const swapped of [false, true]) {
+      const { result } = playTournamentGame(2, bots, { index: 0, pairing: ["random", "negamax@d2"], swapped, seed: 3 });
+      expect(result.scores).toEqual(result.seats.map((label) => (label === "negamax@d2" ? 1 : 0)));
+    }
   });
 });

@@ -1,6 +1,6 @@
-import { createRng, playMove, startGame, type Game } from "@neljan-suora/rules";
+import { createRng, legalColumns, playMove, startGame, type Game } from "@neljan-suora/rules";
 import { systemClock, type Bot, type Budget, type GameResult, type MoveTiming, type ScheduledGame } from "@game-kit/bots";
-import { brsPlayer, greedyPlayer, mctsPlayer, randomPlayer } from "./adapter.js";
+import { brsPlayer, greedyPlayer, mctsPlayer, negamaxPlayer, randomPlayer } from "./adapter.js";
 
 /** A bot a tournament can use, with the budget it gets when its name carries none. */
 interface RegisteredBot {
@@ -14,7 +14,24 @@ export const BOTS: Readonly<Record<string, RegisteredBot>> = {
   greedy: { bot: greedyPlayer, budget: { depth: 1 } },
   brs: { bot: brsPlayer, budget: { depth: 4 } },
   mcts: { bot: mctsPlayer, budget: { iterations: 400 } },
+  negamax: { bot: negamaxPlayer, budget: { depth: 8 } },
 };
+
+/** Random discs every tournament game starts with, so deterministic bots do not replay one game. */
+export const OPENING_PLIES = 2;
+
+/** The game of `seed` after its random opening: the same for both seat orders of a seed. */
+export function openedGame(seed: number, seats: readonly number[]): Game {
+  const rng = createRng((seed + 0x9e3779b9) % 2 ** 32);
+  let state = startGame(seed, seats);
+  for (let ply = 0; ply < OPENING_PLIES; ply++) {
+    const legal = legalColumns(state.cells);
+    const result = playMove(state, state.turn, { column: legal[rng.int(0, legal.length - 1)]! });
+    if (!result.ok) throw new Error(`Opening move refused: ${result.code}`);
+    state = result.game;
+  }
+  return state;
+}
 
 /** A bot as named in a tournament: `greedy`, `greedy@200ms` (time limit), `brs@d2` (depth) or `mcts@i400` (iterations). */
 export interface TournamentBot {
@@ -77,8 +94,8 @@ export interface PlayedGame {
 
 /**
  * Plays one scheduled game: the pairing's first bot takes the format's first side (the second when
- * swapped); the game's seed draws who starts; every bot gets its own budget; one rng seeded by the
- * game's seed. Seats in the result are the seats in order, each with its bot's label and 1 for a
+ * swapped); the game's seed draws who starts and the random opening (`openedGame`); every bot gets
+ * its own budget; one rng seeded by the game's seed. Seats in the result are the seats in order, each with its bot's label and 1 for a
  * win, 0 otherwise.
  */
 export function playTournamentGame(colours: Colours, bots: ReadonlyMap<string, TournamentBot>, game: ScheduledGame): PlayedGame {
@@ -94,7 +111,7 @@ export function playTournamentGame(colours: Colours, bots: ReadonlyMap<string, T
   const timing: Record<string, { moves: number; totalMs: number; maxMs: number }> = {};
   const rng = createRng(game.seed);
   const seats = [...bySeat.keys()].sort((a, b) => a - b);
-  let state = startGame(game.seed, seats);
+  let state = openedGame(game.seed, seats);
   while (!state.over) {
     const player = bySeat.get(state.turn)!;
     const started = systemClock();

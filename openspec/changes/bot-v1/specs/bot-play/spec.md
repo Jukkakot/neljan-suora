@@ -87,12 +87,11 @@ moves it rates exactly equal it SHALL choose by the seed, so different seeds may
 
 The bot's strength SHALL be checked by the tournament workflow against fixed requirements, each a
 score share of the candidate over a fixed number of games where each seed is played once with each
-seat order and every game starts from a short random opening drawn from its seed:
+seat order and every game starts from a short random opening drawn from its seed. Requirements use
+depth budgets only, so their result does not depend on the machine:
 
 - against a uniformly random player: a share of at least 0.98;
-- against the kit's best-reply search at depth 4, the bot at depth 8: a share of at least 0.9;
-- against the kit's best-reply search with the same time limit of 100 ms per move: a share of at
-  least 0.8.
+- against the kit's best-reply search at depth 4, the bot at depth 8: a share of at least 0.9.
 
 A missed requirement SHALL fail the tournament workflow.
 

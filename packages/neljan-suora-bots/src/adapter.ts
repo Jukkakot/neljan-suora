@@ -1,6 +1,7 @@
 import { createRng, legalColumns, playMove, type Game, type Move, type Rng } from "@neljan-suora/rules";
 import { bestReplyBot, greedyBot, mctsBot, randomBot, type Bot, type Budget, type MultiplayerGame } from "@game-kit/bots";
 import { evaluate } from "./evaluation.js";
+import { negamaxBot } from "./negamax/search.js";
 
 /** `seat` drops a disc into `column`, on turn or not (search may play out of turn). */
 function played(game: Game, seat: number, column: number): Game {
@@ -44,8 +45,11 @@ export const mctsPlayer: Bot<Game, number> = mctsBot(neljanSuoraGame, evaluate);
 /** Uniformly random legal moves: the baseline for tests and tournaments. */
 export const randomPlayer: Bot<Game, number> = randomBot(neljanSuoraGame);
 
+/** Negamax on the game's bitboards (`bot-v1`): the strongest bot. */
+export const negamaxPlayer: Bot<Game, number> = negamaxBot();
+
 /** The bot people play against. */
-export const devicePlayer: Bot<Game, number> = brsPlayer;
+export const devicePlayer: Bot<Game, number> = negamaxPlayer;
 
 /**
  * The bot worker's entry point: the move of the seat on turn in `game` within `budget`, or
