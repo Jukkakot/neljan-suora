@@ -8,7 +8,7 @@ game kit). Start any planning or investigation there, then verify against the co
 wiki pages it affects (enforced by `openspec/config.yaml` rules and archive guidance).
 
 Theme: **Marjat** – berries in a birch crate (`openspec/context/product.md` → Theme). Every UI change
-and every text follows it; check light and dark.
+and every text follows it; check light and dark (skills `ui` and `game-ui`).
 
 The project was made from the game kit's template (`create-game`); the rules are the game's own
 (`rules-engine`, spec `game-rules`).
